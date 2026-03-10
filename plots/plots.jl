@@ -1,5 +1,5 @@
 using Pkg
-Pkg.activate(".")
+Pkg.activate("plots")
 Pkg.instantiate()
-using CairoMakie
+using CairoMakie, Parameters, JLD2
 ##
