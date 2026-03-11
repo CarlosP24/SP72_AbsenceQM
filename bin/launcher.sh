@@ -5,7 +5,7 @@ JOB_INFO=$(sbatch --parsable --export=ALL <<EOT
 #!/bin/bash
 #SBATCH --partition=esbirro
 #SBATCH --ntasks-per-node=32
-#SBATCH --nodes=7
+#SBATCH --nodes=1-3
 #SBATCH --cpus-per-task=1
 #SBATCH --mem-per-cpu=2G
 #SBATCH --output="logs/%A_%a.out"

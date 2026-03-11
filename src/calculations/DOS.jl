@@ -1,27 +1,67 @@
 function calc_DOS(name::String)
     system = systems[name]
-    @unpack Φrng, ωrng, Zs, outdir = system.calc_params
+    if system.params_wire isa Params_Partial
+        res = calc_DOS_B(name)
+        return res
+    end
 
+    @unpack Φrng_DOS, ωrng, Zs, NDOS, χ, outdir = system.calc_params
     # Output path
     path = "$(outdir)/DOS/$(name).jld2"
     mkpath(dirname(path))
 
-    g = greens_softwire(system.params_wire)
+    g, L = greens_softwire(system.params_wire, χ)
+    a0 = system.params_wire.a0
+    N = round(Int, L / a0)
+    step = max(1, round(Int, N / NDOS))
+    positions = [x * a0 for x in 0:step:N]
+    ρ = ldos(g[region = r -> r[1] in Set(positions)]; kernel = I)
 
     DOS = pfunction(
         (Φ, ω, Z) -> try
-            rho = ldos(g(ω; ω, Φ, Z), kernel = I)[] |> sum
+            ρ(ω; ω, Φ, Z) |> sum
         catch e
             @warn "Error calculating DOS at (Φ=$Φ, ω=$ω, Z=$Z): $e"
             NaN
         end,
-        [Φrng, ωrng, Zs];
+        [Φrng_DOS, ωrng, Zs];
     )
 
     DOS = Dict(
         Z => DOS[:, :, i] for (i, Z) in enumerate(Zs)
     )
 
+    return Results(
+        system = system,
+        DOS = DOS,
+        path = path,
+    )
+end
+
+function calc_DOS_B(name::String)
+    system = systems[name]
+    @unpack Brng, ωrng, NDOS, χ, outdir = system.calc_params
+    # Output path
+    path = "$(outdir)/DOS/$(name).jld2"
+    mkpath(dirname(path))
+
+    g, L = greens_softwire(system.params_wire, χ)
+    a0 = system.params_wire.a0
+    N = round(Int, L / a0)
+    step = max(1, round(Int, N / NDOS))
+    positions = [x * a0 for x in 0:step:N]
+    ρ = ldos(g[region = r -> r[1] in Set(positions)]; kernel = I)
+
+    DOS = pfunction(
+        (B, ω) -> try
+            ρ(ω; ω, B) |> sum
+        catch e
+            @warn "Error calculating DOS at (B=$B, ω=$ω): $e"
+            NaN
+        end,
+        [Brng, ωrng];
+    )
+        
     return Results(
         system = system,
         DOS = DOS,

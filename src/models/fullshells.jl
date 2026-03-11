@@ -9,16 +9,27 @@ base_fs = Params_System(;
         g = 10,
         α = 0,
         Vmin = 0,
-        Vmax = 50,
-        μ = 14,
-        preα = 70 * 40 / 50,
+        Vmax = 60,
+        μ = 22.8,
+        preα = 70 * 7 / 60,
         ishollow = false,
         τΓ = 40,
         bandbottom = true,
     ),
-    calc_params = Calc_Params()
+    calc_params = Calc_Params(;
+        χ = 500
+    )
+)
+
+base_fs_zoom = Params_System(base_fs;
+    calc_params = Calc_Params(base_fs.calc_params; 
+        ωrng = range(-0.026, 0, length = 201) .+ 1e-3im,
+        Φrng_DOS = range(0.501, 1.499, length = 201),
+        μrng = range(21, 24, length = 500)
+    )
 )
 
 full_shells = Dict(
     "base_fs" => base_fs,
+    "base_fs_zoom" => base_fs_zoom,
 )

@@ -36,6 +36,24 @@ if endswith(input, "_muflux")
     exit(0)
 end
 
+if endswith(input, "_muB")
+    name = replace(input, "_muB" => "")
+    @info "Calculating PD for $(name) as a function of μ and B"
+    res = calc_PD_mu_B(name)
+    @info "Saving results to $(res.path)"
+    save(res.path, "res", res)
+    exit(0)
+end
+
+if endswith(input, "_flux")
+    name = replace(input, "_flux" => "")
+    @info "Calculating PD for $(name) as a function of Φ"
+    res = calc_PD_flux(name)
+    @info "Saving results to $(res.path)"
+    save(res.path, "res", res)
+    exit(0)
+end
+
 if endswith(input, "_dos")
     name = replace(input, "_dos" => "")
     @info "Calculating DOS for $(name)"
