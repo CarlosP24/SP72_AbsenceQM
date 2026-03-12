@@ -1,7 +1,9 @@
-function figure_wyG()
-    fig = Figure(resolution = (600, 800), fontsize = 20)
+function figure_wyG(;)
+    fig = Figure(size = (600, 900), fontsize = 20)
+    
+    ins = MarkerElement(marker = :rect, color = (:gray, 0.2), strokecolor = :black, strokewidth = 1.5, markersize = 16)
     triv = MarkerElement(marker = :rect, color = :white, strokecolor = :black, strokewidth = 1.5, markersize = 16)
-    topo = MarkerElement(marker = :rect, color = :red, markersize = 16)
+    topo = MarkerElement(marker = :rect, color = :red, strokecolor = :black, strokewidth = 1.5,  markersize = 16)
 
 
 
@@ -10,41 +12,66 @@ function figure_wyG()
     figSketch = fig[1:2, 1] = GridLayout()
 
     # Phase Diagram
-    ax = Axis(fig[1, 2])
-    plot_µB(ax, "base_partial")
-    ylims!(ax, 0, 2)
-    xlims!(ax, 0, 2)
-    hidexdecorations!(ax, ticks = false, grid = false)
-    ax.xticks = [0, 1, 2]
-    ax.yticks = [0, 1, 2]
-    ax.ylabel = L"$\mu / V_\text{Z}^\text{c}$"
+    color_loop = [:lightgreen, :lightblue]
+    axP = Axis(fig[1, 2])
+    plot_µB(axP, "base_partial")
+    hlines!(axP, [1]; color = :black, linestyle = :dash, linewidth = 2)
+    ylims!(axP, -2, 2)
+    xlims!(axP, 0, 2)
+    hidexdecorations!(axP, ticks = false, grid = false)
+    axP.yticks = [-2, 0, 2]
+    axP.ylabel = L"$\mu / V_\text{Z}^\text{c}$"
 
-    vlines!(ax, [1]; color = :orange, linestyle = :dash, linewidth = 2)
-    axislegend(ax, [triv, topo], ["Triv", "Topo"], position = (0, 2.5), framevisible = false, orientation = :vertical, labelsize = 14)
+    vlines!(axP, [1]; color = :orange, linestyle = :dash, linewidth = 2)
+
+    ax = Axis(fig[1, 2]; yaxisposition = :right)
+    ylims!(ax, -2, 2)
+    ax.yticks = ([1], [L"\mu_\infty"])
+    ax.yticklabelcolor = :black
+    hidespines!(ax)
+    hidexdecorations!(ax)
+
+    Legend(fig[1, 2, Top()], [ins, triv, topo], ["Ins", "Triv", "Topo"], framevisible = false, orientation = :horizontal, labelsize = 14)
+
 
     # DOS vs B
     ax = Axis(fig[2, 2])
-    plot_DOS_B(ax, "base_partial")
+    Bs = plot_DOS_B(ax, "base_partial"; colorrange = (0, 5e-1), color_loop )
     xlims!(ax, 0, 2)
-    ax.xticks = ([0, 1, 2], [L"0", L"$V_\text{Z}^\text{c}$", L"$2V_\text{Z}^\text{c}$"])
-    ax.yticks = ([-0.23, 0, 0.23], [L"-\Delta_0", L"0", L"\Delta_0"])
-    ax.ylabelpadding = -15
+    ax.xticks = ([0,  1, 2], [L"0", L"$V_\text{Z}^\text{c}$", L"$2V_\text{Z}^\text{c}$"])
+    ax.yticks = ([-0.23, 0, 0.23], ["-1", "0", "1"])
     vlines!(ax, [1]; color = :orange, linestyle = :dash, linewidth = 2)
 
+    text!(ax, 1.5, 0.06; text = "MZM", color = :white, align = (:center, :center), fontsize = 16)
+
+    lines!(ax, [1, 2], [0.02, 0.02]; color = :white)
+    lines!(ax, [0.6, 1], [-0.03, -0.03]; color = :white)
+
+    text!(ax, 0.8, -0.08; text = "Q-MZM", color = :white, align = (:center, :center), fontsize = 16)
+    #arrows2d!(ax, [1.05], [-0.08], [-0.2], [0.04]; color = :white, shaftwidth = 2, tipwidth = 10)
+
+    axP.xticks = vcat([0, 1, 2], Bs)
+    arrows2d!(axP, Bs, [-2, -2], Bs, [1, 1]; color = color_loop, argmode = :endpoint, tiplength = 10, tipwidth = 10)
+
+    ax = Axis(fig[2, 2]; xaxisposition = :top)
+    xlims!(ax, 0, 2)
+    ax.xticks = (Bs, [L"V_\text{Z}^{(1)}", L"V_\text{Z}^{(2)}"])
+    hidespines!(ax)
+    hideydecorations!(ax)
+    hidexdecorations!(ax, ticks = false, ticklabels = false)
+
+    Colorbar(fig[2, 3], colormap = :thermal, limits = (0, 1), ticks = [0, 1], label = L"$$ DOS (arb.  units)", labelpadding = -15, labelsize = 14)
+    
     # Full Shell
     # Sketch
     figSketch = fig[3:4, 1] = GridLayout()
 
     # Full flux DOS
-    figDOS = fig[5, 1] = GridLayout()
-    ax = Axis(figDOS[2, 1])
-    plot_DOS(ax, "base_fs")
-    plot_TT(ax, "base_fs")
+    ax = Axis(fig[5, 1])
+    plot_DOS(ax, "base_fs"; labels = false)
     ax.xlabel = L"$\Phi/\Phi_0$"
-    ax.yticks = ([-0.23, 0, 0.23], [L"-\Delta_0", L"0", L"\Delta_0"])
-    ax.ylabelpadding = -15
-    Colorbar(figDOS[1, 1]; colormap = :thermal, label = L"$$ DOS (arb. units)", ticks = [0, 1], limits = [0, 1], vertical = false, labelpadding = -25)
-    rowgap!(figDOS, 1, 5)
+    ax.xticks = 0:0.5:2.5
+    ax.yticks = ([-0.23, 0, 0.23], ["-1", "0", "1"]) 
 
     # Phase Diagram µ vs α
     ax = Axis(fig[3, 2])
@@ -52,62 +79,108 @@ function figure_wyG()
     ax.xticks = (0:10:60, ["0", "10", "", "", "", "50", "60"])
     ax.xlabelpadding = -20
     ax.yticks = 0:25:50
-    ax.ylabelsize = 14
+    ax.ylabelsize = 16
+    ax.xlabelsize = 16
+    xlims!(ax, -5, 60)
     scatter!(ax, [22.8], [7]; color = :navyblue)
     text!(ax, 14, 45; text = L"m_r = 1", color = :black, align = (:center, :center), fontsize = 16)
     text!(ax, 37.5, 35; text = L"m_r = 2", color = :white, rotation = π/2, align = (:center, :center), fontsize = 16)
     text!(ax, 55, 35; text = L"m_r = 3", color = :white, rotation = π/2, align = (:center, :center), fontsize = 16)
 
+    text!(ax, 10, 25; text = "Trivial\nskin", align = (:center, :center), fontsize = 16)
 
     #axislegend(ax, [triv, topo], ["Triv", "Topo"], position = :lb, framevisible = false, orientation = :vertical, labelsize = 14)
 
-
     # Phase Diagram µ vs Φ
-    ax = Axis(fig[4, 2])
-    plot_μΦ(ax, "base_fs_zoom")
-    ax.xticks = [0.501, 1, 1.499]
-    ax.yticks = ([21, 22, 23, 24], ["0", "22", "23", "24"])
-    ax.ylabelsize = 16
-    hidexdecorations!(ax, ticks = false, grid = false)
-    hlines!(ax, [22.8]; color = :navyblue, linestyle = :dash)
-    plot_TT(ax, "base_fs"; linewidth = 2, color = :orange)
+    color_loop = [:darkgreen, :darkblue]
+    axP = Axis(fig[4, 2])
+    plot_μΦ(axP, "base_fs_zoom")
+    ylims!(axP, 20.7, 23.5)    
+    axP.xticks = [0.501, 1, 1.499]
+    axP.yticks = ([21, 22, 23, 24], ["0", "22", "23", "24"])
+    axP.ylabelsize = 16
+    hidexdecorations!(axP, ticks = false, grid = false)
+    hlines!(axP, [22.8]; color = :black, linestyle = :dash)
+    plot_TT(axP, "base_fs"; linewidth = 2, color = :orange)
 
+    text!(axP, 1.1, 21.5; text = "Trivial\nskin", align = (:center, :center), fontsize = 16)
+
+    break_axis = Axis(fig[4, 2], alignmode = Mixed(left = -22))
+    xlims!(break_axis, 0, 1)
+    ylims!(break_axis, 0, 1)
+
+    vlines!(break_axis, [0.1]; color = :white)
+    vlines!(break_axis, [0.1]; color = (:black, 0.7))
+    band!(break_axis, [0.07, 0.13], [0.18, 0.20], [0.22, 0.24]; color = :white)
+    lines!(break_axis, [0.07, 0.13], [0.18, 0.20]; color = :black)
+    lines!(break_axis, [0.07, 0.13], [0.22, 0.24]; color = :black)
+
+    hidedecorations!(break_axis)
+    hidespines!(break_axis)
+
+    hidespines!(axP, :l)
+
+    ax = Axis(fig[4, 2]; yaxisposition = :right)
+    ylims!(ax, 20.7, 23.5)
+    ax.yticks = ([22.8], [L"\mu_\infty"])
+    ax.yticklabelcolor = :black
+    hidespines!(ax)
+    hidexdecorations!(ax)
+    hideydecorations!(ax, ticks = false, ticklabels = false)
+    
     # DOS vs Φ, zoom
     ax = Axis(fig[5, 2])
-    plot_DOS(ax, "base_fs_zoom"; colorrange = (9e-2, 5e-1))
+    Φs = plot_DOS(ax, "base_fs_zoom"; colorrange = (5e-2, 5e-1), color_loop)
     plot_TT(ax, "base_fs"; linewidth = 2, color = :orange)
     ylims!(ax, -0.026, 0.026)
     xlims!(ax, 0.501, 1.499)
+
     ax.xticks = ([0.501, 1, 1.499], ["0.5", "1", "1.5"])
     ax.xlabel = L"$\Phi/\Phi_0$"
-    ax.yticks = ([-0.023, 0, 0.023], [L"-\frac{\Delta_0}{10}", L"0", L"\frac{\Delta_0}{10}"])
-    ax.ylabelpadding = -25
+    ax.yticks = ([-0.023, 0, 0.023], ["-0.1", "0", "0.1"]) 
+    ax.ylabelpadding = -15
 
-    rowsize!(fig.layout, 1, Relative(0.12))
-    rowsize!(fig.layout, 2, Relative(0.22))
-    rowsize!(fig.layout, 3, Relative(0.18))
-    rowsize!(fig.layout, 4, Relative(0.18))
+    lines!(ax, [0.5, 0.84], [0.002, 0.002]; color = :white)
+    lines!(ax, [0.84, 0.94], [-0.002, -0.002]; color = :white)
+
+    text!(ax, 0.65, 0.006; text = "MZM", color = :white, align = (:center, :center), fontsize = 16)
+
+    text!(ax, 0.86, -0.006; text = "Q-MZM", color = :white, align = (:left, :center), fontsize = 16)
+
+    ax = Axis(fig[5, 2]; xaxisposition = :top)
+    hidespines!(ax)
+    hidexdecorations!(ax, ticks = false, ticklabels = false)
+    hideydecorations!(ax)
+    xlims!(ax, 0.501, 1.499)
+    ax.xticks = (Φs, [L"\Phi^{(1)}", L"\Phi^{(2)}"])
+
+    axP.xticks = vcat([0, 1, 2], Φs)
+    arrows2d!(axP, Φs, [0, 0], Φs, [22.8, 22.8]; color = color_loop, argmode = :endpoint, tiplength = 10, tipwidth = 10)
+
+    Colorbar(fig[5, 3], colormap = :thermal, limits = (0, 1), ticks = [0, 1], label = L"$$ DOS (arb.  units)", labelpadding = -15, labelsize = 14)
 
     rowgap!(fig.layout, 1, 5)
-    rowgap!(fig.layout, 2, -5)
-    rowgap!(fig.layout, 3, -5)
-    rowgap!(fig.layout, 4, -15)
+    rowgap!(fig.layout, 2, 0)
+    rowgap!(fig.layout, 3, 0)
+    rowgap!(fig.layout, 4, 5)
+
+    colgap!(fig.layout, 2, -30)
 
     style = (font = "CMU Serif Bold", fontsize   = 20)
 
-    Label(fig[1, 1, TopLeft()], "a"; padding = (-20, 0, -10, 0), style...)
+    Label(fig[1, 1, TopLeft()], "a"; padding = (-20, 0, -30, 0), style...)
     Label(fig[2, 1, TopLeft()], "b"; padding = (-20, 0, -30, 0), style...)
 
-    Label(fig[1, 2, TopLeft()], "c"; padding = (-40, 0, -10, 0), style...)
+    Label(fig[1, 2, TopLeft()], "c"; padding = (-40, 0, -30, 0), style...)
     Label(fig[2, 2, TopLeft()], "d"; padding = (-40, 0, -30, 0), style...)
 
     Label(fig[3, 1, TopLeft()], "e"; padding = (-20, 0, -30, 0), style...)
     Label(fig[4, 1, TopLeft()], "f"; padding = (-20, 0, -10, 0), style...)
-    Label(fig[5, 1, TopLeft()], "g"; padding = (-20, 0, -10, 0), style...)
+    Label(fig[5, 1, TopLeft()], "g"; padding = (-40, 0, -30, 0), style...)
 
     Label(fig[3, 2, TopLeft()], "h"; padding = (-40, 0, -10, 0), style...)
     Label(fig[4, 2, TopLeft()], "i"; padding = (-40, 0, -10, 0), style...)
-    Label(fig[5, 2, TopLeft()], "j"; padding = (-40, 0, -10, 0), style...)
+    Label(fig[5, 2, TopLeft()], "j"; padding = (-40, 0, -30, 0), style...)
 
     return fig
 end

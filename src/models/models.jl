@@ -3,9 +3,12 @@
     μrng = range(0, 60, length = 500)
     μrngP = range(-4, 4, length = 200)
     Φrng_PD = range(0.501, 1.499, length = 501)
-    Φrng_DOS = range(0, 2.499, length = 101)
-    ωrng = range(-0.26, 0, length = 101) .+ 1e-3im
+    Φrng_DOS = range(0, 2.499, length = 301)
+    ωrng = range(-0.26, 0, length = 301) .+ 1e-3im
     Brng = range(0, 5; length = 501)
+    χrng = 10 .^range(0, 2.9, length = 300)
+    Φs = [0.7, 0.9]
+    Bs = [1.5 * 2, 0.9 * 2]
     NDOS = 5
     Zs = [0]
     χ = "default"

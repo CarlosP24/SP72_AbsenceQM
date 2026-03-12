@@ -3,7 +3,8 @@ function plot_µα(ax, name::String; basepath = "data/PD_mu_alpha")
     @load path res
     @unpack PD, system = res
     @unpack αrng, µrng = system.calc_params
-    heatmap!(ax, µrng, αrng, PD; colormap = [:red, (:white, 0)])
+    band!(ax, [-10, 0], first(αrng), last(αrng); color = (:gray, 0.2))
+    heatmap!(ax, µrng, αrng, PD; colormap = [:red, (:white, 0)], rasterize = 5)
     ax.xlabel = L"$\mu$ (meV)"
     ax.ylabel = L"$\langle \alpha \rangle$ (meVnm)"
 end
@@ -14,12 +15,13 @@ end
 # fig
 
 ##
-function plot_μΦ(ax, name::String; basepath = "data/PD_mu_flux")
+function plot_μΦ(ax, name::String; basepath = "data/PD_mu_flux", μ0fake = 21)
     path = "$(basepath)/$(name).jld2"
     @load path res
     @unpack PD, system = res
     @unpack Φrng_PD, µrng = system.calc_params
-    heatmap!(ax, Φrng_PD, µrng, PD'; colormap = [:red, (:white, 0)])
+    band!(ax, Φrng_PD, 0, μ0fake; color = (:gray, 0.2))
+    heatmap!(ax, Φrng_PD, µrng, PD'; colormap = [:red, (:white, 0)], rasterize = 5)
     ax.ylabel = L"$\mu$ (meV)"
     ax.xlabel = L"$\Phi/\Phi_0$"
 end
@@ -29,7 +31,8 @@ function plot_µB(ax, name::String; basepath = "data/PD_mu_B", Bc = 2)
     @load path res
     @unpack PD, system = res
     @unpack Brng, µrngP = system.calc_params
-    heatmap!(ax, Brng ./ Bc, µrngP ./ Bc, PD'; colormap = [(:white, 0), :red])
+    band!(ax, Brng ./Bc, -2, 0; color = (:gray, 0.2))
+    heatmap!(ax, Brng ./ Bc, µrngP ./ Bc, PD'; colormap = [(:white, 0), :red], rasterize = 5)
     ax.ylabel = L"$\mu$ (meV)"
     ax.xlabel = L"$V_\text{Z}$ (meV)"
 end
