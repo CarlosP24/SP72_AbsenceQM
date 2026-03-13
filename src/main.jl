@@ -27,6 +27,15 @@ if endswith(input, "_mualpha")
     exit(0)
 end
 
+if endswith(input, "_mualphaZ")
+    name = replace(input, "_mualphaZ" => "")
+    @info "Calculating PD for $(name) as a function of μ, α and Z"
+    res = calc_PD_mu_alpha_Z(name)
+    @info "Saving results to $(res.path)"
+    save(res.path, "res", res)
+    exit(0)
+end
+
 if endswith(input, "_muflux")
     name = replace(input, "_muflux" => "")
     @info "Calculating PD for $(name) as a function of μ and Φ"
@@ -67,6 +76,15 @@ if endswith(input, "_ldos")
     name = replace(input, "_ldos" => "")
     @info "Calculating LDOS for $(name)"
     res = calc_LDOS(name)
+    @info "Saving results to $(res.path)"
+    save(res.path, "res", res)
+    exit(0)
+end
+
+if endswith(input, "_ldos_dis")
+    name = replace(input, "_ldos_dis" => "")
+    @info "Calculating LDOS for $(name)"
+    res = calc_LDOS_dis(name)
     @info "Saving results to $(res.path)"
     save(res.path, "res", res)
     exit(0)

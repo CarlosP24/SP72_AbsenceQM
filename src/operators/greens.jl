@@ -13,3 +13,11 @@ function greens_softwire(params_wire::Union{Params, Params_Partial} , χ)
     g = hstep |> attach(gSC; region = r -> r[1] == L) |> greenfunction()
     return g, L
 end
+
+function greens_diswire(params_wire::Union{Params, Params_Partial}, uni, Nn, χ)
+    hSM, hSC, params_wire = build(params_wire)
+    hstep, L = build_disorder(hSC, params_wire, uni, Nn, χ)
+    gSC = hSC |> greenfunction(GS.Schur(boundary = 0))
+    g = hstep |> attach(gSC; region = r -> r[1] == L) |> greenfunction()
+    return g, L
+end

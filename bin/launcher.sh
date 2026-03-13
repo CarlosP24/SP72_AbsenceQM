@@ -3,9 +3,9 @@ source config/prologue.sh "$@"
 if [ $? -ne 0 ]; then exit 1; fi
 JOB_INFO=$(sbatch --parsable --export=ALL <<EOT
 #!/bin/bash
-#SBATCH --partition=most
-#SBATCH --ntasks-per-node=192
-#SBATCH --nodes=1
+#SBATCH --partition=esbirro
+#SBATCH --ntasks-per-node=32
+#SBATCH --nodes=1-7
 #SBATCH --cpus-per-task=1
 #SBATCH --mem-per-cpu=2G
 #SBATCH --output="logs/%A_%a.out"

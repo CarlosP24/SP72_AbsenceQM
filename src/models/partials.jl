@@ -10,11 +10,18 @@ base_partial = Params_System(;
 
 base_partial_szoom = Params_System(base_partial;
     calc_params = Calc_Params(base_partial.calc_params; 
-        ωrng = range(-0.05, 0, length = 301) .+ 1e-3im,
+        ωrng = range(-0.1, 0, length = 301) .+ 1e-3im,
+    )
+)
+
+base_partial_szoom_rand = Params_System(base_partial_szoom;
+    calc_params = Calc_Params(base_partial_szoom.calc_params;
+        uni = false,
     )
 )
 
 partials = Dict(
     "base_partial" => base_partial,
     "base_partial_szoom" => base_partial_szoom,
+    "base_partial_szoom_rand" => base_partial_szoom_rand,
 )

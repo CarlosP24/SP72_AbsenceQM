@@ -11,8 +11,38 @@ end
 
 # fig = Figure()
 # ax = Axis(fig[1, 1])
-# plot_muα(ax, "base_fs")
+# plot_µα(ax, "base_fs"; basepath = "data/PD_mu_alphaZ")
 # fig
+##
+function plot_µαZ(ax, name::String; basepath = "data/PD_mu_alphaZ", basepath0 = "data/PD_mu_alpha")
+    path = "$(basepath0)/$(name).jld2"
+    @load path res
+    @unpack PD, system = res
+    @unpack αrng, µrng = system.calc_params
+    heatmap!(ax, µrng, αrng, PD; colormap = [:orange, (:white, 0)])
+    
+    path = "$(basepath)/$(name).jld2"
+    @load path res
+    @unpack PD, system = res
+
+    band!(ax, [-10, 0], first(αrng), last(αrng); color = (:gray, 0.2))
+    heatmap!(ax, µrng, αrng, PD; colormap = [:red, (:white, 0)], rasterize = 5)
+    ax.xlabel = L"$\mu$ (meV)"
+    ax.ylabel = L"$\langle \alpha \rangle$ (meVnm)"
+
+
+end
+
+fig = Figure(size = (600, 300), fontsize = 20)
+ax = Axis(fig[1, 1])
+plot_µαZ(ax, "base_fs"; basepath = "data/PD_mu_alphaZ")
+fig
+
+##
+fig = Figure(size = (600, 300), fontsize = 20)
+ax = Axis(fig[1, 1])
+plot_µαZ(ax, "base_fs_hex"; basepath = "data/PD_mu_alphaZ")
+fig
 
 ##
 function plot_μΦ(ax, name::String; basepath = "data/PD_mu_flux", μ0fake = 21)
