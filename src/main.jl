@@ -81,13 +81,4 @@ if endswith(input, "_ldos")
     exit(0)
 end
 
-if endswith(input, "_ldos_dis")
-    name = replace(input, "_ldos_dis" => "")
-    @info "Calculating LDOS for $(name)"
-    res = calc_LDOS_dis(name)
-    @info "Saving results to $(res.path)"
-    save(res.path, "res", res)
-    exit(0)
-end
-
 @error "Key '$input' not found."

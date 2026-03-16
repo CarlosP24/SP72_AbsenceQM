@@ -10,9 +10,7 @@
     Φs = [0.7, 0.9]
     Bs = [1.5 * 2, 0.9 * 2]
     NDOS = 5
-    uni = true
-    Nn = 20
-    NR = 1
+    Vdis = 0
     Zs = [0]
     χ = "default"
     outdir = "data"
