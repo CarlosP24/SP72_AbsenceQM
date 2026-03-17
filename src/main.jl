@@ -72,6 +72,15 @@ if endswith(input, "_dos")
     exit(0)
 end
 
+if endswith(input, "_doschi")
+    name = replace(input, "_doschi" => "")
+    @info "Calculating DOS vs χ for $(name)"
+    res = calc_DOS_chi(name)
+    @info "Saving results to $(res.path)"
+    save(res.path, "res", res)
+    exit(0)
+end
+
 if endswith(input, "_ldos")
     name = replace(input, "_ldos" => "")
     @info "Calculating LDOS for $(name)"

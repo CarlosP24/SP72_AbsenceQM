@@ -31,7 +31,13 @@ base_fs_zoom = Params_System(base_fs;
 
 base_fs_szoom = Params_System(base_fs;
     calc_params = Calc_Params(base_fs.calc_params; 
-        ωrng = range(-0.01, 0, length = 301) .+ 1e-3im,
+        ωrng = range(-0.2 * 0.23, 0, length = 301) .+ 1e-3im,
+    )
+)
+
+base_fs_sszoom = Params_System(base_fs;
+    calc_params = Calc_Params(base_fs.calc_params; 
+        ωrng = range(-0.02 * 0.23, 0, length = 301) .+ 1e-4im,
     )
 )
 
@@ -43,13 +49,13 @@ base_fs_hex = Params_System(base_fs;
 
 base_fs_szoom_weak = Params_System(base_fs_szoom;
     calc_params = Calc_Params(base_fs_szoom.calc_params; 
-        Vdis = 0.1 * 22.8
+        Vdis = 0.1 * 0.08 * 0.23 * sqrt(10^2.9 / 5)
     )
 )
 
 base_fs_szoom_strong = Params_System(base_fs_szoom;
     calc_params = Calc_Params(base_fs_szoom.calc_params; 
-        Vdis = 0.5 * 22.8
+        Vdis = 0.5 * 0.8 * 0.23 * sqrt(10^2.9 / 5)
     )
 )
 
@@ -60,5 +66,5 @@ full_shells = Dict(
     "base_fs_hex" => base_fs_hex,
     "base_fs_szoom_weak" => base_fs_szoom_weak,
     "base_fs_szoom_strong" => base_fs_szoom_strong,
-
+    "base_fs_sszoom" => base_fs_sszoom
 ) 

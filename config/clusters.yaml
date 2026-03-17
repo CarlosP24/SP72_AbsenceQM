@@ -17,9 +17,10 @@ atto:
   host: atto.icmm.csic.es
   path: /home/paya
   launcher: bin/launcher.sh
-  partition: all
-  ntasks_per_node: 192
-  nodes: 1
+  partition: most,express,long
+  #ntasks_per_node: 192
+  #nodes: 1
+  ntasks: 192
   cpus_per_task: 1
   mem_per_cpu: 2G
   mail_user: carlos.paya@csic.es
