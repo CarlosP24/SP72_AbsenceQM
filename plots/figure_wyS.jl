@@ -33,7 +33,7 @@ function figure_wyS(strength::String = "")
     text!(ax, 200, -0.15; text = L"\Phi=\Phi^{(1)}", color = :white, align = (:center, :center))
 
     ax = Axis(fig[2, 2]; xlabel, ylabel)
-    plot_LDOS(ax, "base_fs_szoom"*strength, "QMajo"; colorrange = (0, 5e-3) )
+    plot_LDOS(ax, "base_fs_szoom"*strength, "QMajo"; colorrange = (1e-4, 5e-3), )
     hideydecorations!(ax; ticks = false)
     ax.yticks = [-0.2, 0, 0.2]
     ylims!(ax, -0.2, 0.2)
@@ -74,4 +74,10 @@ fig
 ##
 fig = figure_wyS("_strong")
 save("plots/figures/fig_wyS_disorder.pdf", fig)
+fig
+
+##
+fig = Figure()
+ax = Axis(fig[1, 1]; xlabel = L"$\chi$ (nm)", ylabel = L"$\omega / \Delta_0$")
+plot_LDOS(ax, "base_fs_szoom", "QMajo"; basepath = "data/DOS_chi", colorrange = (0.2, 1), )
 fig

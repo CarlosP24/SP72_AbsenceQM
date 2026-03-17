@@ -2,6 +2,9 @@ function plot_LDOS(ax, name::String, key::String; basepath = "data/LDOS", pref =
     path = "$(basepath)/$(name).jld2"
     @load path res
     @unpack LDOS, system = res
+    if LDOS === nothing
+        LDOS = res.DOS
+    end
     @unpack χrng, ωrng = system.calc_params  
 
     if system.params_wire isa Params

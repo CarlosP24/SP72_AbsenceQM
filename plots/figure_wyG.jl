@@ -1,3 +1,9 @@
+function mbar!(ax, p1, p2; color = :white, linewidth = 2)
+    arrows2d!(ax, [p1[1]], [p1[2]], [p2[1]], [p2[2]]; color, argmode = :endpoint, tip = Point2f[(0, -0.3), (0, 0.3), (0.5, 0.3), (0.5, -0.3)], tail = Point2f[(1, -0.3), (1, 0.3), (0.5, 0.3), (0.5, -0.3)], taillength = 4, tiplength = 4, shaftwidth = linewidth)
+end
+
+
+
 function figure_wyG(;)
     fig = Figure(size = (600, 900), fontsize = 20)
     
@@ -9,8 +15,8 @@ function figure_wyG(;)
 
     # Partial Shell
     # Sketch
-    figSketch = fig[1:2, 1] = GridLayout()
-
+    ax = Axis(fig[1:2, 1]; xlabel = L"z", alignmode = Mixed(left = -20, bottom = -30))
+    sketch_partial(ax)
     # Phase Diagram
     color_loop = [:lightgreen, :lightblue]
     axP = Axis(fig[1, 2])
@@ -42,13 +48,12 @@ function figure_wyG(;)
     ax.yticks = ([-0.23, 0, 0.23], ["-1", "0", "1"])
     vlines!(ax, [1]; color = :orange, linestyle = :dash, linewidth = 2)
 
-    text!(ax, 1.5, 0.06; text = "MZM", color = :white, align = (:center, :center), fontsize = 16)
+    text!(ax, 1.5, 0.07; text = "MZM", color = :white, align = (:center, :center), fontsize = 16)
 
-    lines!(ax, [1, 2], [0.02, 0.02]; color = :white)
-    lines!(ax, [0.6, 1], [-0.03, -0.03]; color = :white)
+    mbar!(ax, [1, 0.03], [2, 0.03]; color = :white, linewidth = 2)
 
-    text!(ax, 0.8, -0.08; text = "Q-MZM", color = :white, align = (:center, :center), fontsize = 16)
-    #arrows2d!(ax, [1.05], [-0.08], [-0.2], [0.04]; color = :white, shaftwidth = 2, tipwidth = 10)
+    text!(ax, 0.8, -0.09; text = "Q-MZM", color = :white, align = (:center, :center), fontsize = 16)
+    mbar!(ax, [0.6, -0.04], [1.0, -0.04]; color = :white, linewidth = 2)
 
     axP.xticks = vcat([0, 1, 2], Bs)
     arrows2d!(axP, Bs, [-2, -2], Bs, [1, 1]; color = color_loop, argmode = :endpoint, tiplength = 10, tipwidth = 10)
@@ -61,11 +66,18 @@ function figure_wyG(;)
     hidexdecorations!(ax, ticks = false, ticklabels = false)
 
     Colorbar(fig[2, 3], colormap = :thermal, limits = (0, 1), ticks = [0, 1], label = L"$$ DOS (arb.  units)", labelpadding = -15, labelsize = 14)
+
+    ax = Axis(fig[1:2, 1:3], alignmode = Mixed(bottom = -70, left = -30, right =    0))
+    xlims!(ax, 0, 1)
+    ylims!(ax, 0, 1)
+    hlines!(ax, 0.1; color = :black, linewidth = 0.5)
+    hidedecorations!(ax)
+    hidespines!(ax)
     
     # Full Shell
     # Sketch
-    figSketch = fig[3:4, 1] = GridLayout()
-
+    ax = Axis(fig[3:4, 1]; xlabel = L"z",  alignmode = Mixed(left = -20, bottom = -30))
+    sketch_FS(ax)
     # Full flux DOS
     ax = Axis(fig[5, 1])
     plot_DOS(ax, "base_fs"; labels = false)
@@ -140,12 +152,11 @@ function figure_wyG(;)
     ax.yticks = ([-0.023, 0, 0.023], ["-0.1", "0", "0.1"]) 
     ax.ylabelpadding = -15
 
-    lines!(ax, [0.5, 0.84], [0.002, 0.002]; color = :white)
-    lines!(ax, [0.84, 0.94], [-0.002, -0.002]; color = :white)
+    mbar!(ax, [0.5, 0.004], [0.84, 0.004]; color = :white, linewidth = 2)
+    text!(ax, 0.65, 0.008; text = "MZM", color = :white, align = (:center, :center), fontsize = 16)
 
-    text!(ax, 0.65, 0.006; text = "MZM", color = :white, align = (:center, :center), fontsize = 16)
-
-    text!(ax, 0.86, -0.006; text = "Q-MZM", color = :white, align = (:left, :center), fontsize = 16)
+    mbar!(ax, [0.84, -0.004], [0.94, -0.004]; color = :white, linewidth = 2)
+    text!(ax, 0.86, -0.009; text = "Q-MZM", color = :white, align = (:left, :center), fontsize = 16)
 
     ax = Axis(fig[5, 2]; xaxisposition = :top)
     hidespines!(ax)
@@ -160,7 +171,7 @@ function figure_wyG(;)
     Colorbar(fig[5, 3], colormap = :thermal, limits = (0, 1), ticks = [0, 1], label = L"$$ DOS (arb.  units)", labelpadding = -15, labelsize = 14)
 
     rowgap!(fig.layout, 1, 5)
-    rowgap!(fig.layout, 2, 0)
+    rowgap!(fig.layout, 2, 5)
     rowgap!(fig.layout, 3, 0)
     rowgap!(fig.layout, 4, 5)
 
@@ -169,21 +180,20 @@ function figure_wyG(;)
     style = (font = "CMU Serif Bold", fontsize   = 20)
 
     Label(fig[1, 1, TopLeft()], "a"; padding = (-20, 0, -30, 0), style...)
-    Label(fig[2, 1, TopLeft()], "b"; padding = (-20, 0, -30, 0), style...)
 
-    Label(fig[1, 2, TopLeft()], "c"; padding = (-40, 0, -30, 0), style...)
-    Label(fig[2, 2, TopLeft()], "d"; padding = (-40, 0, -30, 0), style...)
+    Label(fig[1, 2, TopLeft()], "b"; padding = (-40, 0, -30, 0), style...)
+    Label(fig[2, 2, TopLeft()], "c"; padding = (-40, 0, -30, 0), style...)
 
-    Label(fig[3, 1, TopLeft()], "e"; padding = (-20, 0, -30, 0), style...)
-    Label(fig[4, 1, TopLeft()], "f"; padding = (-20, 0, -10, 0), style...)
-    Label(fig[5, 1, TopLeft()], "g"; padding = (-40, 0, -30, 0), style...)
+    Label(fig[3, 1, TopLeft()], "d"; padding = (-20, 0, -30, 0), style...)
 
-    Label(fig[3, 2, TopLeft()], "h"; padding = (-40, 0, -10, 0), style...)
-    Label(fig[4, 2, TopLeft()], "i"; padding = (-40, 0, -10, 0), style...)
-    Label(fig[5, 2, TopLeft()], "j"; padding = (-40, 0, -30, 0), style...)
+    Label(fig[5, 1, TopLeft()], "e"; padding = (-40, 0, -30, 0), style...)
+
+    Label(fig[3, 2, TopLeft()], "f"; padding = (-40, 0, -10, 0), style...)
+    Label(fig[4, 2, TopLeft()], "g"; padding = (-40, 0, -10, 0), style...)
+    Label(fig[5, 2, TopLeft()], "h"; padding = (-40, 0, -30, 0), style...)
 
     return fig
-end
+end 
 
 fig = figure_wyG()
 save("plots/figures/figure_wyG.pdf", fig)
