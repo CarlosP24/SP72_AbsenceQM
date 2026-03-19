@@ -6,7 +6,7 @@ function build(params_wire::Union{Params, Params_Partial})
     end
     return hSM, hSC, params_wire
 end
-function greens_softwire(params_wire::Union{Params, Params_Partial} , χ, Vdis = 0)
+function greens_softwire(params_wire::Union{Params, Params_Partial} , χ = "default", Vdis = 0)
     hSM, hSC, params_wire = build(params_wire)
     hstep, L = build_barrier(hSC, params_wire, χ)
     hstep = build_disorder(hstep, Vdis)

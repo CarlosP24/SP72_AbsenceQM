@@ -72,8 +72,8 @@ save("plots/figures/fig_wyS.pdf", fig)
 fig
 
 ##
-fig = figure_wyS("_strong")
-save("plots/figures/fig_wyS_disorder.pdf", fig)
+fig = figure_wyS("_weak")
+save("plots/figures/fig_wyS_disorder_weak.pdf", fig)
 fig
 
 ##

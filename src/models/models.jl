@@ -21,6 +21,7 @@ end
     LDOS = nothing
     DOS = nothing
     PD = nothing
+    Psis = nothing
     path = nothing
 end
 

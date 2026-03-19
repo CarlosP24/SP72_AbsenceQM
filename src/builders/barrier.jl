@@ -1,4 +1,4 @@
-function build_barrier(h::Quantica.AbstractHamiltonian1D, p_wire::Union{Params, Params_Partial} , χ = "default"  )
+function build_barrier(h::Quantica.AbstractHamiltonian1D, p_wire::Union{Params, Params_Partial} , χ = "default"; pref = log(100)) 
     @unpack μ, a0 = p_wire
 
     if χ == "default"
@@ -10,7 +10,7 @@ function build_barrier(h::Quantica.AbstractHamiltonian1D, p_wire::Union{Params, 
         end
     end
 
-    L = log(100) * χ                    # Length of the wire so the potential decays to 1% of its maximum value (allows for χ to go up to 5χ_electrostatic)
+    L = pref * χ                    # Length of the wire so the potential decays to 1% of its maximum value (allows for χ to go up to 5χ_electrostatic)
 
     L = floor(L/a0)*a0
 

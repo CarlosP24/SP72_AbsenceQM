@@ -49,13 +49,13 @@ base_fs_hex = Params_System(base_fs;
 
 base_fs_szoom_weak = Params_System(base_fs_szoom;
     calc_params = Calc_Params(base_fs_szoom.calc_params; 
-        Vdis = 0.1 * 0.08 * 0.23 * sqrt(10^2.9 / 5)
+        Vdis = 0.2 * 0.08 * 0.23 * sqrt(10^2.9 / 5)
     )
 )
 
 base_fs_szoom_strong = Params_System(base_fs_szoom;
     calc_params = Calc_Params(base_fs_szoom.calc_params; 
-        Vdis = 0.5 * 0.8 * 0.23 * sqrt(10^2.9 / 5)
+        Vdis = 5 * 0.8 * 0.23 * sqrt(10^2.9 / 5)
     )
 )
 

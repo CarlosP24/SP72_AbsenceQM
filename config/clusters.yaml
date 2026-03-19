@@ -18,9 +18,9 @@ atto:
   path: /home/paya
   launcher: bin/launcher.sh
   partition: most,express,long
-  #ntasks_per_node: 192
-  #nodes: 1
-  ntasks: 192
+  ntasks_per_node: 192
+  nodes: 1-2
+  #ntasks: 192
   cpus_per_task: 1
   mem_per_cpu: 2G
   mail_user: carlos.paya@csic.es

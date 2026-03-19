@@ -1,11 +1,10 @@
 using Pkg, JLD2
 include("utilities.jl")
-ensure_pkgs(["Quantica", "FullShell", "ProgressMeter", "Parameters"])
+ensure_pkgs(["Quantica", "FullShell", "ProgressMeter", "Parameters", "ArnoldiMethod", "LinearMaps",])
 @everywhere begin
     using Quantica, FullShell
     using ProgressMeter, Parameters
-    using LinearAlgebra, Arpack
-    BLAS.set_num_threads(1)
+    using ArnoldiMethod, LinearMaps
 
     # Load
     include("utilities.jl")
@@ -85,6 +84,16 @@ if endswith(input, "_ldos")
     name = replace(input, "_ldos" => "")
     @info "Calculating LDOS for $(name)"
     res = calc_LDOS(name)
+    @info "Saving results to $(res.path)"
+    save(res.path, "res", res)
+    exit(0)
+end
+
+if endswith(input, "_wfs")
+    rmprocs(workers()[3:end])
+    name = replace(input, "_wfs" => "")
+    @info "Calculating wavefunctions for $(name)"
+    res = calc_wfs(name)
     @info "Saving results to $(res.path)"
     save(res.path, "res", res)
     exit(0)
