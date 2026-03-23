@@ -10,7 +10,7 @@ function build_barrier(h::Quantica.AbstractHamiltonian1D, p_wire::Union{Params, 
         end
     end
 
-    L = pref * χ                    # Length of the wire so the potential decays to 1% of its maximum value (allows for χ to go up to 5χ_electrostatic)
+    L = pref * χ                    # Length of the wire so the potential decays to 1% )
 
     L = floor(L/a0)*a0
 

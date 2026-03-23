@@ -4,7 +4,7 @@ ensure_pkgs(["Quantica", "FullShell", "ProgressMeter", "Parameters", "ArnoldiMet
 @everywhere begin
     using Quantica, FullShell
     using ProgressMeter, Parameters
-    using ArnoldiMethod, LinearMaps
+    using ArnoldiMethod, LinearMaps, LinearAlgebra
 
     # Load
     include("utilities.jl")
