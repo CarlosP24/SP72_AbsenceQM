@@ -31,6 +31,7 @@ function plot_TT(ax, name::String; basepath = "data/PD_flux", kw...)
     i = isempty(idx) ? nothing : idx[1]
 
     vlines!(ax, Φrng_PD[i]; color = :white, linestyle = :dash, linewidth = 1, kw...)
+    return Φrng_PD[i]
 end
 
 function plot_DOS_B(ax, name::String; basepath = "data/DOS", Bc = 2, color_loop = [:lightgreen, :lightblue],  kw...)

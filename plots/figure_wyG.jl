@@ -11,12 +11,9 @@ function figure_wyG(;)
     triv = MarkerElement(marker = :rect, color = :white, strokecolor = :black, strokewidth = 1.5, markersize = 16)
     topo = MarkerElement(marker = :rect, color = :red, strokecolor = :black, strokewidth = 1.5,  markersize = 16)
 
-
-
     # Partial Shell
     # Sketch
-    ax = Axis(fig[1:2, 1]; xlabel = L"z", alignmode = Mixed(left = -20, bottom = -30))
-    sketch_partial(ax)
+    sketch_partial(fig[1:2, 1])
     # Phase Diagram
     color_loop = [:lightgreen, :lightblue]
     axP = Axis(fig[1, 2])
@@ -32,10 +29,11 @@ function figure_wyG(;)
 
     ax = Axis(fig[1, 2]; yaxisposition = :right)
     ylims!(ax, -2, 2)
-    ax.yticks = ([1], [L"\mu_\infty"])
+    ax.yticks = ([1], [""])
     ax.yticklabelcolor = :black
     hidespines!(ax)
     hidexdecorations!(ax)
+    text!(axP, 1.8, 1.5; text = L"\mu_\text{bulk}", color = :black, align = (:center, :center))
 
     Legend(fig[1, 2, Top()], [ins, triv, topo], ["Ins", "Triv", "Topo"], framevisible = false, orientation = :horizontal, labelsize = 14)
 
@@ -65,7 +63,7 @@ function figure_wyG(;)
     hideydecorations!(ax)
     hidexdecorations!(ax, ticks = false, ticklabels = false)
 
-    Colorbar(fig[2, 3], colormap = :thermal, limits = (0, 1), ticks = [0, 1], label = L"$$ DOS (arb.  units)", labelpadding = -15, labelsize = 14)
+    Colorbar(fig[2, 3], colormap = :thermal, limits = (0, 1), ticks = [0, 1], label = L"$$ DOS (arb.  units)", labelpadding = -15, labelsize = 12)
 
     ax = Axis(fig[1:2, 1:3], alignmode = Mixed(bottom = -70, left = -30, right =    0))
     xlims!(ax, 0, 1)
@@ -76,8 +74,7 @@ function figure_wyG(;)
     
     # Full Shell
     # Sketch
-    ax = Axis(fig[3:4, 1]; xlabel = L"z",  alignmode = Mixed(left = -20, bottom = -30))
-    sketch_FS(ax)
+    sketch_FS(fig[3:4, 1])
     # Full flux DOS
     ax = Axis(fig[5, 1])
     plot_DOS(ax, "base_fs"; labels = false)
@@ -107,6 +104,7 @@ function figure_wyG(;)
     color_loop = [:darkgreen, :darkblue]
     axP = Axis(fig[4, 2])
     plot_μΦ(axP, "base_fs_zoom")
+
     ylims!(axP, 20.7, 23.5)    
     axP.xticks = [0.501, 1, 1.499]
     axP.yticks = ([21, 22, 23, 24], ["0", "22", "23", "24"])
@@ -116,6 +114,7 @@ function figure_wyG(;)
     plot_TT(axP, "base_fs"; linewidth = 2, color = :orange)
 
     text!(axP, 1.1, 21.5; text = "Trivial\nskin", align = (:center, :center), fontsize = 16)
+    text!(axP, 1.4, 23.1; text = L"\mu_\text{bulk}", color = :black, align = (:center, :center),)
 
     break_axis = Axis(fig[4, 2], alignmode = Mixed(left = -22))
     xlims!(break_axis, 0, 1)
@@ -134,20 +133,20 @@ function figure_wyG(;)
 
     ax = Axis(fig[4, 2]; yaxisposition = :right)
     ylims!(ax, 20.7, 23.5)
-    ax.yticks = ([22.8], [L"\mu_\infty"])
+    ax.yticks = ([22.8], [""])
     ax.yticklabelcolor = :black
     hidespines!(ax)
     hidexdecorations!(ax)
     hideydecorations!(ax, ticks = false, ticklabels = false)
-    
+
     # DOS vs Φ, zoom
     ax = Axis(fig[5, 2])
     Φs = plot_DOS(ax, "base_fs_zoom"; colorrange = (5e-2, 5e-1), color_loop)
-    plot_TT(ax, "base_fs"; linewidth = 2, color = :orange)
+    Φ = plot_TT(ax, "base_fs"; linewidth = 2, color = :orange)
     ylims!(ax, -0.026, 0.026)
     xlims!(ax, 0.501, 1.499)
 
-    ax.xticks = ([0.501, 1, 1.499], ["0.5", "1", "1.5"])
+    ax.xticks = ([0.501, Φ, 1, 1.499], ["0.5", L"\Phi^\text{c}", "1", "1.5"])
     ax.xlabel = L"$\Phi/\Phi_0$"
     ax.yticks = ([-0.023, 0, 0.023], ["-0.1", "0", "0.1"]) 
     ax.ylabelpadding = -15
@@ -168,23 +167,27 @@ function figure_wyG(;)
     axP.xticks = vcat([0, 1, 2], Φs)
     arrows2d!(axP, Φs, [0, 0], Φs, [22.8, 22.8]; color = color_loop, argmode = :endpoint, tiplength = 10, tipwidth = 10)
 
-    Colorbar(fig[5, 3], colormap = :thermal, limits = (0, 1), ticks = [0, 1], label = L"$$ DOS (arb.  units)", labelpadding = -15, labelsize = 14)
+    Colorbar(fig[5, 3], colormap = :thermal, limits = (0, 1), ticks = [0, 1], label = L"$$ DOS (arb.  units)", labelpadding = -15, labelsize = 12)
 
     rowgap!(fig.layout, 1, 5)
     rowgap!(fig.layout, 2, 5)
     rowgap!(fig.layout, 3, 0)
     rowgap!(fig.layout, 4, 5)
 
-    colgap!(fig.layout, 2, -30)
+    colgap!(fig.layout, 2, 1)
 
     style = (font = "CMU Serif Bold", fontsize   = 20)
 
     Label(fig[1, 1, TopLeft()], "a"; padding = (-20, 0, -30, 0), style...)
+    Label(fig[1, 1, TopLeft()], "a1"; padding = (-20, 0, -180, 0), style...)
+    Label(fig[1, 1, TopLeft()], "a2"; padding = (-20, 0, -410, 0), style...)
 
     Label(fig[1, 2, TopLeft()], "b"; padding = (-40, 0, -30, 0), style...)
     Label(fig[2, 2, TopLeft()], "c"; padding = (-40, 0, -30, 0), style...)
 
     Label(fig[3, 1, TopLeft()], "d"; padding = (-20, 0, -30, 0), style...)
+    Label(fig[3, 1, TopLeft()], "d1"; padding = (-20, 0, -170, 0), style...)
+    Label(fig[3, 1, TopLeft()], "d2"; padding = (-20, 0, -400, 0), style...)
 
     Label(fig[5, 1, TopLeft()], "e"; padding = (-40, 0, -30, 0), style...)
 
