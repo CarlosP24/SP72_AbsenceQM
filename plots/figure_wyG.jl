@@ -189,15 +189,16 @@ function figure_wyG(;)
     Label(fig[3, 1, TopLeft()], "d1"; padding = (-20, 0, -170, 0), style...)
     Label(fig[3, 1, TopLeft()], "d2"; padding = (-20, 0, -400, 0), style...)
 
-    Label(fig[5, 1, TopLeft()], "e"; padding = (-40, 0, -30, 0), style...)
 
-    Label(fig[3, 2, TopLeft()], "f"; padding = (-40, 0, -10, 0), style...)
-    Label(fig[4, 2, TopLeft()], "g"; padding = (-40, 0, -10, 0), style...)
+    Label(fig[3, 2, TopLeft()], "e"; padding = (-40, 0, -10, 0), style...)
+    Label(fig[4, 2, TopLeft()], "f"; padding = (-40, 0, -10, 0), style...)
+
+    Label(fig[5, 1, TopLeft()], "g"; padding = (-20, 0, -30, 0), style...)
     Label(fig[5, 2, TopLeft()], "h"; padding = (-40, 0, -30, 0), style...)
 
     return fig
 end 
 
 fig = figure_wyG()
-save("plots/figures/figure_wyG.pdf", fig)
+save("plots/figures/Fig1.pdf", fig)
 fig

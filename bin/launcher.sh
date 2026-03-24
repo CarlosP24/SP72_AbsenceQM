@@ -3,7 +3,7 @@ source config/prologue.sh "$@"
 if [ $? -ne 0 ]; then exit 1; fi
 JOB_INFO=$(sbatch --parsable --export=ALL <<EOT
 #!/bin/bash
-#SBATCH --partition=most,express,long
+#SBATCH --partition=bignode2TB
 #SBATCH --ntasks-per-node=192
 #SBATCH --nodes=1-2
 #SBATCH --cpus-per-task=1

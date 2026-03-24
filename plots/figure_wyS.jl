@@ -68,12 +68,12 @@ function figure_wyS(strength::String = "")
 end
 
 fig = figure_wyS()
-save("plots/figures/fig_wyS.pdf", fig)
+save("plots/figures/Fig2.pdf", fig)
 fig
 
 ##
 fig = figure_wyS("_weak")
-save("plots/figures/fig_wyS_disorder_weak.pdf", fig)
+save("plots/figures/Fig3.pdf", fig)
 fig
 
 ##

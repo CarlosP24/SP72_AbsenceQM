@@ -16,7 +16,7 @@ base_partial_szoom = Params_System(base_partial;
 
 base_partial_szoom_weak = Params_System(base_partial_szoom ;
     calc_params = Calc_Params(base_partial_szoom.calc_params; 
-        Vdis = 0.2 * 0.8 * 0.23 * sqrt(10^2.9 / 5)
+        Vdis = 0.4 * 0.8 * 0.23 * sqrt(10^2.9 / 5)
     )
 )
 
