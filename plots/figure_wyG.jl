@@ -42,7 +42,7 @@ function figure_wyG(;)
     ax = Axis(fig[2, 2])
     Bs = plot_DOS_B(ax, "base_partial"; colorrange = (0, 5e-1), color_loop )
     xlims!(ax, 0, 2)
-    ax.xticks = ([0,  1, 2], [L"0", L"$V_\text{Z}^\text{c}$", L"$2V_\text{Z}^\text{c}$"])
+    ax.xticks = ([0,  1, 2], [L"0", L"$V_\text{Z}^\text{c}$", L"$V_\text{Z}$"])
     ax.yticks = ([-0.23, 0, 0.23], ["-1", "0", "1"])
     vlines!(ax, [1]; color = :orange, linestyle = :dash, linewidth = 2)
 
