@@ -4,18 +4,18 @@ function figure_skin(; color0 = :turquoise, color1 = :coral)
 
     ax = Axis(fig[1:2, 2]; alignmode = Mixed(bottom = -32))
     plot_µα(ax, "base_fs_alphazoom")
-    text!(ax, 6.5, 450; text = L"m_r = 0", color = :white, align = (:center, :center), fontsize = 16)
-    text!(ax, 28.5, 450; text = L"m_r = 1", color = :white, align = (:center, :center), fontsize = 16)
+    text!(ax, 6.5, 80; text = L"m_r = 0", color = :black, align = (:center, :center), fontsize = 16)
+    text!(ax, 30, 80; text = L"m_r = 1", color = :black, align = (:center, :center), fontsize = 16)
 
-    vlines!(ax, [1]; color = :purple, linewidth = 3)
+    vlines!(ax, [1]; color = :purple, linewidth = 1)
     xlims!(ax, -5, 35)
     ax.xticks = 0:10:30
 
-    vlines!(ax, [21.8]; color = :navyblue, linewidth = 3)
+    vlines!(ax, [21.9]; color = :navyblue, linewidth = 1)
 
 
-    text!(ax, 2, 10; text = L"\mu_{m_r = 0}^\text{TS}", color = :purple)
-    text!(ax, 22.5, 10; text = L"\mu_{m_r = 1}^\text{TS}", color = :navyblue)
+    text!(ax, 2, 10; text = L"\mu_{m_r = 0}^\text{ts}", color = :purple)
+    text!(ax, 22.5, 10; text = L"\mu_{m_r = 1}^\text{ts}", color = :navyblue)
 
     ins = MarkerElement(marker = :rect, color = (:gray, 0.2), strokecolor = :black, strokewidth = 1.5, markersize = 16)
     triv = MarkerElement(marker = :rect, color = :white, strokecolor = :black, strokewidth = 1.5, markersize = 16)
@@ -61,7 +61,7 @@ function figure_skin(; color0 = :turquoise, color1 = :coral)
     scatter!(ax, xC, fR0c.(xC); color = :red, strokecolor = color0, strokewidth = 2, markersize = 10)
     scatter!(ax, xC, fL0c.(xC); color = :red, strokecolor = color0, strokewidth = 2, markersize = 10)
 
-    text!(ax, 0, 0.05; text = "Trivial\nSkin", color = :black, align = (:center, :center), fontsize = 16)
+    text!(ax, 0, 0.05; text = "Trivial\nskin", color = :black, align = (:center, :center), fontsize = 16)
     
 
     hidexdecorations!(ax, grid = false, ticks = false)
@@ -69,7 +69,7 @@ function figure_skin(; color0 = :turquoise, color1 = :coral)
     ax.xticks = xrngS
 
 
-    ax.yticks = ([0, 0.30], [L"0", L"\mu_{m_r = 0}^\text{TS}"])
+    ax.yticks = ([0, 0.30], [L"0", L"\mu_{m_r = 0}^\text{ts}"])
 
     ax = Axis(fig[2, 1])
     xlims!(ax, -2.1, 2.1)
@@ -94,12 +94,12 @@ function figure_skin(; color0 = :turquoise, color1 = :coral)
     scatter!(ax, xC, fR1.(xC); color = :red, strokecolor = color1, strokewidth = 2, markersize = 10)
     scatter!(ax, xC, fL1.(xC); color = :red, strokecolor = color1, strokewidth = 2, markersize = 10)
 
-    text!(ax, 0, 0.2; text = "Trivial\nSkin", color = :black, align = (:center, :center), fontsize = 16)
+    text!(ax, 0, 0.2; text = "Trivial\nskin", color = :black, align = (:center, :center), fontsize = 16)
 
     ax.xticks = xrngS
 
 
-    ax.yticks = ([0, 0.8], [L"0", L"\mu_{m_r = 1}^\text{TS}"])
+    ax.yticks = ([0, 0.8], [L"0", L"\mu_{m_r = 1}^\text{ts}"])
     ax.xlabel = L"m_L \in \mathbb{Z}"
     hidexdecorations!(ax, grid = false, ticks = false, label = false)
 
@@ -113,7 +113,7 @@ function figure_skin(; color0 = :turquoise, color1 = :coral)
 
     Label(fig[1, 1, TopLeft()], "a"; padding = (-20, 0, -30, 0), style...)
     Label(fig[2, 1, TopLeft()], "b"; padding = (-20, 0, -10, 0), style...)
-    Label(fig[1, 2, TopLeft()], "c"; padding = (-20, 0, -30, 0), style...)
+    Label(fig[1, 2, TopLeft()], "c"; padding = (-50, 0, -30, 0), style...)
 
     return fig
 end

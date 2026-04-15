@@ -5,13 +5,18 @@
     t = ħ2ome/(2m0*a0^2)
     μ = 0
     α = 0
-    Δ = 0.23
+    Δ0 = 0.23
     B = 0
     τΓ = 1
+    Bc = 5 * 0.23
 end
 
+Δf(B; Bc = 1) =  sqrt(1 - (B/Bc)^2) |> real
+
+ΣSC(Δ0, ω) = -Δ0 * (ω * σ0τ0 - Δ0 * σ0τx) / sqrt(Δ0^2 - ω^2)
+
 function build_partial(p::Params_Partial)
-    @unpack a0, t, μ, α, Δ, B, τΓ = p
+    @unpack a0, t, μ, α, Δ0, B, τΓ, Bc = p
 
     lat = LP.square(; a0) |> supercell((1, 0))
 
@@ -37,8 +42,8 @@ function build_partial(p::Params_Partial)
     hSM = lat |> hamiltonian(p2 + rashba + zeeman; orbitals = Val(4))
 
     # Superconductor
-    Σ! = @onsite!((o, r; Δ = Δ, τΓ = τΓ) ->
-        o + τΓ * Δ * σ0τx
+    Σ! = @onsite!((o, r; ω = 0, Δ0 = Δ0, B = B, τΓ = τΓ) ->
+        o + τΓ * ΣSC(Δ0 * Δf(B; Bc), ω)
     )
 
     hSC = hSM |> Σ!

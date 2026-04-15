@@ -8,9 +8,9 @@ function plot_LDOS(ax, name::String, key::String; basepath = "data/LDOS", pref =
     @unpack χrng, ωrng = system.calc_params  
 
     if system.params_wire isa Params
-        Δ = system.params_wire.Δ0 |> real
+        Δ0 = system.params_wire.Δ0 |> real
     else
-        Δ = system.params_wire.Δ
+        Δ0 = system.params_wire.Δ0
     end
 
     ωrng = real.(ωrng)
@@ -19,7 +19,7 @@ function plot_LDOS(ax, name::String, key::String; basepath = "data/LDOS", pref =
     LDOS = LDOS[key]
 
     LDOS = cat(LDOS, reverse(LDOS, dims = 2)[:, 2:end], dims = 2)
-    heatmap!(ax, χrng, pref * ωrng ./ Δ, LDOS; colormap = :thermal, rasterize = 5, kw...)
+    heatmap!(ax, χrng, pref * ωrng ./ Δ0, LDOS; colormap = :thermal, rasterize = 5, kw...)
 
     ax.xscale = log10
     xlims!(ax, 1, maximum(χrng))

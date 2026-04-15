@@ -40,7 +40,7 @@ function figure_wyG(;)
 
     # DOS vs B
     ax = Axis(fig[2, 2])
-    Bs = plot_DOS_B(ax, "base_partial"; colorrange = (0, 5e-1), color_loop )
+    Bs = plot_DOS_B(ax, "base_partial"; colorrange = (0, 4e-1), color_loop )
     xlims!(ax, 0, 2)
     ax.xticks = ([0,  1, 2], [L"0", L"$V_\text{Z}^\text{c}$", L"$V_\text{Z}$"])
     ax.yticks = ([-0.23, 0, 0.23], ["-1", "0", "1"])
@@ -50,8 +50,8 @@ function figure_wyG(;)
 
     mbar!(ax, [1, 0.03], [2, 0.03]; color = :white, linewidth = 2)
 
-    text!(ax, 0.8, -0.09; text = "Q-MZM", color = :white, align = (:center, :center), fontsize = 16)
-    mbar!(ax, [0.6, -0.04], [1.0, -0.04]; color = :white, linewidth = 2)
+    text!(ax, 0.9, -0.09; text = "Q-MZM", color = :white, align = (:center, :center), fontsize = 16)
+    mbar!(ax, [0.7, -0.04], [1.0, -0.04]; color = :white, linewidth = 2)
 
     axP.xticks = vcat([0, 1, 2], Bs)
     arrows2d!(axP, Bs, [-2, -2], Bs, [1, 1]; color = color_loop, argmode = :endpoint, tiplength = 10, tipwidth = 10)

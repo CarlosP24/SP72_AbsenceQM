@@ -49,8 +49,8 @@ base_fs_sszoom = Params_System(base_fs;
 
 base_fs_alphazoom = Params_System(base_fs;
     calc_params = Calc_Params(base_fs.calc_params; 
-        αrng = range(0, 500, length = 1000),
-        μrng = range(0, 35, length = 1000)
+        αrng = range(0, 100, length = 500),
+        μrng = range(0, 35, length = 500)
     )
 )
 

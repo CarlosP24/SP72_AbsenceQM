@@ -1,8 +1,10 @@
 base_partial = Params_System(;
     params_wire = Params_Partial(;
         μ = 2,
-        Δ = 0.23,
+        Δ0 = 0.23,
         α = 40,
+        Bc = 2 * sqrt(2^2 + 0.23^2),
+        τΓ = 3,
         ),
     calc_params = Calc_Params(;
         ωrng = range(-0.26, 0, length = 301) .+ 5e-3im,)
