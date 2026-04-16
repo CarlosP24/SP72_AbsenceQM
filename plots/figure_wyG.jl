@@ -75,9 +75,10 @@ function figure_wyG(;)
     # Full Shell
     # Sketch
     sketch_FS(fig[3:4, 1])
+
     # Full flux DOS
     ax = Axis(fig[5, 1])
-    plot_DOS(ax, "base_fs"; labels = false)
+    plot_DOS(ax, "base_fs_Zs"; labels = false, colorrange = (0, 4))
     ax.xlabel = L"$\Phi/\Phi_0$"
     ax.xticks = 0:0.5:2.5
     ax.yticks = ([-0.23, 0, 0.23], ["-1", "0", "1"]) 
