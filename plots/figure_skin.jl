@@ -1,8 +1,8 @@
 
 function figure_skin(; color0 = :turquoise, color1 = :coral)
-    fig = Figure(size = (600, 300), fontsize = 20)
+    fig = Figure(size = (600, 320), fontsize = 20)
 
-    ax = Axis(fig[1:2, 2]; alignmode = Mixed(bottom = -32))
+    ax = Axis(fig[1:2, 2]; alignmode = Inside())
     plot_µα(ax, "base_fs_alphazoom")
     text!(ax, 6.5, 80; text = L"m_r = 0", color = :black, align = (:center, :center), fontsize = 16)
     text!(ax, 30, 80; text = L"m_r = 1", color = :black, align = (:center, :center), fontsize = 16)
@@ -14,8 +14,8 @@ function figure_skin(; color0 = :turquoise, color1 = :coral)
     vlines!(ax, [21.9]; color = :navyblue, linewidth = 1)
 
 
-    text!(ax, 2, 10; text = L"\mu_{m_r = 0}^\text{ts}", color = :purple)
-    text!(ax, 22.5, 10; text = L"\mu_{m_r = 1}^\text{ts}", color = :navyblue)
+    text!(ax, 2, 2; text = L"\mu_{m_r = 0}^\text{ts}", color = :purple)
+    text!(ax, 22.5, 2; text = L"\mu_{m_r = 1}^\text{ts}", color = :navyblue)
 
     ins = MarkerElement(marker = :rect, color = (:gray, 0.2), strokecolor = :black, strokewidth = 1.5, markersize = 16)
     triv = MarkerElement(marker = :rect, color = :white, strokecolor = :black, strokewidth = 1.5, markersize = 16)
