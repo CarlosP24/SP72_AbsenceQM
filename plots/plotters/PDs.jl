@@ -61,7 +61,7 @@ function plot_µB(ax, name::String; basepath = "data/PD_mu_B", Bc = 2)
     @load path res
     @unpack PD, system = res
     @unpack Brng, µrngP = system.calc_params
-    band!(ax, Brng ./Bc, -2, 0; color = (:gray, 0.2))
+    band!(ax, Brng ./Bc, -2, 0; color = (:gray, 0.4))
     heatmap!(ax, Brng ./ Bc, µrngP ./ Bc, replace(PD', -1 => NaN); colormap = [:white], rasterize = 5)
     heatmap!(ax, Brng ./ Bc, µrngP ./ Bc, PD'; colormap = [(:white, 0.5), (:red, 0.5)], rasterize = 5)
     ax.ylabel = L"$\mu$ (meV)"

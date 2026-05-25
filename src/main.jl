@@ -99,4 +99,13 @@ if endswith(input, "_wfs")
     exit(0)
 end
 
+if endswith(input, "_ldosvB")
+    name = replace(input, "_ldosvB" => "")
+    @info "Calculating LDOS for $(name)"
+    res = calc_LDOS_vB(name)
+    @info "Saving results to $(res.path)"
+    save(res.path, "res", res)
+    exit(0)
+end
+
 @error "Key '$input' not found."
