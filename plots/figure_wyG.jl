@@ -77,11 +77,12 @@ function figure_wyG(;)
     sketch_FS(fig[3:4, 1])
 
     # Full flux DOS
-    ax = Axis(fig[5, 1])
-    plot_DOS(ax, "base_fs_Zs"; labels = false, colorrange = (0, 4))
-    ax.xlabel = L"$\Phi/\Phi_0$"
-    ax.xticks = 0:0.5:2.5
-    ax.yticks = ([-0.23, 0, 0.23], ["-1", "0", "1"]) 
+    axF = Axis(fig[5, 1])
+    plot_DOS(axF, "base_fs_Zs"; labels = false, colorrange = (0, 4))
+    axF.xlabel = L"$\Phi/\Phi_0$"
+    axF.xticks = 0:0.5:2.5
+    axF.yticks = ([-0.23, 0, 0.23], ["-1", "0", "1"]) 
+
 
     # Phase Diagram µ vs α
     ax = Axis(fig[3, 2])
@@ -167,6 +168,8 @@ function figure_wyG(;)
 
     axP.xticks = vcat([0, 1, 2], Φs)
     arrows2d!(axP, Φs, [0, 0], Φs, [22.8, 22.8]; color = color_loop, argmode = :endpoint, tiplength = 10, tipwidth = 10)
+    
+    vlines!(axF, [0.65, 0.95]; color = :white)
 
     Colorbar(fig[5, 3], colormap = :thermal, limits = (0, 1), ticks = [0, 1], label = L"$$ DOS (arb.  units)", labelpadding = -15, labelsize = 12)
 

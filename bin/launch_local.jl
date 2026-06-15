@@ -6,8 +6,10 @@ addprocs(8)
     Pkg.instantiate(); Pkg.precompile()
 end 
 
-## Run code
-include("../src/main.jl")
-
-## Clean up
-rmprocs(workers()...)
+## Run code and always clean up workers
+try
+    include("../src/main.jl")
+finally
+    ws = workers()
+    !isempty(ws) && rmprocs(ws...)
+end

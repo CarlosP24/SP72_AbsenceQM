@@ -1,10 +1,11 @@
 using Pkg, JLD2
 include("utilities.jl")
-ensure_pkgs(["Quantica", "FullShell", "ProgressMeter", "Parameters", "ArnoldiMethod", "LinearMaps",])
+ensure_pkgs(["Quantica", "FullShell", "ProgressMeter", "Parameters", "ArnoldiMethod", "LinearMaps", "FFTW",])
 @everywhere begin
     using Quantica, FullShell
     using ProgressMeter, Parameters
     using ArnoldiMethod, LinearMaps, LinearAlgebra
+    using FFTW
 
     # Load
     include("utilities.jl")
@@ -103,6 +104,15 @@ if endswith(input, "_ldosvB")
     name = replace(input, "_ldosvB" => "")
     @info "Calculating LDOS for $(name)"
     res = calc_LDOS_vB(name)
+    @info "Saving results to $(res.path)"
+    save(res.path, "res", res)
+    exit(0)
+end
+
+if endswith(input, "_conductance")
+    name = replace(input, "_conductance" => "")
+    @info "Calculating conductance for $(name)"
+    res = calc_conductance(name)
     @info "Saving results to $(res.path)"
     save(res.path, "res", res)
     exit(0)

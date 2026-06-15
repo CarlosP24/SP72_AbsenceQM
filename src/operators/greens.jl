@@ -14,3 +14,4 @@ function greens_softwire(params_wire::Union{Params, Params_Partial} , χ = "defa
     g = hstep |> attach(gSC; region = r -> r[1] == L) |> greenfunction()
     return g, L
 end
+
