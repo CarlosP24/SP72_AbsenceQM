@@ -12,7 +12,7 @@ base_partial = Params_System(;
 
 base_partial_szoom = Params_System(base_partial;
     calc_params = Calc_Params(base_partial.calc_params; 
-        ωrng = range(-0.2 * 0.23, 0, length = 301) .+ 1e-3im,
+        ωrng = range(-0.2 * 0.23, 0, length = 301) .+ 1e-4im,
     )
 )
 

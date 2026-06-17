@@ -1,4 +1,5 @@
-function plot_DOS(ax, name::String; labels = true, basepath = "data/DOS", color_loop = [:lightgreen, :lightblue],  kw...)
+function plot_DOS(ax, name::String; labels = true, basepath = "data/DOS", color_loop = [:lightgreen, :lightblue], Φs = [0.65, 0.93]
+,  kw...)
     path = "$(basepath)/$(name).jld2"
     @load path res
     @unpack DOS, system = res
@@ -15,7 +16,6 @@ function plot_DOS(ax, name::String; labels = true, basepath = "data/DOS", color_
     ax.ylabel = L"$\omega / \Delta_0$"
     
     if labels
-        Φs = [0.7, 0.9]
         vlines!(ax, Φs, ymin = 0.9, color = color_loop, linewidth = 4 )
         return Φs
     end

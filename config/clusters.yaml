@@ -5,7 +5,7 @@ esbirro:
   launcher: bin/launcher.sh
   partition: esbirro
   ntasks_per_node: 32
-  nodes: 1-4
+  nodes: 1-2
   cpus_per_task: 1
   mem_per_cpu: 2G
   mail_user: carlos.paya@csic.es
@@ -46,9 +46,9 @@ drago:
   host: drago.csic.es
   path: /lustre/home/icmm/cpaya
   launcher: bin/launcher.sh
-  partition: long
+  partition: express
   ntasks_per_node: 48
-  nodes: 8-16
+  nodes: 1-2
   cpus_per_task: 1
   mem_per_cpu: 2G
   mail_user: carlos.paya@csic.es

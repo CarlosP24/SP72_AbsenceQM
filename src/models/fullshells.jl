@@ -37,13 +37,13 @@ base_fs_zoom = Params_System(base_fs;
 
 base_fs_szoom = Params_System(base_fs;
     calc_params = Calc_Params(base_fs.calc_params; 
-        ωrng = range(-0.2 * 0.23, 0, length = 301) .+ 1e-3im,
+        ωrng = range(-0.2 * 0.23, 0, length = 301) .+ 1e-4im,
     )
 )
 
 base_fs_sszoom = Params_System(base_fs;
     calc_params = Calc_Params(base_fs.calc_params; 
-        ωrng = range(-0.02 * 0.23, 0, length = 301) .+ 1e-4im,
+        ωrng = range(-0.2 * 0.23, 0, length = 301) .+ 1e-4im,
     )
 )
 
@@ -77,20 +77,36 @@ base_fs_szoom_Zs = Params_System(base_fs_szoom;
         #Zs = -42:42
         Zs = -5:5,
         χrng = 10 .^range(0, 2.9, length = 100),
+        ωrng = range(-0.2 * 0.23, 0, length = 401) .+ 1e-6im,
+        τ = 1e-1
+    )
+)
+
+base_fs_szoom_Zs_Phis = Params_System(base_fs_szoom;
+    calc_params = Calc_Params(base_fs_szoom.calc_params; 
+        #Zs = -42:42
+        Zs = -5:5,
+        Φrng_PD = range(0.501, 1.499, length = 101),
+        ωrng = range(-0.2 * 0.23, 0, length = 101) .+ 1e-5im,
+        τ = 1e-1
+    )
+)
+
+# 10mK
+base_fs_szoom_lowT = Params_System(base_fs_szoom;
+    calc_params = Calc_Params(base_fs_szoom.calc_params; 
+        kBT = 0.08617 * 0.01,
         ωrng = range(-0.2 * 0.23, 0, length = 101) .+ 1e-6im,
         τ = 1e-1
     )
 )
 
-base_fs_szoom_lowT = Params_System(base_fs_szoom;
-    calc_params = Calc_Params(base_fs_szoom.calc_params; 
-        kBT = 0.08617 * 0.01
-    )
-)
-
+# 100mK
 base_fs_szoom_highT = Params_System(base_fs_szoom;
     calc_params = Calc_Params(base_fs_szoom.calc_params; 
-        kBT = 0.08617 * 0.05
+        kBT = 0.08617 * 0.1,
+        ωrng = range(-0.2 * 0.23, 0, length = 101) .+ 1e-6im,
+        τ = 1e-1
     )
 )
 
@@ -107,4 +123,5 @@ full_shells = Dict(
     "base_fs_szoom_Zs" => base_fs_szoom_Zs,
     "base_fs_szoom_lowT" => base_fs_szoom_lowT,
     "base_fs_szoom_highT" => base_fs_szoom_highT,
+    "base_fs_szoom_Zs_Phis" => base_fs_szoom_Zs_Phis,
 ) 

@@ -143,7 +143,8 @@ function figure_wyG(;)
 
     # DOS vs Φ, zoom
     ax = Axis(fig[5, 2])
-    Φs = plot_DOS(ax, "base_fs_zoom"; colorrange = (5e-2, 5e-1), color_loop)
+    plot_DOS(ax, "base_fs_zoom"; colorrange = (5e-2, 5e-1), color_loop)
+    Φs = [0.65, 0.93]
     Φ = plot_TT(ax, "base_fs"; linewidth = 2, color = :orange)
     ylims!(ax, -0.026, 0.026)
     xlims!(ax, 0.501, 1.499)
@@ -169,7 +170,6 @@ function figure_wyG(;)
     axP.xticks = vcat([0, 1, 2], Φs)
     arrows2d!(axP, Φs, [0, 0], Φs, [22.8, 22.8]; color = color_loop, argmode = :endpoint, tiplength = 10, tipwidth = 10)
     
-    vlines!(axF, [0.65, 0.95]; color = :white)
 
     Colorbar(fig[5, 3], colormap = :thermal, limits = (0, 1), ticks = [0, 1], label = L"$$ DOS (arb.  units)", labelpadding = -15, labelsize = 12)
 

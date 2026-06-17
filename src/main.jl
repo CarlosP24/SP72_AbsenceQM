@@ -6,6 +6,7 @@ ensure_pkgs(["Quantica", "FullShell", "ProgressMeter", "Parameters", "ArnoldiMet
     using ProgressMeter, Parameters
     using ArnoldiMethod, LinearMaps, LinearAlgebra
     using FFTW
+    using SpecialFunctions, FunctionZeros
 
     # Load
     include("utilities.jl")
@@ -113,6 +114,15 @@ if endswith(input, "_conductance")
     name = replace(input, "_conductance" => "")
     @info "Calculating conductance for $(name)"
     res = calc_conductance(name)
+    @info "Saving results to $(res.path)"
+    save(res.path, "res", res)
+    exit(0)
+end
+
+if endswith(input, "_conductancePhi")
+    name = replace(input, "_conductancePhi" => "")
+    @info "Calculating conductance vs flux for $(name)"
+    res = calc_conductance_Φ(name)
     @info "Saving results to $(res.path)"
     save(res.path, "res", res)
     exit(0)

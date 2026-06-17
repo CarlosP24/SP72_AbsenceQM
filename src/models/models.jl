@@ -14,6 +14,7 @@
     Vdis = 0
     Zs = [0]
     χ = "default"
+    χs = [5, 100]
     τ = 1e-3
     kBT = 0.0
     outdir = "data"
