@@ -25,7 +25,7 @@ function figure_wyS(strength::String = "")
     text!(ax, 200, -0.15; text = L"V_\text{Z}=V_\text{Z}^{(2)}", color = :white, align = (:center, :center))
 
     ax = Axis(fig[2, 1]; xlabel, ylabel)
-    plot_LDOS(ax, "base_fs_sszoom"*strength, "Majo"; colorrange = (0, 1e-2))
+    plot_LDOS(ax, "base_fs_szoom"*strength, "Majo"; colorrange = (0, 1e-2))
     ax.yticks = [-0.2, 0, 0.2]
     ylims!(ax, -0.2, 0.2)
     vlines!(ax, 70/besselj_zero(0, 1) ; color = :white, linestyle = :dash, linewidth = 3)
@@ -34,7 +34,7 @@ function figure_wyS(strength::String = "")
     text!(ax, 200, -0.15; text = L"\Phi=\Phi^{(1)}", color = :white, align = (:center, :center))
 
     ax = Axis(fig[2, 2]; xlabel, ylabel)
-    plot_LDOS(ax, "base_fs_sszoom"*strength, "QMajo"; colorrange = (0, 1e-2), )
+    plot_LDOS(ax, "base_fs_szoom"*strength, "QMajo"; colorrange = (0, 1e-2), )
     hideydecorations!(ax; ticks = false)
     ax.yticks = [-0.2, 0, 0.2]
     ylims!(ax, -0.2, 0.2)

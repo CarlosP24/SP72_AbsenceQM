@@ -1,5 +1,5 @@
 fermi_kernel(δω, kBT) = inv(4 * kBT) * sech(δω / (2 * kBT))^2
-
+tau(χ) = 10^(-0.3 * log10(χ)^2 + 0.22 * log10(χ) - 1)
 function thermal_broadening_plan(ωvals::AbstractVector, kBT::Real)
     kBT > 0 || throw(ArgumentError("kBT must be positive to build a thermal broadening plan."))
 
@@ -36,7 +36,7 @@ end
 function calc_conductance(name::String)
     system = systems[name]
 
-    @unpack χrng, ωrng, Zs, Φs, τ, kBT, outdir = system.calc_params
+    @unpack χrng, ωrng, Zs, Φs, kBT, outdir = system.calc_params
 
     path = "$(outdir)/Conductance/$(name).jld2"
     mkpath(dirname(path))
@@ -54,7 +54,7 @@ function calc_conductance(name::String)
     gN = hNstep |> attach(gN_inf; region = right_face) |> greenfunction()
 
     gS_inf = hSC |> greenfunction(GS.Schur(boundary = 0))
-    coupling = build_coupling(params_wire; τ)
+    coupling = build_coupling(params_wire)
     g = hSstep |>
         attach(gS_inf; region = right_face) |>
         attach(gN[region = left_face], coupling; region = left_face) |>
@@ -64,7 +64,7 @@ function calc_conductance(name::String)
 
     Cond = pfunction(
         (χ, ω, Z, Φ) -> try
-            G(ω; ω, Φ, Z, χ)
+            G(ω; ω, Φ, Z, χ, τ = tau(χ))
 
         catch e
             @warn "Error calculating conductance at (Φ=$Φ, ω=$ω, Z=$Z): $e"
@@ -126,7 +126,7 @@ end
 function calc_conductance_Φ(name::String)
     system = systems[name]
 
-    @unpack Φrng_PD, ωrng, Zs, χs, τ, kBT, outdir = system.calc_params
+    @unpack Φrng_PD, ωrng, Zs, χs, kBT, outdir = system.calc_params
 
     path = "$(outdir)/Conductance_Phi/$(name).jld2"
     mkpath(dirname(path))
@@ -144,7 +144,7 @@ function calc_conductance_Φ(name::String)
     gN = hNstep |> attach(gN_inf; region = right_face) |> greenfunction()
 
     gS_inf = hSC |> greenfunction(GS.Schur(boundary = 0))
-    coupling = build_coupling(params_wire; τ)
+    coupling = build_coupling(params_wire)
     g = hSstep |>
         attach(gS_inf; region = right_face) |>
         attach(gN[region = left_face], coupling; region = left_face) |>
@@ -154,7 +154,7 @@ function calc_conductance_Φ(name::String)
 
     Cond = pfunction(
         (Φ, ω, Z, χ) -> try
-            G(ω; ω, Φ, Z, χ)
+            G(ω; ω, Φ, Z, χ, τ = tau(χ))
 
         catch e
             @warn "Error calculating conductance at (Φ=$Φ, ω=$ω, Z=$Z): $e"

@@ -144,7 +144,7 @@ function figure_wyG(;)
     # DOS vs Φ, zoom
     ax = Axis(fig[5, 2])
     plot_DOS(ax, "base_fs_zoom"; colorrange = (5e-2, 5e-1), color_loop)
-    Φs = [0.65, 0.93]
+    Φs = [0.65, 0.88]
     Φ = plot_TT(ax, "base_fs"; linewidth = 2, color = :orange)
     ylims!(ax, -0.026, 0.026)
     xlims!(ax, 0.501, 1.499)

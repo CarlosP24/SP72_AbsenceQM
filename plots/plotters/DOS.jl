@@ -1,4 +1,4 @@
-function plot_DOS(ax, name::String; labels = true, basepath = "data/DOS", color_loop = [:lightgreen, :lightblue], Φs = [0.65, 0.93]
+function plot_DOS(ax, name::String; labels = true, basepath = "data/DOS", color_loop = [:lightgreen, :lightblue], Φs = [0.65, 0.88]
 ,  kw...)
     path = "$(basepath)/$(name).jld2"
     @load path res

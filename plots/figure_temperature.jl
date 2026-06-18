@@ -27,7 +27,7 @@ function figure_temperature()
     text!(ax, 170, 0.015; text = L"$T = 10$mK", color = :white, align = (:center, :center))
     text!(ax, 200, -0.015; text = L"\Phi=\Phi^{(2)}", color = :white, align = (:center, :center))
 
-    Colorbar(fig[1, 3], colormap = :thermal, limits = (0, maximum([MGM, MGQ])), ticks = [0, 0.25],  label = L"$G$ (e^2/h)", labelpadding = -25)
+    Colorbar(fig[1, 3], colormap = :thermal, limits = (0, maximum([MGM, MGQ])), ticks = [0, 0.09],  label = L"$G$ (e^2/h)", labelpadding = -25)
 
 
     temp = "_highT"
@@ -51,7 +51,7 @@ function figure_temperature()
     text!(ax, 150, 0.015; text = L"$T = 100$mK", color = :white, align = (:center, :center))
     text!(ax, 200, -0.015; text = L"\Phi=\Phi^{(2)}", color = :white, align = (:center, :center))
 
-    Colorbar(fig[2, 3], colormap = :thermal, limits = (0, maximum([MGM, MGQ])), ticks = [0, 0.025], label = L"$G$ (e^2/h)", labelpadding = -34)
+    Colorbar(fig[2, 3], colormap = :thermal, limits = (0, maximum([MGM, MGQ])), ticks = [0, 0.01], label = L"$G$ (e^2/h)", labelpadding = -34)
     
     Label(fig[1, 1, Top()], "MZM"; padding = (0, 0, 10, 0))
     Label(fig[1, 2, Top()], "Q-MZM"; padding = (0, 0, 10, 0) )

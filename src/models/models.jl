@@ -8,14 +8,13 @@
     Brng = range(0, 5; length = 501)
     χrng = 10 .^range(0, 2.9, length = 300)
     #Φs = [0.7, 0.9]
-    Φs = [0.65, 0.93]
+    Φs = [0.65, 0.88]
     Bs = [1.5 * 2, 0.9 * 2]
     NDOS = 5
     Vdis = 0
     Zs = [0]
     χ = "default"
     χs = [5, 100]
-    τ = 1e-3
     kBT = 0.0
     outdir = "data"
 end
