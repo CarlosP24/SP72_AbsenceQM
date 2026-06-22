@@ -6,7 +6,7 @@
     Φrng_DOS = range(0, 2.499, length = 301)
     ωrng = range(-0.26, 0, length = 301) .+ 1e-3im
     Brng = range(0, 5; length = 501)
-    χrng = 10 .^range(0, 2.9, length = 300)
+    χrng = 10 .^range(0, 3.5, length = 300)
     #Φs = [0.7, 0.9]
     Φs = [0.65, 0.88]
     Bs = [1.5 * 2, 0.9 * 2]
@@ -14,7 +14,7 @@
     Vdis = 0
     Zs = [0]
     χ = "default"
-    χs = [5, 100]
+    χs = [5, 1000]
     kBT = 0.0
     outdir = "data"
 end

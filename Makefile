@@ -54,7 +54,7 @@ gen_launcher:
 	@echo "#!/bin/bash" > bin/launcher.sh
 	@echo "source config/prologue.sh \"\$$@\"" >> bin/launcher.sh
 	@echo "if [ \$$? -ne 0 ]; then exit 1; fi" >> bin/launcher.sh
-	@echo "JOB_INFO=\$$(sbatch --parsable --export=ALL <<EOT" >> bin/launcher.sh
+	@echo "JOB_INFO=\$$(sbatch -v --parsable --export=ALL <<EOT" >> bin/launcher.sh
 	@echo "#!/bin/bash" >> bin/launcher.sh
 	@if yq e '.${CLUSTER}.partition' $(CLUSTERS_CFG) | grep -vq 'null'; then \
 		echo "#SBATCH --partition=$$(yq e '.${CLUSTER}.partition' $(CLUSTERS_CFG))" >> bin/launcher.sh; \
@@ -90,7 +90,7 @@ gen_launcher:
 	@echo "IFS=, read -r -a PARAMS <<< \"\\\$$PARAMS_STR\"" >> bin/launcher.sh
 	@echo "PARAM=\"\\\$${PARAMS[\\\$$SLURM_ARRAY_TASK_ID-1]}\"" >> bin/launcher.sh
 	@echo "echo Running \\\$$PARAM" >> bin/launcher.sh
-	@echo "julia --project bin/launcher.jl \"\\\$$PARAM\"" >> bin/launcher.sh
+	@echo "julia --compiled-modules=no --project bin/launcher.jl \"\\\$$PARAM\"" >> bin/launcher.sh
 	@echo "EOT" >> bin/launcher.sh
 	@echo ")" >> bin/launcher.sh
 	@echo "JOB_ID=\$$(echo \"\$$JOB_INFO\" | cut -d';' -f1)" >> bin/launcher.sh

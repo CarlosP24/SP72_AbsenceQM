@@ -51,13 +51,13 @@ function calc_conductance(name::String)
     right_face = r -> abs(r[1] - L) <= atolx
 
     gN_inf = hSM |> greenfunction(GS.Schur(boundary = 0))
-    gN = hNstep |> attach(gN_inf; region = right_face) |> greenfunction()
+    #gN = hNstep |> attach(gN_inf; region = right_face) |> greenfunction()
 
     gS_inf = hSC |> greenfunction(GS.Schur(boundary = 0))
     coupling = build_coupling(params_wire)
     g = hSstep |>
         attach(gS_inf; region = right_face) |>
-        attach(gN[region = left_face], coupling; region = left_face) |>
+        attach(gN_inf, coupling; region = left_face) |>
         greenfunction()
 
     G = conductance(g[2, 2]; nambu = true)

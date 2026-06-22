@@ -10,6 +10,8 @@ depot_path="$script_dir/../.julia_depot"
 mkdir -p "$depot_path"
 mkdir -p "logs"
 mkdir -p "data"
+sync
+sleep 3
 export JULIA_DEPOT_PATH="$depot_path"
 export JULIA_PROJECT="$script_dir/.."
 

@@ -1,7 +1,7 @@
 #!/bin/bash
 source config/prologue.sh "$@"
 if [ $? -ne 0 ]; then exit 1; fi
-JOB_INFO=$(sbatch --parsable --export=ALL <<EOT
+JOB_INFO=$(sbatch -v --parsable --export=ALL <<EOT
 #!/bin/bash
 #SBATCH --partition=express
 #SBATCH --ntasks-per-node=48
@@ -17,7 +17,7 @@ JOB_INFO=$(sbatch --parsable --export=ALL <<EOT
 IFS=, read -r -a PARAMS <<< "\$PARAMS_STR"
 PARAM="\${PARAMS[\$SLURM_ARRAY_TASK_ID-1]}"
 echo Running \$PARAM
-julia --project bin/launcher.jl "\$PARAM"
+julia --compiled-modules=no --project bin/launcher.jl "\$PARAM"
 EOT
 )
 JOB_ID=$(echo "$JOB_INFO" | cut -d';' -f1)

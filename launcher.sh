@@ -1,0 +1,6 @@
+echo "DEBUG: Raw ARRAY_SIZE value: >$ARRAY_SIZE<"
+echo "DEBUG: Number of parameters: $(echo $PARAMS_STR | tr , n | wc -l)"
+cat -v <<< "#SBATCH --array=1-$ARRAY_SIZE"
+echo "DEBUG: Raw ARRAY_SIZE value: >$ARRAY_SIZE<"
+echo "DEBUG: Number of parameters: $(echo $PARAMS_STR | tr , n | wc -l)"
+cat -v <<< "#SBATCH --array=1-$ARRAY_SIZE"

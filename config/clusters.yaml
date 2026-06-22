@@ -1,11 +1,11 @@
 esbirro:
   short: es1
   host: es1.icmm.csic.es
-  path: /local/cap
+  path: /home/cap
   launcher: bin/launcher.sh
   partition: esbirro
   ntasks_per_node: 32
-  nodes: 1-2
+  nodes: 1-7
   cpus_per_task: 1
   mem_per_cpu: 2G
   mail_user: carlos.paya@csic.es
@@ -17,9 +17,9 @@ atto:
   host: atto.icmm.csic.es
   path: /home/paya
   launcher: bin/launcher.sh
-  partition: single
+  partition: most
   ntasks_per_node: 192
-  nodes: 1-2
+  nodes: 4
   #ntasks: 192
   cpus_per_task: 1
   mem_per_cpu: 2G

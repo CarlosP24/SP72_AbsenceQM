@@ -157,7 +157,7 @@ function figure_wyG(;)
     mbar!(ax, [0.5, 0.004], [0.84, 0.004]; color = :white, linewidth = 2)
     text!(ax, 0.65, 0.008; text = "MZM", color = :white, align = (:center, :center), fontsize = 16)
 
-    mbar!(ax, [0.84, -0.004], [0.94, -0.004]; color = :white, linewidth = 2)
+    mbar!(ax, [0.84, -0.004], [0.98, -0.004]; color = :white, linewidth = 2)
     text!(ax, 0.86, -0.009; text = "Q-MZM", color = :white, align = (:left, :center), fontsize = 16)
 
     ax = Axis(fig[5, 2]; xaxisposition = :top)

@@ -28,7 +28,7 @@ function figure_wyS(strength::String = "")
     plot_LDOS(ax, "base_fs_szoom"*strength, "Majo"; colorrange = (0, 1e-2))
     ax.yticks = [-0.2, 0, 0.2]
     ylims!(ax, -0.2, 0.2)
-    vlines!(ax, 70/besselj_zero(0, 1) ; color = :white, linestyle = :dash, linewidth = 3)
+    #vlines!(ax, 70/besselj_zero(0, 1) ; color = :white, linestyle = :dash, linewidth = 3)
     
     text!(ax, 200, 0.15; text = "MZM", color = :white, align = (:center, :center))
     text!(ax, 200, -0.15; text = L"\Phi=\Phi^{(1)}", color = :white, align = (:center, :center))
@@ -38,7 +38,7 @@ function figure_wyS(strength::String = "")
     hideydecorations!(ax; ticks = false)
     ax.yticks = [-0.2, 0, 0.2]
     ylims!(ax, -0.2, 0.2)
-    vlines!(ax, 70/besselj_zero(0, 1) ; color = :white, linestyle = :dash, linewidth = 3)
+    #vlines!(ax, 70/besselj_zero(0, 1) ; color = :white, linestyle = :dash, linewidth = 3)
 
 
     text!(ax, 200, 0.15; text = "Q-MZM", color = :white, align = (:center, :center),)
