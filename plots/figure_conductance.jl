@@ -9,9 +9,11 @@ function figure_conductance(temp::String = ""; Φs = [0.65, 0.88], color_loop1 =
 
 
     ax = Axis(fig[1, 1]; xlabel, ylabel, xticks)
-    mGM, MGM = plot_conductance(ax, "base_fs_szoom"*temp, "Majo"; colorrange = (0, 0.5))
+    mGM, MGM = plot_conductance(ax, "base_fs_szoom"*temp, "Majo"; colorrange = (0, 1e-2))
     ax.yticks = ([-0.02, 0, 0.02], ["-20", "0", "20"])
     ylims!(ax, -0.026, 0.026)
+    vlines!(ax, 70/k1; color = :white, linestyle = :dash)
+
 
     text!(ax, 800, 0.015; text = "MZM", color = :white, align = (:center, :center))
     text!(ax, 800, -0.015; text = L"\Phi=\Phi^{(1)}", color = :white, align = (:center, :center))
@@ -20,7 +22,7 @@ function figure_conductance(temp::String = ""; Φs = [0.65, 0.88], color_loop1 =
     vlines!(ax, χs, ymax = 0.1, color = color_loop2, linewidth = 4 )
 
     ax = Axis(fig[1, 2]; xlabel, ylabel, xticks)
-    mGQ, MGQ = plot_conductance(ax, "base_fs_szoom"*temp, "QMajo"; colorrange = (0, 0.5) )
+    mGQ, MGQ = plot_conductance(ax, "base_fs_szoom"*temp, "QMajo"; colorrange = (0, 1e-2) )
     hideydecorations!(ax; ticks = false)
 
     ax.yticks = ([-0.02, 0, 0.02], ["-20", "0", "20"])
@@ -32,7 +34,7 @@ function figure_conductance(temp::String = ""; Φs = [0.65, 0.88], color_loop1 =
 
     vlines!(ax, χs, ymax = 0.1, color = color_loop2, linewidth = 4 )
 
-    Colorbar(fig[1, 3], colormap = :thermal, limits = (0, 0.5), ticks = [0, 0.5], label = L"$G$ (e^2/h)", labelpadding = -32, highclip = to_colormap(:thermal) |> last)
+    Colorbar(fig[1, 3], colormap = :thermal, limits = (0, 0.01), ticks = [0, 0.01], label = L"$G$ (e^2/h)", labelpadding = -32, highclip = to_colormap(:thermal) |> last)
 
 
     xlabel = L"$\Phi / \Phi_0$"
@@ -67,7 +69,7 @@ function figure_conductance(temp::String = ""; Φs = [0.65, 0.88], color_loop1 =
     text!(ax, 1.9, 0.015; text = L"$\chi = %$(χs[2])$nm", color = :white, align = (:center, :center))
     scatter!(ax, 1.2, 0.015; color = color_loop2[2], marker = :circle, markersize = 10)
 
-    Colorbar(fig[2, 3], colormap = :thermal , limits = (0, 2), ticks = [0, 2], label = L"$G (e^2/h)$", labelpadding = -15)
+    Colorbar(fig[2, 3], colormap = :thermal , limits = (0, 2), ticks = [0, 2], label = L"$G$ (e^2/h)", labelpadding = -15)
 
     style = (font = "CMU Serif Bold", fontsize   = 20)
     Label(fig[1, 1, TopLeft()], "a"; padding = (-40, 0, -20, 0), style...)

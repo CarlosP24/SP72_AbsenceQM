@@ -1,5 +1,8 @@
 fermi_kernel(δω, kBT) = inv(4 * kBT) * sech(δω / (2 * kBT))^2
-tau(χ) = 10^(-0.3 * log10(χ)^2 + 0.22 * log10(χ) - 1)
+
+#tau(χ) = 10^(-0.3 * log10(χ)^2 + 0.22 * log10(χ) - 1)
+tau(χ) = 1e-3
+
 function thermal_broadening_plan(ωvals::AbstractVector, kBT::Real)
     kBT > 0 || throw(ArgumentError("kBT must be positive to build a thermal broadening plan."))
 
@@ -65,7 +68,6 @@ function calc_conductance(name::String)
     Cond = pfunction(
         (χ, ω, Z, Φ) -> try
             G(ω; ω, Φ, Z, χ, τ = tau(χ))
-
         catch e
             @warn "Error calculating conductance at (Φ=$Φ, ω=$ω, Z=$Z): $e"
             NaN

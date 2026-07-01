@@ -5,7 +5,9 @@ function figure_wyS(strength::String = "")
     
     ylabel = L"$\omega / \Delta_0$"
 
-    ax = Axis(fig[1, 1]; xlabel, ylabel)
+    xticks = ([1, 10^1, 10^2, 10^3], [L"1", L"10", L"100", L"1000"])
+
+    ax = Axis(fig[1, 1]; xlabel, ylabel, xticks)
     plot_LDOS(ax, "base_partial_szoom"*strength, "Majo"; colorrange = (0, 1e-1),)
     hidexdecorations!(ax; ticks = false)
     ax.yticks = [-0.2, 0, 0.2]
@@ -14,7 +16,7 @@ function figure_wyS(strength::String = "")
     text!(ax, 200, 0.15; text = "MZM", color = :white, align = (:center, :center))
     text!(ax, 200, -0.15; text = L"V_\text{Z}=V_\text{Z}^{(1)}", color = :white, align = (:center, :center))
 
-    ax = Axis(fig[1, 2]; xlabel, ylabel)
+    ax = Axis(fig[1, 2]; xlabel, ylabel, xticks)
     plot_LDOS(ax, "base_partial_szoom"*strength, "QMajo"; colorrange = (0, 1e-1), )
     hidexdecorations!(ax; ticks = false)
     hideydecorations!(ax; ticks = false)
@@ -24,7 +26,7 @@ function figure_wyS(strength::String = "")
     text!(ax, 200, 0.15; text = "Q-MZM", color = :white, align = (:center, :center))
     text!(ax, 200, -0.15; text = L"V_\text{Z}=V_\text{Z}^{(2)}", color = :white, align = (:center, :center))
 
-    ax = Axis(fig[2, 1]; xlabel, ylabel)
+    ax = Axis(fig[2, 1]; xlabel, ylabel, xticks)
     plot_LDOS(ax, "base_fs_szoom"*strength, "Majo"; colorrange = (0, 1e-2))
     ax.yticks = [-0.2, 0, 0.2]
     ylims!(ax, -0.2, 0.2)
@@ -33,7 +35,7 @@ function figure_wyS(strength::String = "")
     text!(ax, 200, 0.15; text = "MZM", color = :white, align = (:center, :center))
     text!(ax, 200, -0.15; text = L"\Phi=\Phi^{(1)}", color = :white, align = (:center, :center))
 
-    ax = Axis(fig[2, 2]; xlabel, ylabel)
+    ax = Axis(fig[2, 2]; xlabel, ylabel, xticks)
     plot_LDOS(ax, "base_fs_szoom"*strength, "QMajo"; colorrange = (0, 1e-2), )
     hideydecorations!(ax; ticks = false)
     ax.yticks = [-0.2, 0, 0.2]

@@ -3,11 +3,11 @@ source config/prologue.sh "$@"
 if [ $? -ne 0 ]; then exit 1; fi
 JOB_INFO=$(sbatch -v --parsable --export=ALL <<EOT
 #!/bin/bash
-#SBATCH --partition=express
-#SBATCH --ntasks-per-node=48
-#SBATCH --nodes=1-2
+#SBATCH --partition=bignode2TB
+#SBATCH --ntasks-per-node=128
+#SBATCH --nodes=2
 #SBATCH --cpus-per-task=1
-#SBATCH --mem-per-cpu=2G
+#SBATCH --mem-per-cpu=15G
 #SBATCH --output="logs/%A_%a.out"
 #SBATCH --job-name="$*"
 #SBATCH --mail-user=carlos.paya@csic.es
