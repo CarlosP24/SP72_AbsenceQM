@@ -17,12 +17,12 @@ atto:
   host: atto.icmm.csic.es
   path: /home/paya
   launcher: bin/launcher.sh
-  partition: bignode2TB
-  ntasks_per_node: 128
-  nodes: 2
+  partition: most
+  ntasks_per_node: 192
+  nodes: 1
   #ntasks: 192
   cpus_per_task: 1
-  mem_per_cpu: 15G
+  mem_per_cpu: 2G
   mail_user: carlos.paya@csic.es
   mail_type: BEGIN,END,FAIL,TIME_LIMIT_80
   # Add any other SBATCH options needed for this cluster

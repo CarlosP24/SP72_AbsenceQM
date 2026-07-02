@@ -3,6 +3,7 @@ function figure_temperature(; colorrangeM = (0, 0.07), colorrangeQ = (0, 0.005))
 
     xlabel = L"$\chi$ (nm)"
     ylabel = L"$V$ ($\mu$V)"
+    cbarlab = (label = L"$\frac{dI}{dV}$ (e^2/h)", labelpadding = -35, labelsize = 16)
 
     xticks = ([1, 10^1, 10^2, 10^3], [L"1", L"10", L"100", L"1000"])
 
@@ -18,7 +19,9 @@ function figure_temperature(; colorrangeM = (0, 0.07), colorrangeQ = (0, 0.005))
     text!(ax, 350, 0.015; text = L"$T = 10$mK", color = :white, align = (:center, :center))
     text!(ax, 600, -0.015; text = L"\Phi=\Phi^{(1)}", color = :white, align = (:center, :center))
 
-    Colorbar(fig[1, 2], colormap = :thermal, limits = colorrangeM, ticks = [colorrangeM[1], colorrangeM[2]],  label = L"$G$ (e^2/h)", labelpadding = -25)
+
+
+    Colorbar(fig[1, 2], colormap = :thermal, limits = colorrangeM, ticks = [colorrangeM[1], colorrangeM[2]]; cbarlab...)
 
     
     ax = Axis(fig[1, 3]; xlabel, ylabel, xticks)
@@ -32,7 +35,7 @@ function figure_temperature(; colorrangeM = (0, 0.07), colorrangeQ = (0, 0.005))
     text!(ax, 350, 0.015; text = L"$T = 10$mK", color = :white, align = (:center, :center))
     text!(ax, 600, -0.015; text = L"\Phi=\Phi^{(2)}", color = :white, align = (:center, :center))
 
-    Colorbar(fig[1, 4], colormap = :thermal, limits = colorrangeQ, ticks = [colorrangeQ[1], colorrangeQ[2]],  label = L"$G$ (e^2/h)", labelpadding = -34)
+    Colorbar(fig[1, 4], colormap = :thermal, limits = colorrangeQ, ticks = [colorrangeQ[1], colorrangeQ[2]]; cbarlab...)
 
 
     temp = "_midT"
@@ -47,7 +50,7 @@ function figure_temperature(; colorrangeM = (0, 0.07), colorrangeQ = (0, 0.005))
     text!(ax, 350, 0.015; text = L"$T = 25$mK", color = :white, align = (:center, :center))
     text!(ax, 600, -0.015; text = L"\Phi=\Phi^{(1)}", color = :white, align = (:center, :center))
 
-    Colorbar(fig[2, 2], colormap = :thermal, limits = colorrangeM, ticks = [colorrangeM[1], colorrangeM[2]],  label = L"$G$ (e^2/h)", labelpadding = -25)
+    Colorbar(fig[2, 2], colormap = :thermal, limits = colorrangeM, ticks = [colorrangeM[1], colorrangeM[2]]; cbarlab... )
 
     
     ax = Axis(fig[2, 3]; xlabel, ylabel, xticks)
@@ -61,7 +64,7 @@ function figure_temperature(; colorrangeM = (0, 0.07), colorrangeQ = (0, 0.005))
     text!(ax, 350, 0.015; text = L"$T = 25$mK", color = :white, align = (:center, :center))
     text!(ax, 600, -0.015; text = L"\Phi=\Phi^{(2)}", color = :white, align = (:center, :center))
 
-    Colorbar(fig[2, 4], colormap = :thermal, limits = colorrangeQ, ticks = [colorrangeQ[1], colorrangeQ[2]], label = L"$G$ (e^2/h)", labelpadding = -34)
+    Colorbar(fig[2, 4], colormap = :thermal, limits = colorrangeQ, ticks = [colorrangeQ[1], colorrangeQ[2]]; cbarlab... )
     
 
     temp = "_highT"
@@ -75,7 +78,7 @@ function figure_temperature(; colorrangeM = (0, 0.07), colorrangeQ = (0, 0.005))
     text!(ax, 270, 0.015; text = L"$T = 100$mK", color = :white, align = (:center, :center))
     text!(ax, 600, -0.015; text = L"\Phi=\Phi^{(1)}", color = :white, align = (:center, :center))
     
-    Colorbar(fig[3, 2], colormap = :thermal, limits = colorrangeM, ticks = [colorrangeM[1], colorrangeM[2]],  label = L"$G$ (e^2/h)", labelpadding = -25)
+    Colorbar(fig[3, 2], colormap = :thermal, limits = colorrangeM, ticks = [colorrangeM[1], colorrangeM[2]]; cbarlab... )
 
 
     ax = Axis(fig[3, 3]; xlabel, ylabel, xticks)
@@ -88,7 +91,7 @@ function figure_temperature(; colorrangeM = (0, 0.07), colorrangeQ = (0, 0.005))
     text!(ax, 270, 0.015; text = L"$T = 100$mK", color = :white, align = (:center, :center))
     text!(ax, 600, -0.015; text = L"\Phi=\Phi^{(2)}", color = :white, align = (:center, :center))
 
-    Colorbar(fig[3, 4], colormap = :thermal, limits = colorrangeQ, ticks = [colorrangeQ[1], colorrangeQ[2]], label = L"$G$ (e^2/h)", labelpadding = -34)
+    Colorbar(fig[3, 4], colormap = :thermal, limits = colorrangeQ, ticks = [colorrangeQ[1], colorrangeQ[2]]; cbarlab... )
 
     Label(fig[1, 1, Top()], "MZM"; padding = (0, 0, 10, 0))
     Label(fig[1, 3, Top()], "Q-MZM"; padding = (0, 0, 10, 0) )

@@ -1,7 +1,7 @@
 fermi_kernel(δω, kBT) = inv(4 * kBT) * sech(δω / (2 * kBT))^2
 
 #tau(χ) = 10^(-0.3 * log10(χ)^2 + 0.22 * log10(χ) - 1)
-tau(χ) = 1e-3
+tau(χ) = 1e-1
 
 function thermal_broadening_plan(ωvals::AbstractVector, kBT::Real)
     kBT > 0 || throw(ArgumentError("kBT must be positive to build a thermal broadening plan."))
@@ -36,25 +36,15 @@ function thermal_broaden_conductance(Gω::AbstractVector, plan)
     return c[nω:(2nω - 1)]
 end
 
-function calc_conductance(name::String)
-    system = systems[name]
+function build_NS(params_wire::Params, χ)
+    hSM, hSC, params_wire = build(params_wire)
+    hSstep, L = build_barrier(hSC, params_wire, χ)
 
-    @unpack χrng, ωrng, Zs, Φs, kBT, outdir = system.calc_params
-
-    path = "$(outdir)/Conductance/$(name).jld2"
-    mkpath(dirname(path))
-
-    hSM, hSC, params_wire = build(system.params_wire)
-    hSstep, L = build_barrier(hSC, params_wire)
-    hNstep, _ = build_barrier(hSM, params_wire)
-
-    # Finite sections are bounded systems, so interfaces are selected by position.
     atolx = params_wire.a0 / 10
     left_face = r -> abs(r[1]) <= atolx
     right_face = r -> abs(r[1] - L) <= atolx
 
     gN_inf = hSM |> greenfunction(GS.Schur(boundary = 0))
-    #gN = hNstep |> attach(gN_inf; region = right_face) |> greenfunction()
 
     gS_inf = hSC |> greenfunction(GS.Schur(boundary = 0))
     coupling = build_coupling(params_wire)
@@ -63,10 +53,25 @@ function calc_conductance(name::String)
         attach(gN_inf, coupling; region = left_face) |>
         greenfunction()
 
-    G = conductance(g[2, 2]; nambu = true)
+    return g
+end
+
+function calc_conductance(name::String)
+    system = systems[name]
+
+    @unpack χrng, ωrng, Zs, Φs, kBT, outdir = system.calc_params
+
+    path = "$(outdir)/Conductance/$(name).jld2"
+    mkpath(dirname(path))
+
+    #g = build_NS(system.params_wire, maximum(χrng))
+
+    #G = conductance(g[2, 2]; nambu = true)
 
     Cond = pfunction(
         (χ, ω, Z, Φ) -> try
+            g = build_NS(system.params_wire, χ)
+            G = conductance(g[2, 2]; nambu = true)
             G(ω; ω, Φ, Z, χ, τ = tau(χ))
         catch e
             @warn "Error calculating conductance at (Φ=$Φ, ω=$ω, Z=$Z): $e"
@@ -84,11 +89,8 @@ function calc_conductance(name::String)
     )
 
     if kBT > 0
-        # ωrng is complex (ω + iη) for Green-function stability. Thermal broadening acts on real bias.
         ωvals = real.(ωrng)
 
-        # If energies are provided only on [-ωmax, 0], mirror them to [-ωmax, +ωmax]
-        # before convolution so broadening near zero does not suffer edge truncation.
         one_sided = maximum(ωvals) <= 0 && minimum(ωvals) < 0
 
         if one_sided
@@ -133,31 +135,11 @@ function calc_conductance_Φ(name::String)
     path = "$(outdir)/Conductance_Phi/$(name).jld2"
     mkpath(dirname(path))
 
-    hSM, hSC, params_wire = build(system.params_wire)
-    hSstep, L = build_barrier(hSC, params_wire)
-    hNstep, _ = build_barrier(hSM, params_wire)
-
-    # Finite sections are bounded systems, so interfaces are selected by position.
-    atolx = params_wire.a0 / 10
-    left_face = r -> abs(r[1]) <= atolx
-    right_face = r -> abs(r[1] - L) <= atolx
-
-    gN_inf = hSM |> greenfunction(GS.Schur(boundary = 0))
-    gN = hNstep |> attach(gN_inf; region = right_face) |> greenfunction()
-
-    gS_inf = hSC |> greenfunction(GS.Schur(boundary = 0))
-    coupling = build_coupling(params_wire)
-    g = hSstep |>
-        attach(gS_inf; region = right_face) |>
-        attach(gN[region = left_face], coupling; region = left_face) |>
-        greenfunction()
-
-    G = conductance(g[2, 2]; nambu = true)
-
     Cond = pfunction(
         (Φ, ω, Z, χ) -> try
+            g = build_NS(system.params_wire, χ)
+            G = conductance(g[2, 2]; nambu = true)
             G(ω; ω, Φ, Z, χ, τ = tau(χ))
-
         catch e
             @warn "Error calculating conductance at (Φ=$Φ, ω=$ω, Z=$Z): $e"
             NaN

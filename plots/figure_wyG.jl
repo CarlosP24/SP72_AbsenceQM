@@ -197,7 +197,7 @@ function figure_wyG(;)
     Label(fig[3, 2, TopLeft()], "e"; padding = (-40, 0, -10, 0), style...)
     Label(fig[4, 2, TopLeft()], "f"; padding = (-40, 0, -10, 0), style...)
 
-    Label(fig[5, 1, TopLeft(>)], "g"; padding = (-20, 0, -30, 0), style...)
+    Label(fig[5, 1, TopLeft()], "g"; padding = (-20, 0, -30, 0), style...)
     Label(fig[5, 2, TopLeft()], "h"; padding = (-40, 0, -30, 0), style...)
 
     return fig

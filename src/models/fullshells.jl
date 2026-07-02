@@ -85,7 +85,7 @@ base_fs_szoom_Zs = Params_System(base_fs_szoom;
         #Zs = -42:42
         Zs = -5:5,
         χrng = 10 .^range(0, 3.5, length = 301),
-        ωrng = range(-0.2 * 0.23, 0, length = 201) .+ 1e-8im,
+        ωrng = range(-0.2 * 0.23, 0, length = 201) .+ 1e-6im,
         kBT = 0.08617 * 0.001,
         )
 )
@@ -95,7 +95,7 @@ base_fs_szoom_Zs_Phis = Params_System(base_fs_szoom;
         #Zs = -42:42
         Zs = -5:5,
         Φrng_PD = range(0, 2.499, length = 301),
-        ωrng = range(-0.2 * 0.23, 0, length = 201) .+ 1e-8im,
+        ωrng = range(-0.2 * 0.23, 0, length = 201) .+ 1e-6im,
         kBT = 0.08617 * 0.001,
     )
 )

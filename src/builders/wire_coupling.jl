@@ -8,5 +8,5 @@ function build_coupling(params_wire::Params; τ = 1)
     dϕ(ρ, v0, v1) = - (Vexponent/R) * (v1 - v0) * (ρ/R)^(Vexponent - 1)
     rashbahop(r, dr, α, preα, Vmin, Vmax) = (α + preα * dϕ(r[2], Vmax, Vmin)) * (im * dr[1] / (2 * a0^2)) * σyτz
 
-    return @hopping((r, dr; τ = τ, α = α, preα = preα, Vmin = Vmin, Vmax = Vmax) -> τ * phop(r, dr) + rashbahop(r, dr, α, preα, Vmin, Vmax); range = a0)
+    return @hopping((r, dr; τ = τ, α = α, preα = preα, Vmin = Vmin, Vmax = Vmax) -> τ * (phop(r, dr) + rashbahop(r, dr, α, preα, Vmin, Vmax)); range = a0)
 end

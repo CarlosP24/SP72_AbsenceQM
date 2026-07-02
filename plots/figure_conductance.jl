@@ -1,18 +1,19 @@
-function figure_conductance(temp::String = ""; Φs = [0.65, 0.88], color_loop1 = [:lightgreen, :lightblue], color_loop2 = [:yellow, :pink], χs = [5, 1000])
+function figure_conductance(temp::String = ""; Φs = [0.65, 0.88], color_loop1 = [:lightgreen, :lightblue], color_loop2 = [:yellow, :pink], χs = [5, 1000], crangeχ = (0, 0.5), crangeΦ = (0, 0.5))
     fig = Figure(size = (600, 450), fontsize = 20)
 
 
     xlabel = L"$\chi$ (nm)"
     ylabel = L"$V$ ($\mu$V)"
+    cbarlab = (label = L"$dI/dV$ (e^2/h)", labelpadding = -10, highclip = to_colormap(:thermal) |> last)
 
     xticks = ([1, 10^1, 10^2, 10^3], [L"1", L"10", L"100", L"1000"])
 
 
     ax = Axis(fig[1, 1]; xlabel, ylabel, xticks)
-    mGM, MGM = plot_conductance(ax, "base_fs_szoom"*temp, "Majo"; colorrange = (0, 1e-2))
+    mGM, MGM = plot_conductance(ax, "base_fs_szoom"*temp, "Majo"; colorrange = crangeχ)
     ax.yticks = ([-0.02, 0, 0.02], ["-20", "0", "20"])
     ylims!(ax, -0.026, 0.026)
-    vlines!(ax, 70/k1; color = :white, linestyle = :dash)
+    #vlines!(ax, 70/k1; color = :white, linestyle = :dash)
 
 
     text!(ax, 800, 0.015; text = "MZM", color = :white, align = (:center, :center))
@@ -22,7 +23,7 @@ function figure_conductance(temp::String = ""; Φs = [0.65, 0.88], color_loop1 =
     vlines!(ax, χs, ymax = 0.1, color = color_loop2, linewidth = 4 )
 
     ax = Axis(fig[1, 2]; xlabel, ylabel, xticks)
-    mGQ, MGQ = plot_conductance(ax, "base_fs_szoom"*temp, "QMajo"; colorrange = (0, 1e-2) )
+    mGQ, MGQ = plot_conductance(ax, "base_fs_szoom"*temp, "QMajo"; colorrange = crangeχ )
     hideydecorations!(ax; ticks = false)
 
     ax.yticks = ([-0.02, 0, 0.02], ["-20", "0", "20"])
@@ -34,12 +35,12 @@ function figure_conductance(temp::String = ""; Φs = [0.65, 0.88], color_loop1 =
 
     vlines!(ax, χs, ymax = 0.1, color = color_loop2, linewidth = 4 )
 
-    Colorbar(fig[1, 3], colormap = :thermal, limits = (0, 0.01), ticks = [0, 0.01], label = L"$G$ (e^2/h)", labelpadding = -32, highclip = to_colormap(:thermal) |> last)
+    Colorbar(fig[1, 3], colormap = :thermal, limits = crangeχ, ticks = [crangeχ[1], crangeχ[2]]; cbarlab... )
 
 
     xlabel = L"$\Phi / \Phi_0$"
     ax = Axis(fig[2, 1]; xlabel, ylabel)
-    mGM, MGM = plot_conductance_Phi(ax, "base_fs_szoom"*temp*"_Phis", χs[1]; colorrange = (0, 2))
+    mGM, MGM = plot_conductance_Phi(ax, "base_fs_szoom"*temp*"_Phis", χs[1]; colorrange = crangeΦ)
     Φ = plot_TT(ax, "base_fs"; linewidth = 2, color = :white)
     text!(ax, 1, -0.022; text = L"\Phi^\text{c}", color = :white, align = (:center, :center))
     
@@ -53,7 +54,7 @@ function figure_conductance(temp::String = ""; Φs = [0.65, 0.88], color_loop1 =
     scatter!(ax, 1.5, 0.015; color = color_loop2[1], marker = :circle, markersize = 10)
 
     ax = Axis(fig[2, 2]; xlabel, ylabel)
-    mGQ, MGQ = plot_conductance_Phi(ax, "base_fs_szoom"*temp*"_Phis", χs[2]; colorrange = (0, 2))
+    mGQ, MGQ = plot_conductance_Phi(ax, "base_fs_szoom"*temp*"_Phis", χs[2]; colorrange = crangeΦ)
     Φ = plot_TT(ax, "base_fs"; linewidth = 2, color = :white)
     text!(ax, 1, -0.022; text = L"\Phi^\text{c}", color = :white, align = (:center, :center))
 
@@ -69,7 +70,7 @@ function figure_conductance(temp::String = ""; Φs = [0.65, 0.88], color_loop1 =
     text!(ax, 1.9, 0.015; text = L"$\chi = %$(χs[2])$nm", color = :white, align = (:center, :center))
     scatter!(ax, 1.2, 0.015; color = color_loop2[2], marker = :circle, markersize = 10)
 
-    Colorbar(fig[2, 3], colormap = :thermal , limits = (0, 2), ticks = [0, 2], label = L"$G$ (e^2/h)", labelpadding = -15)
+    Colorbar(fig[2, 3], colormap = :thermal , limits = crangeΦ, ticks = [crangeΦ[1], crangeΦ[2]]; cbarlab... )
 
     style = (font = "CMU Serif Bold", fontsize   = 20)
     Label(fig[1, 1, TopLeft()], "a"; padding = (-40, 0, -20, 0), style...)

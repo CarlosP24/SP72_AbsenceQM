@@ -1,625 +1,0 @@
-Running base_fs_testing_doschi
-[ Info: Calculating DOS vs χ for base_fs_testing
-Progress:   0%|                                         |  ETA: 2 days, 20:55:32[KProgress:   0%|▏                                        |  ETA: 11:33:11[KProgress:   0%|▏                                        |  ETA: 7:44:12[KProgress:   0%|▏                                        |  ETA: 7:21:00[KProgress:   0%|▏                                        |  ETA: 6:39:45[KProgress:   0%|▏                                        |  ETA: 6:22:15[KProgress:   0%|▏                                        |  ETA: 6:06:28[KProgress:   1%|▎                                        |  ETA: 4:17:25[KProgress:   1%|▍                                        |  ETA: 3:17:55[KProgress:   1%|▍                                        |  ETA: 3:05:24[KProgress:   1%|▍                                        |  ETA: 2:47:51[KProgress:   1%|▍                                        |  ETA: 2:38:40[KProgress:   1%|▌                                        |  ETA: 2:33:47[KProgress:   1%|▌                                        |  ETA: 2:31:55[KProgress:   1%|▌                                        |  ETA: 2:29:47[KProgress:   1%|▌                                        |  ETA: 2:29:23[KProgress:   1%|▌                                        |  ETA: 2:27:22[KProgress:   1%|▌                                        |  ETA: 2:25:08[KProgress:   1%|▌                                        |  ETA: 2:23:43[KProgress:   1%|▌                                        |  ETA: 2:23:35[KProgress:   1%|▌                                        |  ETA: 2:21:43[KProgress:   1%|▌                                        |  ETA: 2:20:06[KProgress:   1%|▌                                        |  ETA: 2:21:25[KProgress:   1%|▌                                        |  ETA: 2:21:13[KProgress:   1%|▌                                        |  ETA: 2:23:30[KProgress:   1%|▌                                        |  ETA: 2:21:56[KProgress:   1%|▌                                        |  ETA: 2:20:30[KProgress:   1%|▌                                        |  ETA: 2:25:43[KProgress:   1%|▋                                        |  ETA: 2:25:42[KProgress:   1%|▋                                        |  ETA: 2:24:57[KProgress:   1%|▋                                        |  ETA: 2:24:31[KProgress:   1%|▋                                        |  ETA: 2:23:03[KProgress:   1%|▋                                        |  ETA: 2:25:40[KProgress:   1%|▋                                        |  ETA: 2:29:27[KProgress:   1%|▋                                        |  ETA: 2:27:53[KProgress:   2%|▋                                        |  ETA: 2:26:08[KProgress:   2%|▋                                        |  ETA: 2:24:24[KProgress:   2%|▋                                        |  ETA: 2:22:44[KProgress:   2%|▋                                        |  ETA: 2:21:05[KProgress:   2%|▋                                        |  ETA: 2:17:49[KProgress:   2%|▋                                        |  ETA: 2:13:08[KProgress:   2%|▊                                        |  ETA: 2:10:15[KProgress:   2%|▊                                        |  ETA: 2:06:12[KProgress:   2%|▊                                        |  ETA: 1:55:58[KProgress:   2%|▊                                        |  ETA: 1:56:06[KProgress:   2%|▉                                        |  ETA: 1:55:19[KProgress:   2%|▉                                        |  ETA: 1:54:21[KProgress:   2%|▉                                        |  ETA: 1:53:25[KProgress:   2%|▉                                        |  ETA: 1:52:40[KProgress:   2%|▉                                        |  ETA: 1:52:12[KProgress:   2%|▉                                        |  ETA: 1:52:12[KProgress:   2%|▉                                        |  ETA: 1:51:31[KProgress:   2%|▉                                        |  ETA: 1:51:19[KProgress:   2%|▉                                        |  ETA: 1:50:10[KProgress:   2%|▉                                        |  ETA: 1:49:41[KProgress:   2%|▉                                        |  ETA: 1:49:42[KProgress:   2%|▉                                        |  ETA: 1:49:11[Ksrun: error: a5: task 92: Killed
-Worker 96 terminated.
-UNHANDLED TASK ERROR: EOFError: read end of file
-Stacktrace:
- [1] (::Base.var"#wait_locked#unsafe_read##0")(s::Sockets.TCPSocket, buf::IOBuffer, nb::Int64)
-   @ Base ./stream.jl:980
- [2] unsafe_read(s::Sockets.TCPSocket, p::Ptr{UInt8}, nb::UInt64)
-   @ Base ./stream.jl:988
- [3] unsafe_read
-   @ ./io.jl:890 [inlined]
- [4] unsafe_read(s::Sockets.TCPSocket, p::Base.RefValue{NTuple{4, Int64}}, n::Int64)
-   @ Base ./io.jl:889
- [5] read!
-   @ ./io.jl:894 [inlined]
- [6] deserialize_hdr_raw
-   @ ~/.julia/juliaup/julia-1.12.4+0.x64.linux.gnu/share/julia/stdlib/v1.12/Distributed/src/messages.jl:167 [inlined]
- [7] message_handler_loop(r_stream::Sockets.TCPSocket, w_stream::Sockets.TCPSocket, incoming::Bool)
-   @ Distributed ~/.julia/juliaup/julia-1.12.4+0.x64.linux.gnu/share/julia/stdlib/v1.12/Distributed/src/process_messages.jl:172
- [8] process_tcp_streams(r_stream::Sockets.TCPSocket, w_stream::Sockets.TCPSocket, incoming::Bool)
-   @ Distributed ~/.julia/juliaup/julia-1.12.4+0.x64.linux.gnu/share/julia/stdlib/v1.12/Distributed/src/process_messages.jl:133
- [9] (::Distributed.var"#process_messages##0#process_messages##1"{Sockets.TCPSocket, Sockets.TCPSocket, Bool})()
-   @ Distributed ~/.julia/juliaup/julia-1.12.4+0.x64.linux.gnu/share/julia/stdlib/v1.12/Distributed/src/process_messages.jl:121
-Progress:   2%|▉                                        |  ETA: 1:52:41[Ksrun: error: a5: task 55: Killed
-Worker 99 terminated.
-UNHANDLED TASK ERROR: IOError: read: connection reset by peer (ECONNRESET)
-Stacktrace:
-  [1] wait_readnb(x::Sockets.TCPSocket, nb::Int64)
-    @ Base ./stream.jl:410
-  [2] (::Base.var"#wait_locked#unsafe_read##0")(s::Sockets.TCPSocket, buf::IOBuffer, nb::Int64)
-    @ Base ./stream.jl:982
-  [3] unsafe_read(s::Sockets.TCPSocket, p::Ptr{UInt8}, nb::UInt64)
-    @ Base ./stream.jl:988
-  [4] unsafe_read
-    @ ./io.jl:890 [inlined]
-  [5] unsafe_read(s::Sockets.TCPSocket, p::Base.RefValue{NTuple{4, Int64}}, n::Int64)
-    @ Base ./io.jl:889
-  [6] read!
-    @ ./io.jl:894 [inlined]
-  [7] deserialize_hdr_raw
-    @ ~/.julia/juliaup/julia-1.12.4+0.x64.linux.gnu/share/julia/stdlib/v1.12/Distributed/src/messages.jl:167 [inlined]
-  [8] message_handler_loop(r_stream::Sockets.TCPSocket, w_stream::Sockets.TCPSocket, incoming::Bool)
-    @ Distributed ~/.julia/juliaup/julia-1.12.4+0.x64.linux.gnu/share/julia/stdlib/v1.12/Distributed/src/process_messages.jl:172
-  [9] process_tcp_streams(r_stream::Sockets.TCPSocket, w_stream::Sockets.TCPSocket, incoming::Bool)
-    @ Distributed ~/.julia/juliaup/julia-1.12.4+0.x64.linux.gnu/share/julia/stdlib/v1.12/Distributed/src/process_messages.jl:133
- [10] (::Distributed.var"#process_messages##0#process_messages##1"{Sockets.TCPSocket, Sockets.TCPSocket, Bool})()
-    @ Distributed ~/.julia/juliaup/julia-1.12.4+0.x64.linux.gnu/share/julia/stdlib/v1.12/Distributed/src/process_messages.jl:121
-Progress:   2%|█                                        |  ETA: 1:50:04[KProgress:   2%|█                                        |  ETA: 1:51:27[KProgress:   2%|█                                        |  ETA: 1:51:14[KProgress:   2%|█                                        |  ETA: 1:50:38[Ksrun: error: a5: task 90: Killed
-Worker 102 terminated.
-UNHANDLED TASK ERROR: IOError: read: connection reset by peer (ECONNRESET)
-Stacktrace:
-  [1] wait_readnb(x::Sockets.TCPSocket, nb::Int64)
-    @ Base ./stream.jl:410
-  [2] (::Base.var"#wait_locked#unsafe_read##0")(s::Sockets.TCPSocket, buf::IOBuffer, nb::Int64)
-    @ Base ./stream.jl:982
-  [3] unsafe_read(s::Sockets.TCPSocket, p::Ptr{UInt8}, nb::UInt64)
-    @ Base ./stream.jl:988
-  [4] unsafe_read
-    @ ./io.jl:890 [inlined]
-  [5] unsafe_read(s::Sockets.TCPSocket, p::Base.RefValue{NTuple{4, Int64}}, n::Int64)
-    @ Base ./io.jl:889
-  [6] read!
-    @ ./io.jl:894 [inlined]
-  [7] deserialize_hdr_raw
-    @ ~/.julia/juliaup/julia-1.12.4+0.x64.linux.gnu/share/julia/stdlib/v1.12/Distributed/src/messages.jl:167 [inlined]
-  [8] message_handler_loop(r_stream::Sockets.TCPSocket, w_stream::Sockets.TCPSocket, incoming::Bool)
-    @ Distributed ~/.julia/juliaup/julia-1.12.4+0.x64.linux.gnu/share/julia/stdlib/v1.12/Distributed/src/process_messages.jl:172
-  [9] process_tcp_streams(r_stream::Sockets.TCPSocket, w_stream::Sockets.TCPSocket, incoming::Bool)
-    @ Distributed ~/.julia/juliaup/julia-1.12.4+0.x64.linux.gnu/share/julia/stdlib/v1.12/Distributed/src/process_messages.jl:133
- [10] (::Distributed.var"#process_messages##0#process_messages##1"{Sockets.TCPSocket, Sockets.TCPSocket, Bool})()
-    @ Distributed ~/.julia/juliaup/julia-1.12.4+0.x64.linux.gnu/share/julia/stdlib/v1.12/Distributed/src/process_messages.jl:121
-Progress:   2%|█                                        |  ETA: 1:50:31[KProgress:   2%|█                                        |  ETA: 1:49:45[KProgress:   2%|█                                        |  ETA: 1:49:09[KProgress:   2%|█                                        |  ETA: 1:48:21[KProgress:   2%|█                                        |  ETA: 1:47:51[KProgress:   2%|█                                        |  ETA: 1:48:20[KProgress:   3%|█                                        |  ETA: 1:47:28[KProgress:   3%|█                                        |  ETA: 1:46:46[Ksrun: error: a5: task 93: Killed
-Worker 111 terminated.
-UNHANDLED TASK ERROR: IOError: read: connection reset by peer (ECONNRESET)
-Stacktrace:
-  [1] wait_readnb(x::Sockets.TCPSocket, nb::Int64)
-    @ Base ./stream.jl:410
-  [2] (::Base.var"#wait_locked#unsafe_read##0")(s::Sockets.TCPSocket, buf::IOBuffer, nb::Int64)
-    @ Base ./stream.jl:982
-  [3] unsafe_read(s::Sockets.TCPSocket, p::Ptr{UInt8}, nb::UInt64)
-    @ Base ./stream.jl:988
-  [4] unsafe_read
-    @ ./io.jl:890 [inlined]
-  [5] unsafe_read(s::Sockets.TCPSocket, p::Base.RefValue{NTuple{4, Int64}}, n::Int64)
-    @ Base ./io.jl:889
-  [6] read!
-    @ ./io.jl:894 [inlined]
-  [7] deserialize_hdr_raw
-    @ ~/.julia/juliaup/julia-1.12.4+0.x64.linux.gnu/share/julia/stdlib/v1.12/Distributed/src/messages.jl:167 [inlined]
-  [8] message_handler_loop(r_stream::Sockets.TCPSocket, w_stream::Sockets.TCPSocket, incoming::Bool)
-    @ Distributed ~/.julia/juliaup/julia-1.12.4+0.x64.linux.gnu/share/julia/stdlib/v1.12/Distributed/src/process_messages.jl:172
-  [9] process_tcp_streams(r_stream::Sockets.TCPSocket, w_stream::Sockets.TCPSocket, incoming::Bool)
-    @ Distributed ~/.julia/juliaup/julia-1.12.4+0.x64.linux.gnu/share/julia/stdlib/v1.12/Distributed/src/process_messages.jl:133
- [10] (::Distributed.var"#process_messages##0#process_messages##1"{Sockets.TCPSocket, Sockets.TCPSocket, Bool})()
-    @ Distributed ~/.julia/juliaup/julia-1.12.4+0.x64.linux.gnu/share/julia/stdlib/v1.12/Distributed/src/process_messages.jl:121
-Progress:   3%|█                                        |  ETA: 1:47:18[KProgress:   3%|█                                        |  ETA: 1:46:37[KProgress:   3%|█▏                                       |  ETA: 1:45:10[KProgress:   3%|█▏                                       |  ETA: 1:44:36[KProgress:   3%|█▏                                       |  ETA: 1:43:55[KProgress:   3%|█▏                                       |  ETA: 1:43:16[KProgress:   3%|█▏                                       |  ETA: 1:43:25[KProgress:   3%|█▏                                       |  ETA: 1:42:44[KProgress:   3%|█▏                                       |  ETA: 1:42:25[KProgress:   3%|█▏                                       |  ETA: 1:41:55[KProgress:   3%|█▏                                       |  ETA: 1:41:29[KProgress:   3%|█▏                                       |  ETA: 1:38:50[KProgress:   3%|█▎                                       |  ETA: 1:36:58[KProgress:   3%|█▎                                       |  ETA: 1:36:24[KProgress:   3%|█▎                                       |  ETA: 1:35:49[KProgress:   3%|█▎                                       |  ETA: 1:33:35[Ksrun: error: a5: task 29: Killed
-Worker 103 terminated.
-UNHANDLED TASK ERROR: IOError: read: connection reset by peer (ECONNRESET)
-Stacktrace:
-  [1] wait_readnb(x::Sockets.TCPSocket, nb::Int64)
-    @ Base ./stream.jl:410
-  [2] (::Base.var"#wait_locked#unsafe_read##0")(s::Sockets.TCPSocket, buf::IOBuffer, nb::Int64)
-    @ Base ./stream.jl:982
-  [3] unsafe_read(s::Sockets.TCPSocket, p::Ptr{UInt8}, nb::UInt64)
-    @ Base ./stream.jl:988
-  [4] unsafe_read
-    @ ./io.jl:890 [inlined]
-  [5] unsafe_read(s::Sockets.TCPSocket, p::Base.RefValue{NTuple{4, Int64}}, n::Int64)
-    @ Base ./io.jl:889
-  [6] read!
-    @ ./io.jl:894 [inlined]
-  [7] deserialize_hdr_raw
-    @ ~/.julia/juliaup/julia-1.12.4+0.x64.linux.gnu/share/julia/stdlib/v1.12/Distributed/src/messages.jl:167 [inlined]
-  [8] message_handler_loop(r_stream::Sockets.TCPSocket, w_stream::Sockets.TCPSocket, incoming::Bool)
-    @ Distributed ~/.julia/juliaup/julia-1.12.4+0.x64.linux.gnu/share/julia/stdlib/v1.12/Distributed/src/process_messages.jl:172
-  [9] process_tcp_streams(r_stream::Sockets.TCPSocket, w_stream::Sockets.TCPSocket, incoming::Bool)
-    @ Distributed ~/.julia/juliaup/julia-1.12.4+0.x64.linux.gnu/share/julia/stdlib/v1.12/Distributed/src/process_messages.jl:133
- [10] (::Distributed.var"#process_messages##0#process_messages##1"{Sockets.TCPSocket, Sockets.TCPSocket, Bool})()
-    @ Distributed ~/.julia/juliaup/julia-1.12.4+0.x64.linux.gnu/share/julia/stdlib/v1.12/Distributed/src/process_messages.jl:121
-Progress:   3%|█▎                                       |  ETA: 1:33:15[KProgress:   3%|█▎                                       |  ETA: 1:30:22[KProgress:   3%|█▎                                       |  ETA: 1:30:20[KProgress:   3%|█▍                                       |  ETA: 1:30:01[Ksrun: error: a5: task 39: Killed
-srun: error: a5: task 88: Killed
-Worker 25 terminated.
-UNHANDLED TASK ERROR: IOError: read: connection reset by peer (ECONNRESET)
-Stacktrace:
-  [1] wait_readnb(x::Sockets.TCPSocket, nb::Int64)
-    @ Base ./stream.jl:410
-  [2] (::Base.var"#wait_locked#unsafe_read##0")(s::Sockets.TCPSocket, buf::IOBuffer, nb::Int64)
-    @ Base ./stream.jl:982
-  [3] unsafe_read(s::Sockets.TCPSocket, p::Ptr{UInt8}, nb::UInt64)
-    @ Base ./stream.jl:988
-  [4] unsafe_read
-    @ ./io.jl:890 [inlined]
-  [5] unsafe_read(s::Sockets.TCPSocket, p::Base.RefValue{NTuple{4, Int64}}, n::Int64)
-    @ Base ./io.jl:889
-  [6] read!
-    @ ./io.jl:894 [inlined]
-  [7] deserialize_hdr_raw
-    @ ~/.julia/juliaup/julia-1.12.4+0.x64.linux.gnu/share/julia/stdlib/v1.12/Distributed/src/messages.jl:167 [inlined]
-  [8] message_handler_loop(r_stream::Sockets.TCPSocket, w_stream::Sockets.TCPSocket, incoming::Bool)
-    @ Distributed ~/.julia/juliaup/julia-1.12.4+0.x64.linux.gnu/share/julia/stdlib/v1.12/Distributed/src/process_messages.jl:172
-  [9] process_tcp_streams(r_stream::Sockets.TCPSocket, w_stream::Sockets.TCPSocket, incoming::Bool)
-    @ Distributed ~/.julia/juliaup/julia-1.12.4+0.x64.linux.gnu/share/julia/stdlib/v1.12/Distributed/src/process_messages.jl:133
- [10] (::Distributed.var"#process_messages##0#process_messages##1"{Sockets.TCPSocket, Sockets.TCPSocket, Bool})()
-    @ Distributed ~/.julia/juliaup/julia-1.12.4+0.x64.linux.gnu/share/julia/stdlib/v1.12/Distributed/src/process_messages.jl:121
-Worker 100 terminated.
-UNHANDLED TASK ERROR: IOError: read: connection reset by peer (ECONNRESET)
-Stacktrace:
-  [1] wait_readnb(x::Sockets.TCPSocket, nb::Int64)
-    @ Base ./stream.jl:410
-  [2] (::Base.var"#wait_locked#unsafe_read##0")(s::Sockets.TCPSocket, buf::IOBuffer, nb::Int64)
-    @ Base ./stream.jl:982
-  [3] unsafe_read(s::Sockets.TCPSocket, p::Ptr{UInt8}, nb::UInt64)
-    @ Base ./stream.jl:988
-  [4] unsafe_read
-    @ ./io.jl:890 [inlined]
-  [5] unsafe_read(s::Sockets.TCPSocket, p::Base.RefValue{NTuple{4, Int64}}, n::Int64)
-    @ Base ./io.jl:889
-  [6] read!
-    @ ./io.jl:894 [inlined]
-  [7] deserialize_hdr_raw
-    @ ~/.julia/juliaup/julia-1.12.4+0.x64.linux.gnu/share/julia/stdlib/v1.12/Distributed/src/messages.jl:167 [inlined]
-  [8] message_handler_loop(r_stream::Sockets.TCPSocket, w_stream::Sockets.TCPSocket, incoming::Bool)
-    @ Distributed ~/.julia/juliaup/julia-1.12.4+0.x64.linux.gnu/share/julia/stdlib/v1.12/Distributed/src/process_messages.jl:172
-  [9] process_tcp_streams(r_stream::Sockets.TCPSocket, w_stream::Sockets.TCPSocket, incoming::Bool)
-    @ Distributed ~/.julia/juliaup/julia-1.12.4+0.x64.linux.gnu/share/julia/stdlib/v1.12/Distributed/src/process_messages.jl:133
- [10] (::Distributed.var"#process_messages##0#process_messages##1"{Sockets.TCPSocket, Sockets.TCPSocket, Bool})()
-    @ Distributed ~/.julia/juliaup/julia-1.12.4+0.x64.linux.gnu/share/julia/stdlib/v1.12/Distributed/src/process_messages.jl:121
-Progress:   3%|█▍                                       |  ETA: 1:32:09[KProgress:   3%|█▍                                       |  ETA: 1:32:09[KWorker 19 terminated.
-UNHANDLED TASK ERROR: IOError: read: connection reset by peer (ECONNRESET)
-Stacktrace:
-  [1] wait_readnb(x::Sockets.TCPSocket, nb::Int64)
-    @ Base ./stream.jl:410
-  [2] (::Base.var"#wait_locked#unsafe_read##0")(s::Sockets.TCPSocket, buf::IOBuffer, nb::Int64)
-    @ Base ./stream.jl:982
-  [3] unsafe_read(s::Sockets.TCPSocket, p::Ptr{UInt8}, nb::UInt64)
-    @ Base ./stream.jl:988
-  [4] unsafe_read
-    @ ./io.jl:890 [inlined]
-  [5] unsafe_read(s::Sockets.TCPSocket, p::Base.RefValue{NTuple{4, Int64}}, n::Int64)
-    @ Base ./io.jl:889
-  [6] read!
-    @ ./io.jl:894 [inlined]
-  [7] deserialize_hdr_raw
-    @ ~/.julia/juliaup/julia-1.12.4+0.x64.linux.gnu/share/julia/stdlib/v1.12/Distributed/src/messages.jl:167 [inlined]
-  [8] message_handler_loop(r_stream::Sockets.TCPSocket, w_stream::Sockets.TCPSocket, incoming::Bool)
-    @ Distributed ~/.julia/juliaup/julia-1.12.4+0.x64.linux.gnu/share/julia/stdlib/v1.12/Distributed/src/process_messages.jl:172
-  [9] process_tcp_streams(r_stream::Sockets.TCPSocket, w_stream::Sockets.TCPSocket, incoming::Bool)
-    @ Distributed ~/.julia/juliaup/julia-1.12.4+0.x64.linux.gnu/share/julia/stdlib/v1.12/Distributed/src/process_messages.jl:133
- [10] (::Distributed.var"#process_messages##0#process_messages##1"{Sockets.TCPSocket, Sockets.TCPSocket, Bool})()
-    @ Distributed ~/.julia/juliaup/julia-1.12.4+0.x64.linux.gnu/share/julia/stdlib/v1.12/Distributed/src/process_messages.jl:121
-Progress:   3%|█▍                                       |  ETA: 1:31:43[Ksrun: error: a5: task 25: Killed
-srun: error: a5: task 23: Killed
-Worker 9 terminated.
-UNHANDLED TASK ERROR: IOError: read: connection reset by peer (ECONNRESET)
-Stacktrace:
-  [1] wait_readnb(x::Sockets.TCPSocket, nb::Int64)
-    @ Base ./stream.jl:410
-  [2] (::Base.var"#wait_locked#unsafe_read##0")(s::Sockets.TCPSocket, buf::IOBuffer, nb::Int64)
-    @ Base ./stream.jl:982
-  [3] unsafe_read(s::Sockets.TCPSocket, p::Ptr{UInt8}, nb::UInt64)
-    @ Base ./stream.jl:988
-  [4] unsafe_read
-    @ ./io.jl:890 [inlined]
-  [5] unsafe_read(s::Sockets.TCPSocket, p::Base.RefValue{NTuple{4, Int64}}, n::Int64)
-    @ Base ./io.jl:889
-  [6] read!
-    @ ./io.jl:894 [inlined]
-  [7] deserialize_hdr_raw
-    @ ~/.julia/juliaup/julia-1.12.4+0.x64.linux.gnu/share/julia/stdlib/v1.12/Distributed/src/messages.jl:167 [inlined]
-  [8] message_handler_loop(r_stream::Sockets.TCPSocket, w_stream::Sockets.TCPSocket, incoming::Bool)
-    @ Distributed ~/.julia/juliaup/julia-1.12.4+0.x64.linux.gnu/share/julia/stdlib/v1.12/Distributed/src/process_messages.jl:172
-  [9] process_tcp_streams(r_stream::Sockets.TCPSocket, w_stream::Sockets.TCPSocket, incoming::Bool)
-    @ Distributed ~/.julia/juliaup/julia-1.12.4+0.x64.linux.gnu/share/julia/stdlib/v1.12/Distributed/src/process_messages.jl:133
- [10] (::Distributed.var"#process_messages##0#process_messages##1"{Sockets.TCPSocket, Sockets.TCPSocket, Bool})()
-    @ Distributed ~/.julia/juliaup/julia-1.12.4+0.x64.linux.gnu/share/julia/stdlib/v1.12/Distributed/src/process_messages.jl:121
-Progress:   3%|█▍                                       |  ETA: 1:34:35[Ksrun: error: a5: task 9: Killed
-srun: error: a5: task 96: Killed
-Worker 51 terminated.
-UNHANDLED TASK ERROR: IOError: read: connection reset by peer (ECONNRESET)
-Stacktrace:
-  [1] wait_readnb(x::Sockets.TCPSocket, nb::Int64)
-    @ Base ./stream.jl:410
-  [2] (::Base.var"#wait_locked#unsafe_read##0")(s::Sockets.TCPSocket, buf::IOBuffer, nb::Int64)
-    @ Base ./stream.jl:982
-  [3] unsafe_read(s::Sockets.TCPSocket, p::Ptr{UInt8}, nb::UInt64)
-    @ Base ./stream.jl:988
-  [4] unsafe_read
-    @ ./io.jl:890 [inlined]
-  [5] unsafe_read(s::Sockets.TCPSocket, p::Base.RefValue{NTuple{4, Int64}}, n::Int64)
-    @ Base ./io.jl:889
-  [6] read!
-    @ ./io.jl:894 [inlined]
-  [7] deserialize_hdr_raw
-    @ ~/.julia/juliaup/julia-1.12.4+0.x64.linux.gnu/share/julia/stdlib/v1.12/Distributed/src/messages.jl:167 [inlined]
-  [8] message_handler_loop(r_stream::Sockets.TCPSocket, w_stream::Sockets.TCPSocket, incoming::Bool)
-    @ Distributed ~/.julia/juliaup/julia-1.12.4+0.x64.linux.gnu/share/julia/stdlib/v1.12/Distributed/src/process_messages.jl:172
-  [9] process_tcp_streams(r_stream::Sockets.TCPSocket, w_stream::Sockets.TCPSocket, incoming::Bool)
-    @ Distributed ~/.julia/juliaup/julia-1.12.4+0.x64.linux.gnu/share/julia/stdlib/v1.12/Distributed/src/process_messages.jl:133
- [10] (::Distributed.var"#process_messages##0#process_messages##1"{Sockets.TCPSocket, Sockets.TCPSocket, Bool})()
-    @ Distributed ~/.julia/juliaup/julia-1.12.4+0.x64.linux.gnu/share/julia/stdlib/v1.12/Distributed/src/process_messages.jl:121
-Worker 67 terminated.
-UNHANDLED TASK ERROR: IOError: read: connection reset by peer (ECONNRESET)
-Stacktrace:
-  [1] wait_readnb(x::Sockets.TCPSocket, nb::Int64)
-    @ Base ./stream.jl:410
-  [2] (::Base.var"#wait_locked#unsafe_read##0")(s::Sockets.TCPSocket, buf::IOBuffer, nb::Int64)
-    @ Base ./stream.jl:982
-  [3] unsafe_read(s::Sockets.TCPSocket, p::Ptr{UInt8}, nb::UInt64)
-    @ Base ./stream.jl:988
-  [4] unsafe_read
-    @ ./io.jl:890 [inlined]
-  [5] unsafe_read(s::Sockets.TCPSocket, p::Base.RefValue{NTuple{4, Int64}}, n::Int64)
-    @ Base ./io.jl:889
-  [6] read!
-    @ ./io.jl:894 [inlined]
-  [7] deserialize_hdr_raw
-    @ ~/.julia/juliaup/julia-1.12.4+0.x64.linux.gnu/share/julia/stdlib/v1.12/Distributed/src/messages.jl:167 [inlined]
-  [8] message_handler_loop(r_stream::Sockets.TCPSocket, w_stream::Sockets.TCPSocket, incoming::Bool)
-    @ Distributed ~/.julia/juliaup/julia-1.12.4+0.x64.linux.gnu/share/julia/stdlib/v1.12/Distributed/src/process_messages.jl:172
-  [9] process_tcp_streams(r_stream::Sockets.TCPSocket, w_stream::Sockets.TCPSocket, incoming::Bool)
-    @ Distributed ~/.julia/juliaup/julia-1.12.4+0.x64.linux.gnu/share/julia/stdlib/v1.12/Distributed/src/process_messages.jl:133
- [10] (::Distributed.var"#process_messages##0#process_messages##1"{Sockets.TCPSocket, Sockets.TCPSocket, Bool})()
-    @ Distributed ~/.julia/juliaup/julia-1.12.4+0.x64.linux.gnu/share/julia/stdlib/v1.12/Distributed/src/process_messages.jl:121
-Progress:   3%|█▍                                       |  ETA: 1:38:10[KProgress:   3%|█▍                                       |  ETA: 1:38:59[Ksrun: error: a5: task 46: Killed
-srun: error: a5: task 70: Killed
-srun: error: a5: task 74: Killed
-srun: error: a5: task 20: Killed
-Worker 16 terminated.
-UNHANDLED TASK ERROR: IOError: read: connection reset by peer (ECONNRESET)
-Stacktrace:
-  [1] wait_readnb(x::Sockets.TCPSocket, nb::Int64)
-    @ Base ./stream.jl:410
-  [2] (::Base.var"#wait_locked#unsafe_read##0")(s::Sockets.TCPSocket, buf::IOBuffer, nb::Int64)
-    @ Base ./stream.jl:982
-  [3] unsafe_read(s::Sockets.TCPSocket, p::Ptr{UInt8}, nb::UInt64)
-    @ Base ./stream.jl:988
-  [4] unsafe_read
-    @ ./io.jl:890 [inlined]
-  [5] unsafe_read(s::Sockets.TCPSocket, p::Base.RefValue{NTuple{4, Int64}}, n::Int64)
-    @ Base ./io.jl:889
-  [6] read!
-    @ ./io.jl:894 [inlined]
-  [7] deserialize_hdr_raw
-    @ ~/.julia/juliaup/julia-1.12.4+0.x64.linux.gnu/share/julia/stdlib/v1.12/Distributed/src/messages.jl:167 [inlined]
-  [8] message_handler_loop(r_stream::Sockets.TCPSocket, w_stream::Sockets.TCPSocket, incoming::Bool)
-    @ Distributed ~/.julia/juliaup/julia-1.12.4+0.x64.linux.gnu/share/julia/stdlib/v1.12/Distributed/src/process_messages.jl:172
-  [9] process_tcp_streams(r_stream::Sockets.TCPSocket, w_stream::Sockets.TCPSocket, incoming::Bool)
-    @ Distributed ~/.julia/juliaup/julia-1.12.4+0.x64.linux.gnu/share/julia/stdlib/v1.12/Distributed/src/process_messages.jl:133
- [10] (::Distributed.var"#process_messages##0#process_messages##1"{Sockets.TCPSocket, Sockets.TCPSocket, Bool})()
-    @ Distributed ~/.julia/juliaup/julia-1.12.4+0.x64.linux.gnu/share/julia/stdlib/v1.12/Distributed/src/process_messages.jl:121
-Worker 50 terminated.
-UNHANDLED TASK ERROR: IOError: read: connection reset by peer (ECONNRESET)
-Stacktrace:
-  [1] wait_readnb(x::Sockets.TCPSocket, nb::Int64)
-    @ Base ./stream.jl:410
-  [2] (::Base.var"#wait_locked#unsafe_read##0")(s::Sockets.TCPSocket, buf::IOBuffer, nb::Int64)
-    @ Base ./stream.jl:982
-  [3] unsafe_read(s::Sockets.TCPSocket, p::Ptr{UInt8}, nb::UInt64)
-    @ Base ./stream.jl:988
-  [4] unsafe_read
-    @ ./io.jl:890 [inlined]
-  [5] unsafe_read(s::Sockets.TCPSocket, p::Base.RefValue{NTuple{4, Int64}}, n::Int64)
-    @ Base ./io.jl:889
-  [6] read!
-    @ ./io.jl:894 [inlined]
-  [7] deserialize_hdr_raw
-    @ ~/.julia/juliaup/julia-1.12.4+0.x64.linux.gnu/share/julia/stdlib/v1.12/Distributed/src/messages.jl:167 [inlined]
-  [8] message_handler_loop(r_stream::Sockets.TCPSocket, w_stream::Sockets.TCPSocket, incoming::Bool)
-    @ Distributed ~/.julia/juliaup/julia-1.12.4+0.x64.linux.gnu/share/julia/stdlib/v1.12/Distributed/src/process_messages.jl:172
-  [9] process_tcp_streams(r_stream::Sockets.TCPSocket, w_stream::Sockets.TCPSocket, incoming::Bool)
-    @ Distributed ~/.julia/juliaup/julia-1.12.4+0.x64.linux.gnu/share/julia/stdlib/v1.12/Distributed/src/process_messages.jl:133
- [10] (::Distributed.var"#process_messages##0#process_messages##1"{Sockets.TCPSocket, Sockets.TCPSocket, Bool})()
-    @ Distributed ~/.julia/juliaup/julia-1.12.4+0.x64.linux.gnu/share/julia/stdlib/v1.12/Distributed/src/process_messages.jl:121
-Worker 52 terminated.
-UNHANDLED TASK ERROR: IOError: read: connection reset by peer (ECONNRESET)
-Stacktrace:
-  [1] wait_readnb(x::Sockets.TCPSocket, nb::Int64)
-    @ Base ./stream.jl:410
-  [2] (::Base.var"#wait_locked#unsafe_read##0")(s::Sockets.TCPSocket, buf::IOBuffer, nb::Int64)
-    @ Base ./stream.jl:982
-  [3] unsafe_read(s::Sockets.TCPSocket, p::Ptr{UInt8}, nb::UInt64)
-    @ Base ./stream.jl:988
-  [4] unsafe_read
-    @ ./io.jl:890 [inlined]
-  [5] unsafe_read(s::Sockets.TCPSocket, p::Base.RefValue{NTuple{4, Int64}}, n::Int64)
-    @ Base ./io.jl:889
-  [6] read!
-    @ ./io.jl:894 [inlined]
-  [7] deserialize_hdr_raw
-    @ ~/.julia/juliaup/julia-1.12.4+0.x64.linux.gnu/share/julia/stdlib/v1.12/Distributed/src/messages.jl:167 [inlined]
-  [8] message_handler_loop(r_stream::Sockets.TCPSocket, w_stream::Sockets.TCPSocket, incoming::Bool)
-    @ Distributed ~/.julia/juliaup/julia-1.12.4+0.x64.linux.gnu/share/julia/stdlib/v1.12/Distributed/src/process_messages.jl:172
-  [9] process_tcp_streams(r_stream::Sockets.TCPSocket, w_stream::Sockets.TCPSocket, incoming::Bool)
-    @ Distributed ~/.julia/juliaup/julia-1.12.4+0.x64.linux.gnu/share/julia/stdlib/v1.12/Distributed/src/process_messages.jl:133
- [10] (::Distributed.var"#process_messages##0#process_messages##1"{Sockets.TCPSocket, Sockets.TCPSocket, Bool})()
-    @ Distributed ~/.julia/juliaup/julia-1.12.4+0.x64.linux.gnu/share/julia/stdlib/v1.12/Distributed/src/process_messages.jl:121
-Worker 46 terminated.
-UNHANDLED TASK ERROR: IOError: read: connection reset by peer (ECONNRESET)
-Stacktrace:
-  [1] wait_readnb(x::Sockets.TCPSocket, nb::Int64)
-    @ Base ./stream.jl:410
-  [2] (::Base.var"#wait_locked#unsafe_read##0")(s::Sockets.TCPSocket, buf::IOBuffer, nb::Int64)
-    @ Base ./stream.jl:982
-  [3] unsafe_read(s::Sockets.TCPSocket, p::Ptr{UInt8}, nb::UInt64)
-    @ Base ./stream.jl:988
-  [4] unsafe_read
-    @ ./io.jl:890 [inlined]
-  [5] unsafe_read(s::Sockets.TCPSocket, p::Base.RefValue{NTuple{4, Int64}}, n::Int64)
-    @ Base ./io.jl:889
-  [6] read!
-    @ ./io.jl:894 [inlined]
-  [7] deserialize_hdr_raw
-    @ ~/.julia/juliaup/julia-1.12.4+0.x64.linux.gnu/share/julia/stdlib/v1.12/Distributed/src/messages.jl:167 [inlined]
-  [8] message_handler_loop(r_stream::Sockets.TCPSocket, w_stream::Sockets.TCPSocket, incoming::Bool)
-    @ Distributed ~/.julia/juliaup/julia-1.12.4+0.x64.linux.gnu/share/julia/stdlib/v1.12/Distributed/src/process_messages.jl:172
-  [9] process_tcp_streams(r_stream::Sockets.TCPSocket, w_stream::Sockets.TCPSocket, incoming::Bool)
-    @ Distributed ~/.julia/juliaup/julia-1.12.4+0.x64.linux.gnu/share/julia/stdlib/v1.12/Distributed/src/process_messages.jl:133
- [10] (::Distributed.var"#process_messages##0#process_messages##1"{Sockets.TCPSocket, Sockets.TCPSocket, Bool})()
-    @ Distributed ~/.julia/juliaup/julia-1.12.4+0.x64.linux.gnu/share/julia/stdlib/v1.12/Distributed/src/process_messages.jl:121
-Progress:   3%|█▍                                       |  ETA: 1:44:05[Ksrun: error: a5: task 48: Killed
-Worker 21 terminated.
-UNHANDLED TASK ERROR: IOError: read: connection reset by peer (ECONNRESET)
-Stacktrace:
-  [1] wait_readnb(x::Sockets.TCPSocket, nb::Int64)
-    @ Base ./stream.jl:410
-  [2] (::Base.var"#wait_locked#unsafe_read##0")(s::Sockets.TCPSocket, buf::IOBuffer, nb::Int64)
-    @ Base ./stream.jl:982
-  [3] unsafe_read(s::Sockets.TCPSocket, p::Ptr{UInt8}, nb::UInt64)
-    @ Base ./stream.jl:988
-  [4] unsafe_read
-    @ ./io.jl:890 [inlined]
-  [5] unsafe_read(s::Sockets.TCPSocket, p::Base.RefValue{NTuple{4, Int64}}, n::Int64)
-    @ Base ./io.jl:889
-  [6] read!
-    @ ./io.jl:894 [inlined]
-  [7] deserialize_hdr_raw
-    @ ~/.julia/juliaup/julia-1.12.4+0.x64.linux.gnu/share/julia/stdlib/v1.12/Distributed/src/messages.jl:167 [inlined]
-  [8] message_handler_loop(r_stream::Sockets.TCPSocket, w_stream::Sockets.TCPSocket, incoming::Bool)
-    @ Distributed ~/.julia/juliaup/julia-1.12.4+0.x64.linux.gnu/share/julia/stdlib/v1.12/Distributed/src/process_messages.jl:172
-  [9] process_tcp_streams(r_stream::Sockets.TCPSocket, w_stream::Sockets.TCPSocket, incoming::Bool)
-    @ Distributed ~/.julia/juliaup/julia-1.12.4+0.x64.linux.gnu/share/julia/stdlib/v1.12/Distributed/src/process_messages.jl:133
- [10] (::Distributed.var"#process_messages##0#process_messages##1"{Sockets.TCPSocket, Sockets.TCPSocket, Bool})()
-    @ Distributed ~/.julia/juliaup/julia-1.12.4+0.x64.linux.gnu/share/julia/stdlib/v1.12/Distributed/src/process_messages.jl:121
-Progress:   3%|█▍                                       |  ETA: 1:46:32[Ksrun: error: a5: task 6: Killed
-Worker 70 terminated.
-UNHANDLED TASK ERROR: IOError: read: connection reset by peer (ECONNRESET)
-Stacktrace:
-  [1] wait_readnb(x::Sockets.TCPSocket, nb::Int64)
-    @ Base ./stream.jl:410
-  [2] (::Base.var"#wait_locked#unsafe_read##0")(s::Sockets.TCPSocket, buf::IOBuffer, nb::Int64)
-    @ Base ./stream.jl:982
-  [3] unsafe_read(s::Sockets.TCPSocket, p::Ptr{UInt8}, nb::UInt64)
-    @ Base ./stream.jl:988
-  [4] unsafe_read
-    @ ./io.jl:890 [inlined]
-  [5] unsafe_read(s::Sockets.TCPSocket, p::Base.RefValue{NTuple{4, Int64}}, n::Int64)
-    @ Base ./io.jl:889
-  [6] read!
-    @ ./io.jl:894 [inlined]
-  [7] deserialize_hdr_raw
-    @ ~/.julia/juliaup/julia-1.12.4+0.x64.linux.gnu/share/julia/stdlib/v1.12/Distributed/src/messages.jl:167 [inlined]
-  [8] message_handler_loop(r_stream::Sockets.TCPSocket, w_stream::Sockets.TCPSocket, incoming::Bool)
-    @ Distributed ~/.julia/juliaup/julia-1.12.4+0.x64.linux.gnu/share/julia/stdlib/v1.12/Distributed/src/process_messages.jl:172
-  [9] process_tcp_streams(r_stream::Sockets.TCPSocket, w_stream::Sockets.TCPSocket, incoming::Bool)
-    @ Distributed ~/.julia/juliaup/julia-1.12.4+0.x64.linux.gnu/share/julia/stdlib/v1.12/Distributed/src/process_messages.jl:133
- [10] (::Distributed.var"#process_messages##0#process_messages##1"{Sockets.TCPSocket, Sockets.TCPSocket, Bool})()
-    @ Distributed ~/.julia/juliaup/julia-1.12.4+0.x64.linux.gnu/share/julia/stdlib/v1.12/Distributed/src/process_messages.jl:121
-Progress:   3%|█▍                                       |  ETA: 1:49:10[KProgress:   3%|█▍                                       |  ETA: 1:48:40[Ksrun: error: a5: task 21: Killed
-srun: error: a5: task 78: Killed
-srun: error: a5: task 2: Killed
-srun: error: a5: task 32: Killed
-Worker 45 terminated.
-UNHANDLED TASK ERROR: IOError: read: connection reset by peer (ECONNRESET)
-Stacktrace:
-  [1] wait_readnb(x::Sockets.TCPSocket, nb::Int64)
-    @ Base ./stream.jl:410
-  [2] (::Base.var"#wait_locked#unsafe_read##0")(s::Sockets.TCPSocket, buf::IOBuffer, nb::Int64)
-    @ Base ./stream.jl:982
-  [3] unsafe_read(s::Sockets.TCPSocket, p::Ptr{UInt8}, nb::UInt64)
-    @ Base ./stream.jl:988
-  [4] unsafe_read
-    @ ./io.jl:890 [inlined]
-  [5] unsafe_read(s::Sockets.TCPSocket, p::Base.RefValue{NTuple{4, Int64}}, n::Int64)
-    @ Base ./io.jl:889
-  [6] read!
-    @ ./io.jl:894 [inlined]
-  [7] deserialize_hdr_raw
-    @ ~/.julia/juliaup/julia-1.12.4+0.x64.linux.gnu/share/julia/stdlib/v1.12/Distributed/src/messages.jl:167 [inlined]
-  [8] message_handler_loop(r_stream::Sockets.TCPSocket, w_stream::Sockets.TCPSocket, incoming::Bool)
-    @ Distributed ~/.julia/juliaup/julia-1.12.4+0.x64.linux.gnu/share/julia/stdlib/v1.12/Distributed/src/process_messages.jl:172
-  [9] process_tcp_streams(r_stream::Sockets.TCPSocket, w_stream::Sockets.TCPSocket, incoming::Bool)
-    @ Distributed ~/.julia/juliaup/julia-1.12.4+0.x64.linux.gnu/share/julia/stdlib/v1.12/Distributed/src/process_messages.jl:133
- [10] (::Distributed.var"#process_messages##0#process_messages##1"{Sockets.TCPSocket, Sockets.TCPSocket, Bool})()
-    @ Distributed ~/.julia/juliaup/julia-1.12.4+0.x64.linux.gnu/share/julia/stdlib/v1.12/Distributed/src/process_messages.jl:121
-Worker 4 terminated.
-UNHANDLED TASK ERROR: IOError: read: connection reset by peer (ECONNRESET)
-Stacktrace:
-  [1] wait_readnb(x::Sockets.TCPSocket, nb::Int64)
-    @ Base ./stream.jl:410
-  [2] (::Base.var"#wait_locked#unsafe_read##0")(s::Sockets.TCPSocket, buf::IOBuffer, nb::Int64)
-    @ Base ./stream.jl:982
-  [3] unsafe_read(s::Sockets.TCPSocket, p::Ptr{UInt8}, nb::UInt64)
-    @ Base ./stream.jl:988
-  [4] unsafe_read
-    @ ./io.jl:890 [inlined]
-  [5] unsafe_read(s::Sockets.TCPSocket, p::Base.RefValue{NTuple{4, Int64}}, n::Int64)
-    @ Base ./io.jl:889
-  [6] read!
-    @ ./io.jl:894 [inlined]
-  [7] deserialize_hdr_raw
-    @ ~/.julia/juliaup/julia-1.12.4+0.x64.linux.gnu/share/julia/stdlib/v1.12/Distributed/src/messages.jl:167 [inlined]
-  [8] message_handler_loop(r_stream::Sockets.TCPSocket, w_stream::Sockets.TCPSocket, incoming::Bool)
-    @ Distributed ~/.julia/juliaup/julia-1.12.4+0.x64.linux.gnu/share/julia/stdlib/v1.12/Distributed/src/process_messages.jl:172
-  [9] process_tcp_streams(r_stream::Sockets.TCPSocket, w_stream::Sockets.TCPSocket, incoming::Bool)
-    @ Distributed ~/.julia/juliaup/julia-1.12.4+0.x64.linux.gnu/share/julia/stdlib/v1.12/Distributed/src/process_messages.jl:133
- [10] (::Distributed.var"#process_messages##0#process_messages##1"{Sockets.TCPSocket, Sockets.TCPSocket, Bool})()
-    @ Distributed ~/.julia/juliaup/julia-1.12.4+0.x64.linux.gnu/share/julia/stdlib/v1.12/Distributed/src/process_messages.jl:121
-Worker 115 terminated.
-UNHANDLED TASK ERROR: IOError: read: connection reset by peer (ECONNRESET)
-Stacktrace:
-  [1] wait_readnb(x::Sockets.TCPSocket, nb::Int64)
-    @ Base ./stream.jl:410
-  [2] (::Base.var"#wait_locked#unsafe_read##0")(s::Sockets.TCPSocket, buf::IOBuffer, nb::Int64)
-    @ Base ./stream.jl:982
-  [3] unsafe_read(s::Sockets.TCPSocket, p::Ptr{UInt8}, nb::UInt64)
-    @ Base ./stream.jl:988
-  [4] unsafe_read
-    @ ./io.jl:890 [inlined]
-  [5] unsafe_read(s::Sockets.TCPSocket, p::Base.RefValue{NTuple{4, Int64}}, n::Int64)
-    @ Base ./io.jl:889
-  [6] read!
-    @ ./io.jl:894 [inlined]
-  [7] deserialize_hdr_raw
-    @ ~/.julia/juliaup/julia-1.12.4+0.x64.linux.gnu/share/julia/stdlib/v1.12/Distributed/src/messages.jl:167 [inlined]
-  [8] message_handler_loop(r_stream::Sockets.TCPSocket, w_stream::Sockets.TCPSocket, incoming::Bool)
-    @ Distributed ~/.julia/juliaup/julia-1.12.4+0.x64.linux.gnu/share/julia/stdlib/v1.12/Distributed/src/process_messages.jl:172
-  [9] process_tcp_streams(r_stream::Sockets.TCPSocket, w_stream::Sockets.TCPSocket, incoming::Bool)
-    @ Distributed ~/.julia/juliaup/julia-1.12.4+0.x64.linux.gnu/share/julia/stdlib/v1.12/Distributed/src/process_messages.jl:133
- [10] (::Distributed.var"#process_messages##0#process_messages##1"{Sockets.TCPSocket, Sockets.TCPSocket, Bool})()
-    @ Distributed ~/.julia/juliaup/julia-1.12.4+0.x64.linux.gnu/share/julia/stdlib/v1.12/Distributed/src/process_messages.jl:121
-Worker 84 terminated.
-UNHANDLED TASK ERROR: IOError: read: connection reset by peer (ECONNRESET)
-Stacktrace:
-  [1] wait_readnb(x::Sockets.TCPSocket, nb::Int64)
-    @ Base ./stream.jl:410
-  [2] (::Base.var"#wait_locked#unsafe_read##0")(s::Sockets.TCPSocket, buf::IOBuffer, nb::Int64)
-    @ Base ./stream.jl:982
-  [3] unsafe_read(s::Sockets.TCPSocket, p::Ptr{UInt8}, nb::UInt64)
-    @ Base ./stream.jl:988
-  [4] unsafe_read
-    @ ./io.jl:890 [inlined]
-  [5] unsafe_read(s::Sockets.TCPSocket, p::Base.RefValue{NTuple{4, Int64}}, n::Int64)
-    @ Base ./io.jl:889
-  [6] read!
-    @ ./io.jl:894 [inlined]
-  [7] deserialize_hdr_raw
-    @ ~/.julia/juliaup/julia-1.12.4+0.x64.linux.gnu/share/julia/stdlib/v1.12/Distributed/src/messages.jl:167 [inlined]
-  [8] message_handler_loop(r_stream::Sockets.TCPSocket, w_stream::Sockets.TCPSocket, incoming::Bool)
-    @ Distributed ~/.julia/juliaup/julia-1.12.4+0.x64.linux.gnu/share/julia/stdlib/v1.12/Distributed/src/process_messages.jl:172
-  [9] process_tcp_streams(r_stream::Sockets.TCPSocket, w_stream::Sockets.TCPSocket, incoming::Bool)
-    @ Distributed ~/.julia/juliaup/julia-1.12.4+0.x64.linux.gnu/share/julia/stdlib/v1.12/Distributed/src/process_messages.jl:133
- [10] (::Distributed.var"#process_messages##0#process_messages##1"{Sockets.TCPSocket, Sockets.TCPSocket, Bool})()
-    @ Distributed ~/.julia/juliaup/julia-1.12.4+0.x64.linux.gnu/share/julia/stdlib/v1.12/Distributed/src/process_messages.jl:121
-Progress:   3%|█▍                                       |  ETA: 2:01:18[Ksrun: error: a5: task 65: Killed
-Worker 5 terminated.
-UNHANDLED TASK ERROR: IOError: read: connection reset by peer (ECONNRESET)
-Stacktrace:
-  [1] wait_readnb(x::Sockets.TCPSocket, nb::Int64)
-    @ Base ./stream.jl:410
-  [2] (::Base.var"#wait_locked#unsafe_read##0")(s::Sockets.TCPSocket, buf::IOBuffer, nb::Int64)
-    @ Base ./stream.jl:982
-  [3] unsafe_read(s::Sockets.TCPSocket, p::Ptr{UInt8}, nb::UInt64)
-    @ Base ./stream.jl:988
-  [4] unsafe_read
-    @ ./io.jl:890 [inlined]
-  [5] unsafe_read(s::Sockets.TCPSocket, p::Base.RefValue{NTuple{4, Int64}}, n::Int64)
-    @ Base ./io.jl:889
-  [6] read!
-    @ ./io.jl:894 [inlined]
-  [7] deserialize_hdr_raw
-    @ ~/.julia/juliaup/julia-1.12.4+0.x64.linux.gnu/share/julia/stdlib/v1.12/Distributed/src/messages.jl:167 [inlined]
-  [8] message_handler_loop(r_stream::Sockets.TCPSocket, w_stream::Sockets.TCPSocket, incoming::Bool)
-    @ Distributed ~/.julia/juliaup/julia-1.12.4+0.x64.linux.gnu/share/julia/stdlib/v1.12/Distributed/src/process_messages.jl:172
-  [9] process_tcp_streams(r_stream::Sockets.TCPSocket, w_stream::Sockets.TCPSocket, incoming::Bool)
-    @ Distributed ~/.julia/juliaup/julia-1.12.4+0.x64.linux.gnu/share/julia/stdlib/v1.12/Distributed/src/process_messages.jl:133
- [10] (::Distributed.var"#process_messages##0#process_messages##1"{Sockets.TCPSocket, Sockets.TCPSocket, Bool})()
-    @ Distributed ~/.julia/juliaup/julia-1.12.4+0.x64.linux.gnu/share/julia/stdlib/v1.12/Distributed/src/process_messages.jl:121
-Progress:   4%|█▌                                       |  ETA: 2:05:18[KProgress:   4%|█▌                                       |  ETA: 2:05:41[Ksrun: error: a5: task 108: Killed
-Worker 33 terminated.
-UNHANDLED TASK ERROR: IOError: read: connection reset by peer (ECONNRESET)
-Stacktrace:
-  [1] wait_readnb(x::Sockets.TCPSocket, nb::Int64)
-    @ Base ./stream.jl:410
-  [2] (::Base.var"#wait_locked#unsafe_read##0")(s::Sockets.TCPSocket, buf::IOBuffer, nb::Int64)
-    @ Base ./stream.jl:982
-  [3] unsafe_read(s::Sockets.TCPSocket, p::Ptr{UInt8}, nb::UInt64)
-    @ Base ./stream.jl:988
-  [4] unsafe_read
-    @ ./io.jl:890 [inlined]
-  [5] unsafe_read(s::Sockets.TCPSocket, p::Base.RefValue{NTuple{4, Int64}}, n::Int64)
-    @ Base ./io.jl:889
-  [6] read!
-    @ ./io.jl:894 [inlined]
-  [7] deserialize_hdr_raw
-    @ ~/.julia/juliaup/julia-1.12.4+0.x64.linux.gnu/share/julia/stdlib/v1.12/Distributed/src/messages.jl:167 [inlined]
-  [8] message_handler_loop(r_stream::Sockets.TCPSocket, w_stream::Sockets.TCPSocket, incoming::Bool)
-    @ Distributed ~/.julia/juliaup/julia-1.12.4+0.x64.linux.gnu/share/julia/stdlib/v1.12/Distributed/src/process_messages.jl:172
-  [9] process_tcp_streams(r_stream::Sockets.TCPSocket, w_stream::Sockets.TCPSocket, incoming::Bool)
-    @ Distributed ~/.julia/juliaup/julia-1.12.4+0.x64.linux.gnu/share/julia/stdlib/v1.12/Distributed/src/process_messages.jl:133
- [10] (::Distributed.var"#process_messages##0#process_messages##1"{Sockets.TCPSocket, Sockets.TCPSocket, Bool})()
-    @ Distributed ~/.julia/juliaup/julia-1.12.4+0.x64.linux.gnu/share/julia/stdlib/v1.12/Distributed/src/process_messages.jl:121
-Progress:   4%|█▌                                       |  ETA: 2:07:56[KProgress:   4%|█▌                                       |  ETA: 2:07:50[Ksrun: error: a5: task 75: Killed
-Worker 24 terminated.
-UNHANDLED TASK ERROR: IOError: read: connection reset by peer (ECONNRESET)
-Stacktrace:
-  [1] wait_readnb(x::Sockets.TCPSocket, nb::Int64)
-    @ Base ./stream.jl:410
-  [2] (::Base.var"#wait_locked#unsafe_read##0")(s::Sockets.TCPSocket, buf::IOBuffer, nb::Int64)
-    @ Base ./stream.jl:982
-  [3] unsafe_read(s::Sockets.TCPSocket, p::Ptr{UInt8}, nb::UInt64)
-    @ Base ./stream.jl:988
-  [4] unsafe_read
-    @ ./io.jl:890 [inlined]
-  [5] unsafe_read(s::Sockets.TCPSocket, p::Base.RefValue{NTuple{4, Int64}}, n::Int64)
-    @ Base ./io.jl:889
-  [6] read!
-    @ ./io.jl:894 [inlined]
-  [7] deserialize_hdr_raw
-    @ ~/.julia/juliaup/julia-1.12.4+0.x64.linux.gnu/share/julia/stdlib/v1.12/Distributed/src/messages.jl:167 [inlined]
-  [8] message_handler_loop(r_stream::Sockets.TCPSocket, w_stream::Sockets.TCPSocket, incoming::Bool)
-    @ Distributed ~/.julia/juliaup/julia-1.12.4+0.x64.linux.gnu/share/julia/stdlib/v1.12/Distributed/src/process_messages.jl:172
-  [9] process_tcp_streams(r_stream::Sockets.TCPSocket, w_stream::Sockets.TCPSocket, incoming::Bool)
-    @ Distributed ~/.julia/juliaup/julia-1.12.4+0.x64.linux.gnu/share/julia/stdlib/v1.12/Distributed/src/process_messages.jl:133
- [10] (::Distributed.var"#process_messages##0#process_messages##1"{Sockets.TCPSocket, Sockets.TCPSocket, Bool})()
-    @ Distributed ~/.julia/juliaup/julia-1.12.4+0.x64.linux.gnu/share/julia/stdlib/v1.12/Distributed/src/process_messages.jl:121
-Progress:   4%|█▌                                       |  ETA: 2:16:09[Ksrun: error: a5: task 105: Killed
-Worker 101 terminated.
-UNHANDLED TASK ERROR: IOError: read: connection reset by peer (ECONNRESET)
-Stacktrace:
-  [1] wait_readnb(x::Sockets.TCPSocket, nb::Int64)
-    @ Base ./stream.jl:410
-  [2] (::Base.var"#wait_locked#unsafe_read##0")(s::Sockets.TCPSocket, buf::IOBuffer, nb::Int64)
-    @ Base ./stream.jl:982
-  [3] unsafe_read(s::Sockets.TCPSocket, p::Ptr{UInt8}, nb::UInt64)
-    @ Base ./stream.jl:988
-  [4] unsafe_read
-    @ ./io.jl:890 [inlined]
-  [5] unsafe_read(s::Sockets.TCPSocket, p::Base.RefValue{NTuple{4, Int64}}, n::Int64)
-    @ Base ./io.jl:889
-  [6] read!
-    @ ./io.jl:894 [inlined]
-  [7] deserialize_hdr_raw
-    @ ~/.julia/juliaup/julia-1.12.4+0.x64.linux.gnu/share/julia/stdlib/v1.12/Distributed/src/messages.jl:167 [inlined]
-  [8] message_handler_loop(r_stream::Sockets.TCPSocket, w_stream::Sockets.TCPSocket, incoming::Bool)
-    @ Distributed ~/.julia/juliaup/julia-1.12.4+0.x64.linux.gnu/share/julia/stdlib/v1.12/Distributed/src/process_messages.jl:172
-  [9] process_tcp_streams(r_stream::Sockets.TCPSocket, w_stream::Sockets.TCPSocket, incoming::Bool)
-    @ Distributed ~/.julia/juliaup/julia-1.12.4+0.x64.linux.gnu/share/julia/stdlib/v1.12/Distributed/src/process_messages.jl:133
- [10] (::Distributed.var"#process_messages##0#process_messages##1"{Sockets.TCPSocket, Sockets.TCPSocket, Bool})()
-    @ Distributed ~/.julia/juliaup/julia-1.12.4+0.x64.linux.gnu/share/julia/stdlib/v1.12/Distributed/src/process_messages.jl:121
-Progress:   4%|█▌                                       |  ETA: 2:19:35[KProgress:   4%|█▌                                       |  ETA: 2:24:48[KProgress:   4%|█▌                                       |  ETA: 2:26:49[KProgress:   4%|█▌                                       |  ETA: 2:28:51[KProgress:   4%|█▌                                       |  ETA: 2:34:04[Ksrun: error: a5: task 64: Killed
-Worker 49 terminated.
-UNHANDLED TASK ERROR: IOError: read: connection reset by peer (ECONNRESET)
-Stacktrace:
-  [1] wait_readnb(x::Sockets.TCPSocket, nb::Int64)
-    @ Base ./stream.jl:410
-  [2] (::Base.var"#wait_locked#unsafe_read##0")(s::Sockets.TCPSocket, buf::IOBuffer, nb::Int64)
-    @ Base ./stream.jl:982
-  [3] unsafe_read(s::Sockets.TCPSocket, p::Ptr{UInt8}, nb::UInt64)
-    @ Base ./stream.jl:988
-  [4] unsafe_read
-    @ ./io.jl:890 [inlined]
-  [5] unsafe_read(s::Sockets.TCPSocket, p::Base.RefValue{NTuple{4, Int64}}, n::Int64)
-    @ Base ./io.jl:889
-  [6] read!
-    @ ./io.jl:894 [inlined]
-  [7] deserialize_hdr_raw
-    @ ~/.julia/juliaup/julia-1.12.4+0.x64.linux.gnu/share/julia/stdlib/v1.12/Distributed/src/messages.jl:167 [inlined]
-  [8] message_handler_loop(r_stream::Sockets.TCPSocket, w_stream::Sockets.TCPSocket, incoming::Bool)
-    @ Distributed ~/.julia/juliaup/julia-1.12.4+0.x64.linux.gnu/share/julia/stdlib/v1.12/Distributed/src/process_messages.jl:172
-  [9] process_tcp_streams(r_stream::Sockets.TCPSocket, w_stream::Sockets.TCPSocket, incoming::Bool)
-    @ Distributed ~/.julia/juliaup/julia-1.12.4+0.x64.linux.gnu/share/julia/stdlib/v1.12/Distributed/src/process_messages.jl:133
- [10] (::Distributed.var"#process_messages##0#process_messages##1"{Sockets.TCPSocket, Sockets.TCPSocket, Bool})()
-    @ Distributed ~/.julia/juliaup/julia-1.12.4+0.x64.linux.gnu/share/julia/stdlib/v1.12/Distributed/src/process_messages.jl:121
-Progress:   4%|█▌                                       |  ETA: 2:43:27[KProgress:   4%|█▌                                       |  ETA: 2:44:25[KProgress:   4%|█▌                                       |  ETA: 2:46:01[KProgress:   4%|█▌                                       |  ETA: 2:51:49[KProgress:   4%|█▌                                       |  ETA: 2:51:07[KProgress:   4%|█▌                                       |  ETA: 2:54:00[KProgress:   4%|█▋                                       |  ETA: 2:55:28[KProgress:   4%|█▋                                       |  ETA: 3:11:26[KProgress:   4%|█▋                                       |  ETA: 3:16:03[KProgress:   4%|█▋                                       |  ETA: 3:20:16[KProgress:   4%|█▋                                       |  ETA: 3:29:34[K
