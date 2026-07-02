@@ -101,12 +101,23 @@ base_fs_szoom_Zs_Phis = Params_System(base_fs_szoom;
 )
 
 # 10mK
+τs = range(0.1, 0.9, step = 0.05)
+
 base_fs_szoom_lowT = Params_System(base_fs_szoom;
     calc_params = Calc_Params(base_fs_szoom.calc_params; 
-        kBT = 0.08617 * 0.01,
-        ωrng = range(-0.2 * 0.23, 0, length = 301) .+ 1e-6im,
-
+        kBT = 0.08617 * 0,
+        ωrng = range(-0.2 * 0.23, 0, length = 51) .+ 1e-6im,
+        χrng = 10 .^range(0, 1.1, length = 51),
     )
+)
+
+base_τs = Dict(
+    "base_fs_tau=$(τ)" => Params_System(base_fs_szoom_lowT;
+        calc_params = Calc_Params(base_fs_szoom_lowT.calc_params; 
+            τ = τ,
+            kBT = 0.08617 * 0.001,
+        )
+    ) for τ in τs
 )
 
 # 25mK
@@ -151,3 +162,5 @@ full_shells = Dict(
     "base_fs_fdos" => base_fs_fdos,
     "base_fs_testing" => base_fs_testing
 ) 
+
+merge!(full_shells, base_τs)

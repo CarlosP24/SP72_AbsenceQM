@@ -16,6 +16,8 @@
     χ = "default"
     χs = [5, 1000]
     kBT = 0.0
+    τ = 0.1
+    τrng = 1 .- 10 .^ range(-2, -0.01, length = 100)
     outdir = "data"
 end
 

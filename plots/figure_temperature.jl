@@ -19,8 +19,6 @@ function figure_temperature(; colorrangeM = (0, 0.07), colorrangeQ = (0, 0.005))
     text!(ax, 350, 0.015; text = L"$T = 10$mK", color = :white, align = (:center, :center))
     text!(ax, 600, -0.015; text = L"\Phi=\Phi^{(1)}", color = :white, align = (:center, :center))
 
-
-
     Colorbar(fig[1, 2], colormap = :thermal, limits = colorrangeM, ticks = [colorrangeM[1], colorrangeM[2]]; cbarlab...)
 
     

@@ -10,3 +10,13 @@ function build_coupling(params_wire::Params; τ = 1)
 
     return @hopping((r, dr; τ = τ, α = α, preα = preα, Vmin = Vmin, Vmax = Vmax) -> τ * (phop(r, dr) + rashbahop(r, dr, α, preα, Vmin, Vmax)); range = a0)
 end
+
+function build_coupling(params_wire::Params_Partial; τ = 1)
+    @unpack a0, t, μ, α, Δ0, B, τΓ, Bc = params_wire
+
+    phop(r, dr) = -t * σ0τz
+    
+    rashbahop(r, dr, α,) = α * im * dr[1] / (2 * a0^2) * σyτz
+
+    return @hopping((r, dr; τ = τ, α = α,) -> τ * (phop(r, dr) + rashbahop(r, dr, α,)); range = a0)
+end

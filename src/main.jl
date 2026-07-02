@@ -2,7 +2,7 @@ using Pkg, JLD2
 include("utilities.jl")
 ensure_pkgs(["Quantica", "FullShell", "ProgressMeter", "Parameters", "ArnoldiMethod", "LinearMaps", "FFTW",])
 @everywhere begin
-    using Quantica, FullShell
+    using Quantica, FullShell, QuadGK
     using ProgressMeter, Parameters
     using ArnoldiMethod, LinearMaps, LinearAlgebra
     using FFTW
@@ -123,6 +123,15 @@ if endswith(input, "_conductancePhi")
     name = replace(input, "_conductancePhi" => "")
     @info "Calculating conductance vs flux for $(name)"
     res = calc_conductance_Φ(name)
+    @info "Saving results to $(res.path)"
+    save(res.path, "res", res)
+    exit(0)
+end
+
+if endswith(input, "_conductanceTau")
+    name = replace(input, "_conductanceTau" => "")
+    @info "Calculating conductance vs τ for $(name)"
+    res = calc_conductance_τ(name)
     @info "Saving results to $(res.path)"
     save(res.path, "res", res)
     exit(0)

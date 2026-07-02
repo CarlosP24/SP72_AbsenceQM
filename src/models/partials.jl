@@ -28,9 +28,18 @@ base_partial_szoom_strong = Params_System(base_partial_szoom ;
     )
 )
 
+base_partial_szoom_lowT = Params_System(base_partial_szoom;
+    calc_params = Calc_Params(base_partial_szoom.calc_params; 
+        kBT = 0.08617 * 0.001,
+        ωrng = range(-0.2 * 0.23, 0, length = 51) .+ 1e-6im,
+        χrng = 10 .^range(0, 1.1, length = 51),
+    )
+)
+
 partials = Dict(
     "base_partial" => base_partial,
     "base_partial_szoom" => base_partial_szoom,
     "base_partial_szoom_weak" => base_partial_szoom_weak,
-    "base_partial_szoom_strong" => base_partial_szoom_strong
+    "base_partial_szoom_strong" => base_partial_szoom_strong,
+    "base_partial_szoom_lowT" => base_partial_szoom_lowT
 )
