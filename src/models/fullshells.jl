@@ -105,9 +105,8 @@ base_fs_szoom_Zs_Phis = Params_System(base_fs_szoom;
 
 base_fs_szoom_lowT = Params_System(base_fs_szoom;
     calc_params = Calc_Params(base_fs_szoom.calc_params; 
-        kBT = 0.08617 * 0,
-        ωrng = range(-0.2 * 0.23, 0, length = 51) .+ 1e-6im,
-        χrng = 10 .^range(0, 1.1, length = 51),
+        kBT = 0.08617 * 0.01,
+        ωrng = range(-0.2 * 0.23, 0, length = 301) .+ 1e-6im,
     )
 )
 

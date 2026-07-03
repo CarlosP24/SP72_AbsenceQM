@@ -5,7 +5,7 @@ JOB_INFO=$(sbatch -v --parsable --export=ALL <<EOT
 #!/bin/bash
 #SBATCH --partition=most
 #SBATCH --ntasks-per-node=192
-#SBATCH --nodes=1
+#SBATCH --nodes=2
 #SBATCH --cpus-per-task=1
 #SBATCH --mem-per-cpu=2G
 #SBATCH --output="logs/%A_%a.out"

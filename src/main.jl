@@ -7,7 +7,8 @@ ensure_pkgs(["Quantica", "FullShell", "ProgressMeter", "Parameters", "ArnoldiMet
     using ArnoldiMethod, LinearMaps, LinearAlgebra
     using FFTW
     using SpecialFunctions, FunctionZeros
-
+    using Suppressor
+    
     # Load
     include("utilities.jl")
     include_all("builders")

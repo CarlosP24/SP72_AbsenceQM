@@ -21,7 +21,6 @@ function figure_temperature(; colorrangeM = (0, 0.07), colorrangeQ = (0, 0.005))
 
     Colorbar(fig[1, 2], colormap = :thermal, limits = colorrangeM, ticks = [colorrangeM[1], colorrangeM[2]]; cbarlab...)
 
-    
     ax = Axis(fig[1, 3]; xlabel, ylabel, xticks)
     mGQ, MGQ = plot_conductance(ax, "base_fs_szoom"*temp, "QMajo";  colorrange = colorrangeQ)
     hideydecorations!(ax; ticks = false)

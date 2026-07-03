@@ -1,8 +1,5 @@
 fermi_kernel(δω, kBT) = inv(4 * kBT) * sech(δω / (2 * kBT))^2
 
-#tau(χ) = 10^(-0.3 * log10(χ)^2 + 0.22 * log10(χ) - 1)
-#tau(χ) = 1e-1
-
 function thermal_broadening_plan(ωvals::AbstractVector, kBT::Real)
     kBT > 0 || throw(ArgumentError("kBT must be positive to build a thermal broadening plan."))
 
@@ -68,16 +65,10 @@ function apply_thermal_broadening!(Cond::Dict, ωrng, kBT)
     return Cond
 end
 
-# function convolve(f, g, t; lo=-Inf, hi=Inf; kwargs...)
-#     integrand(τ) = f(τ) * g(t - τ)
-#     val, err = quadgk(integrand, lo, hi; kwargs...)
-#     return val
-# end
-
 function build_NS(params_wire::Union{Params, Params_Partial}, χ)
     hSM, hSC, params_wire = build(params_wire)
-    hSstep, L = build_barrier(hSC, params_wire, χ)
 
+    hSstep, L = build_barrier(hSC, params_wire, χ)
 
     atolx = params_wire.a0 / 10
     left_face = r -> abs(r[1]) <= atolx
@@ -87,7 +78,9 @@ function build_NS(params_wire::Union{Params, Params_Partial}, χ)
 
     gS_inf = hSC |> greenfunction(GS.Schur(boundary = 0))
     coupling = build_coupling(params_wire)
-    g = hSstep |>
+
+    local g
+    @suppress g = hSstep |>
         attach(gS_inf; region = right_face) |>
         attach(gN_inf, coupling; region = left_face) |>
         greenfunction()
@@ -108,6 +101,14 @@ function fermi_dirac_deriv(V, kBT)
     return abs(x) > 40 ? 0.0 : (1/(4*kBT)) * sech(x)^2
 end
 
+function broadened_conductance(G0, V, kBT, width)
+    kBT == 0 && return G0(V)
+    Vr = real(V)
+    integrand(ω) = G0(ω) * fermi_dirac_deriv(Vr - ω, kBT)
+    val, err = quadgk(integrand, Vr - width, Vr + width)
+    return val
+end
+
 function calc_conductance(name::String)
     system = systems[name]
 
@@ -120,22 +121,17 @@ function calc_conductance(name::String)
 
     #G = conductance(g[2, 2]; nambu = true)
 
-    width = 40 * kBT
+    #width = 40 * kBT
 
     Cond = pfunction(
         (χ, V, Z, Φ) -> 
         try
-            Vr = real(V)
-            Vi = imag(V)
-            g = build_NS(system.params_wire, χ)
-            G = conductance(g[2, 2]; nambu = true)
-            G0(ω) = G(ω + Vi*1im; ω = ω + Vi*1im, Φ, Z, χ, τ)
-            if kBT == 0
-                return G0(V)
-            end
-            integrand(ω) = G0(ω) * fermi_dirac_deriv(real(V) - ω, kBT)
-            val, err = quadgk(integrand, Vr - width, Vr + width )
-            return val
+            # Vi = imag(V)
+            g = build_NS(system.params_wire, χ);
+            G = conductance(g[2, 2]; nambu = true);
+            # G0(ω) = G(ω + Vi*1im; ω = ω + Vi*1im, Φ, Z, χ, τ)
+            # broadened_conductance(G0, V, kBT, width)
+            G(V; ω = V, Φ, Z, τ)
         catch e
             @warn "Error calculating conductance at (Φ=$Φ, V=$V, Z=$Z): $e"
             NaN
@@ -151,7 +147,7 @@ function calc_conductance(name::String)
         name => Cond[:, :, i] for (i, name) in enumerate(["Majo", "QMajo"])
     )
 
-    #apply_thermal_broadening!(Cond, ωrng, kBT)
+    apply_thermal_broadening!(Cond, ωrng, kBT)
 
     return Results(
         system = system,
@@ -169,25 +165,18 @@ function calc_conductance_Φ(name::String)
     path = "$(outdir)/Conductance_Phi/$(name).jld2"
     mkpath(dirname(path))
 
-    width = 40 * kBT
+    #width = 40 * kBT
 
     Cond = pfunction(
         (Φ, V, Z, χ) -> try
-            g = build_NS(system.params_wire, χ)
-            G = conductance(g[2, 2]; nambu = true)
-            Vr = real(V)
-            Vi = imag(V)
-            g = build_NS(system.params_wire, χ)
-            G = conductance(g[2, 2]; nambu = true)
-            G0(ω) = G(ω + Vi*1im; ω = ω + Vi*1im, Φ, Z, χ, τ)
-            if kBT == 0
-                return G0(V)
-            end
-            integrand(ω) = G0(ω) * fermi_dirac_deriv(real(V) - ω, kBT)
-            val, err = quadgk(integrand, Vr - width, Vr + width )
-            return val
+            # Vi = imag(V)
+            g = build_NS(system.params_wire, χ);
+            G = conductance(g[2, 2]; nambu = true);
+            # G0(ω) = G(ω + Vi*1im; ω = ω + Vi*1im, Φ, Z, χ, τ)
+            # broadened_conductance(G0, V, kBT, width)
+            G(V; ω = V, Φ, Z, τ)
         catch e
-            @warn "Error calculating conductance at (Φ=$Φ, ω=$ω, Z=$Z): $e"
+            @warn "Error calculating conductance at (Φ=$Φ, V=$V, Z=$Z): $e"
             NaN
         end,
         [Φrng_PD, ωrng, Zs, χs];
@@ -201,7 +190,7 @@ function calc_conductance_Φ(name::String)
         χ => Cond[:, :, i] for (i, χ) in enumerate(χs)
     )
 
-    #apply_thermal_broadening!(Cond, ωrng, kBT)
+    apply_thermal_broadening!(Cond, ωrng, kBT)
 
     return Results(
         system = system,
@@ -227,22 +216,17 @@ function calc_conductance_τ(name::String)
     g = build_NS(system.params_wire, χs[1])
     G = conductance(g[2, 2]; nambu = true)
 
-    width = 40 * kBT
+    #width = 40 * kBT
 
 
     Cond = pfunction(
         (τ, V, Z, Φ) -> try
-            Vr = real(V)
-            Vi = imag(V)
-            G0(ω) = G(ω + Vi*1im; ω = ω + Vi*1im, Φ, Z, τ)
-            if kBT == 0
-                return G0(V)
-            end
-            integrand(ω) = G0(ω) * fermi_dirac_deriv(real(V) - ω, kBT)
-            val, err = quadgk(integrand, Vr - width, Vr + width )
-            return val
+            #Vi = imag(V)
+            #G0(ω) = G(ω + Vi*1im; ω = ω + Vi*1im, Φ, Z, τ)
+            #broadened_conductance(G0, V, kBT, width)
+            G(V; ω = V, Φ, Z, τ)
         catch e
-            @warn "Error calculating conductance at (Φ=$Φ, ω=$ω, Z=$Z): $e"
+            @warn "Error calculating conductance at (Φ=$Φ, V=$V, Z=$Z): $e"
             NaN
         end,
         [τrng, ωrng, Zs, Φs];
@@ -256,7 +240,7 @@ function calc_conductance_τ(name::String)
         name => Cond[:, :, i] for (i, name) in enumerate(["Majo", "QMajo"])
     )
 
-    #apply_thermal_broadening!(Cond, ωrng, kBT)
+    apply_thermal_broadening!(Cond, ωrng, kBT)
 
     return Results(
         system = system,
@@ -277,19 +261,14 @@ function calc_conductance_Pτ(name::String)
     g = build_NS(system.params_wire, χs[1])
     G = conductance(g[2, 2]; nambu = true)
 
-    width = 40 * kBT
+    #width = 40 * kBT
 
     Cond = pfunction(
         (τ, V, B) -> try
-            Vr = real(V)
-            Vi = imag(V)
-            G0(ω) = G(ω + Vi*1im; ω = ω + Vi*1im, B, τ)
-            if kBT == 0
-                return G0(V)
-            end
-            integrand(ω) = G0(ω) * fermi_dirac_deriv(real(V) - ω, kBT)
-            val, err = quadgk(integrand, Vr - width, Vr + width )
-            return val
+            # Vi = imag(V)
+            # G0(ω) = G(ω + Vi*1im; ω = ω + Vi*1im, B, τ)
+            # broadened_conductance(G0, V, kBT, width)
+            G(V; ω = V, Φ, Z, τ)
         catch e
             @warn "Error calculating conductance at (B=$B, V=$V, τ=$τ): $e"
             NaN
@@ -302,7 +281,7 @@ function calc_conductance_Pτ(name::String)
         name => Cond[:, :, i] for (i, name) in enumerate(["Majo", "QMajo"])
     )
 
-    #apply_thermal_broadening!(Cond, ωrng, kBT)
+    apply_thermal_broadening!(Cond, ωrng, kBT)
 
     return Results(
         system = system,
