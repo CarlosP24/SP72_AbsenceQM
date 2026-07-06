@@ -19,7 +19,7 @@ atto:
   launcher: bin/launcher.sh
   partition: most
   ntasks_per_node: 192
-  nodes: 2
+  nodes: 1
   #ntasks: 192
   cpus_per_task: 1
   mem_per_cpu: 2G
