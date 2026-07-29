@@ -1,5 +1,5 @@
 function figure_wyS(strength::String = "")
-    fig = Figure(size = (600, 450), fontsize = 20)
+    fig = Figure(size = (600, 410), fontsize = 20)
 
     xlabel = L"$\chi$ (nm)"
     
@@ -46,8 +46,8 @@ function figure_wyS(strength::String = "")
     text!(ax, 200, 0.15; text = "Q-MZM", color = :white, align = (:center, :center),)
     text!(ax, 200, -0.15; text = L"\Phi=\Phi^{(2)}", color = :white, align = (:center, :center))
 
-    Colorbar(fig[1, 3], colormap = :thermal, limits = (0, 1), ticks = [0, 1], label = L"$$ LDOS (arb.  units)", labelpadding = -15, labelsize = 14)
-    Colorbar(fig[2, 3], colormap = :thermal, limits = (0, 1), ticks = [0, 1], label = L"$$ LDOS (arb.  units)", labelpadding = -15, labelsize = 14)
+    Colorbar(fig[1, 3], colormap = :thermal, limits = (0, 1), ticks = [0, 1], label = L"$$ LDOS (arb. u)", labelpadding = -15, labelsize = 14)
+    Colorbar(fig[2, 3], colormap = :thermal, limits = (0, 1), ticks = [0, 1], label = L"$$ LDOS (arb. u)", labelpadding = -15, labelsize = 14)
 
     colgap!(fig.layout, 2, 5)
 

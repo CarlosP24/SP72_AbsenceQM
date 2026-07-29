@@ -5,7 +5,7 @@ end
 
 
 function figure_wyG(;)
-    fig = Figure(size = (600, 900), fontsize = 20)
+    fig = Figure(size = (600,800), fontsize = 20)
     
     ins = MarkerElement(marker = :rect, color = (:gray, 0.2), strokecolor = :black, strokewidth = 1.5, markersize = 16)
     triv = MarkerElement(marker = :rect, color = :white, strokecolor = :black, strokewidth = 1.5, markersize = 16)
