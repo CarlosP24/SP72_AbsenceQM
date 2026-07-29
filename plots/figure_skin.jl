@@ -1,6 +1,6 @@
 
 function figure_skin(; color0 = :turquoise, color1 = :coral)
-    fig = Figure(size = (600, 320), fontsize = 20)
+    fig = Figure(size = (600, 290), fontsize = 20)
 
     ax = Axis(fig[1:2, 2]; alignmode = Inside())
     plot_µα(ax, "base_fs_alphazoom")
