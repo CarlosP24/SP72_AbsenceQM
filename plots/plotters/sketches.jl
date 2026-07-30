@@ -35,12 +35,13 @@ color_topo = (:red, 0.5)
 
 ## Sketch Partial 
 function sketch_partial(pos; path = "plots/sketches/partial-shell.png")
-    ax = Axis(pos; xlabel = L"z", alignmode = Mixed(left = -20, bottom = -30))
+    ax = Axis(pos; xlabel = L"z", alignmode = Mixed(left = -20, bottom = -30), xticklabelsize = 14, xlabelpadding = -18 )
 
 
     xlims!(ax, 0, 1)
     ylims!(ax, 0, 1)
-    hidexdecorations!(ax; label = false)
+    ax.xticks = ([0.2], [L"0"])
+    hidexdecorations!(ax; label = false, ticks = false, ticklabels = false)
     hideydecorations!(ax) 
 
     band!(ax, [0, 0.05], 0.85, 0.95; color = color_probe)
@@ -110,7 +111,7 @@ function sketch_partial(pos; path = "plots/sketches/partial-shell.png")
     
     lines!(ax, [0.2, 0.2], [0, 0.18]; color = (:black, 0.5), linewidth = 2)
     text!(ax, 0.16, 0.09; text = L"\Psi", rotation = π/2, color = :black, align = (:center, :center), fontsize = 16)
-
+    
     xrng = range(0, 1, length = 1000)
     yrng = lorentz_exp_profile.(xrng; gamma = 0.1, chi = 9, y_inf = 0.1, y_join = 0.2, ylimit = 0.35)
 
@@ -144,12 +145,13 @@ end
 
 ## Sketch FS 
 function sketch_FS(pos; path = "plots/sketches/full-shell.png")
-    ax = Axis(pos; xlabel = L"z",  alignmode = Mixed(left = -20, bottom = -30))
+    ax = Axis(pos; xlabel = L"z", alignmode = Mixed(left = -20, bottom = -30), xticklabelsize = 14, xlabelpadding = -18 )
 
     xlims!(ax, 0, 1)
     ylims!(ax, 0, 1)
-    hidexdecorations!(ax; label = false)
-    hideydecorations!(ax;) 
+    ax.xticks = ([0.2], [L"0"])
+    hidexdecorations!(ax; label = false, ticks = false, ticklabels = false)
+    hideydecorations!(ax) 
 
     band!(ax, [0, 0.05], 0.85, 0.95; color = color_probe)
     band!(ax, [0.05, 0.7], 0.85, 0.95; color = color_semi)
