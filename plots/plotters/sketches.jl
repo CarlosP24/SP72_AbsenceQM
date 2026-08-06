@@ -45,8 +45,8 @@ function sketch_partial(pos; path = "plots/sketches/partial-shell.png")
     hideydecorations!(ax) 
 
     band!(ax, [0, 0.05], 0.85, 0.95; color = color_probe)
-    band!(ax, [0.05, 1.0], 0.85, 0.95; color = color_semi)
-    band!(ax, [0.2, 1.0], 0.95, 1; color = color_super)
+    band!(ax, [0.05, 0.9], 0.85, 0.95; color = color_semi)
+    band!(ax, [0.2, 0.9], 0.95, 1; color = color_super)
 
     arrows2d!(ax, [0.2], [0.8], [0.5], [0.8]; argmode = :endpoint, color = :red)
     text!(ax, 0.51, 0.8; text = L"B", color = :red, align = (:left, :center), fontsize = 16)

@@ -10,8 +10,8 @@ function plot_wf(ax, name::String; key = "Majo", basepath = "data/wfs", color_ma
     #xlims!(ax, 1, L/10)
 end
 
-fig = Figure() 
-ax = Axis(fig[1, 1]) 
-plot_wf(ax, "base_partial";  key = "Majo")
-#xlims!(ax, 1, 200)
-fig
+# fig = Figure() 
+# ax = Axis(fig[1, 1]) 
+# plot_wf(ax, "base_partial";  key = "Majo")
+# #xlims!(ax, 1, 200)
+# fig

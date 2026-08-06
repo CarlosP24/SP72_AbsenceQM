@@ -118,6 +118,6 @@ function figure_skin(; color0 = :turquoise, color1 = :coral)
     return fig
 end
 
-fig = figure_skin()
-save("plots/figures/Fig4.pdf", fig)
-fig
+# fig = figure_skin()
+# save("plots/figures/Fig4.pdf", fig)
+# fig

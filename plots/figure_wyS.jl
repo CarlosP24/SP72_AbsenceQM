@@ -72,17 +72,17 @@ function figure_wyS(strength::String = "")
     return fig
 end
 
-fig = figure_wyS()
-save("plots/figures/Fig2.pdf", fig)
-fig
+# fig = figure_wyS()
+# save("plots/figures/Fig2.pdf", fig)
+# fig
 
 ##
-fig = figure_wyS("_weak")
-save("plots/figures/Fig3.pdf", fig)
-fig
+# fig = figure_wyS("_weak")
+# save("plots/figures/Fig3.pdf", fig)
+# fig
 
 ##
-fig = Figure()
-ax = Axis(fig[1, 1]; xlabel = L"$\chi$ (nm)", ylabel = L"$\omega / \Delta_0$")
-plot_LDOS(ax, "base_fs_szoom", "QMajo"; basepath = "data/DOS_chi", colorrange = (0.2, 1), )
-fig
+# fig = Figure()
+# ax = Axis(fig[1, 1]; xlabel = L"$\chi$ (nm)", ylabel = L"$\omega / \Delta_0$")
+# plot_LDOS(ax, "base_fs_szoom", "QMajo"; basepath = "data/DOS_chi", colorrange = (0.2, 1), )
+# fig

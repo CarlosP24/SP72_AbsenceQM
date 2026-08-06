@@ -1,5 +1,3 @@
-fig = Figure()
-ax = Axis(fig[1, 1])
 
 function plot_wf_test(ax, name::String; key = "Majo", basepath = "data/wfs", color_majo = :blue, color_quasi = :red, quasi = true)
     path = "$(basepath)/$(name).jld2"
@@ -14,9 +12,9 @@ function plot_wf_test(ax, name::String; key = "Majo", basepath = "data/wfs", col
 end
 
 
-plot_wf_test(ax, "base_fs_fdos";  key = "QMajo", quasi = true,)
-xlims!(ax, 0, 1)
-fig
+# plot_wf_test(ax, "base_fs_fdos";  key = "QMajo", quasi = true,)
+# xlims!(ax, 0, 1)
+# fig
 
 
 ##
@@ -32,8 +30,8 @@ function plot_DOS_test(ax, name::String;     basepath = "data/DOS")
     lines!(ax, Φrng_DOS, DOS; color = :blue, linewidth = 2)
 end
 
-fig = Figure()
-ax = Axis(fig[1, 1])
-plot_DOS_test(ax, "base_fs_fdos";)
-plot_TT(ax, "base_fs"; color = :black, linewidth = 4)
-fig
+# fig = Figure()
+# ax = Axis(fig[1, 1])
+# plot_DOS_test(ax, "base_fs_fdos";)
+# plot_TT(ax, "base_fs"; color = :black, linewidth = 4)
+# fig

@@ -22,10 +22,10 @@ function tau_test(τ)
     return fig
 end
 
-τ = "0.9"
-fig = tau_test(τ)
-save("tau_test_" * τ * ".pdf", fig)
-fig
+# τ = "0.9"
+# fig = tau_test(τ)
+# save("tau_test_" * τ * ".pdf", fig)
+# fig
 
 ##
 function cond_vs_tau(name::String, key::String; basepath = "data/Conductance_Tau")
@@ -75,5 +75,5 @@ function cond_vs_tau(name::String, key::String; basepath = "data/Conductance_Tau
     return fig
 end
 
-fig = cond_vs_tau("base_partial_szoom_lowT", "Majo")
-fig
+# fig = cond_vs_tau("base_partial_szoom_lowT", "Majo")
+# fig

@@ -203,6 +203,6 @@ function figure_wyG(;)
     return fig
 end 
 
-fig = figure_wyG()
-save("plots/figures/Fig1.pdf", fig)
-fig
+# fig = figure_wyG()
+# save("plots/figures/Fig1.pdf", fig)
+# fig

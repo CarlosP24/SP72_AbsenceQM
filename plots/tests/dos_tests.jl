@@ -50,5 +50,5 @@ function dos_test(; pref = log(100))
     fig
 end
 
-fig = dos_test()
-fig
+# fig = dos_test()
+# fig

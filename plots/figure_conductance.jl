@@ -84,6 +84,6 @@ function figure_conductance(temp::String = ""; Φs = [0.65, 0.88], color_loop1 =
     return fig
 end
 
-fig = figure_conductance("_Zs")
-save("plots/figures/SFig_Conductance.pdf", fig)
-fig
+# fig = figure_conductance("_Zs")
+# save("plots/figures/SFig_Conductance.pdf", fig)
+# fig
