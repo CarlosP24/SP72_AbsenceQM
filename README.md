@@ -1,14 +1,15 @@
 # Absence of Quasi-Majorana False Positives in Full-Shell Hybrid Nanowires
 
+[![DOI: 10.1103/w9tp-3bbq](assets/aps-prl-badge.svg)](https://doi.org/10.1103/w9tp-3bbq)
 [![Julia v1.12+](https://img.shields.io/badge/Julia-v1.12+-blue.svg)](https://julialang.org/)
 [![Quantica badge](https://raw.githubusercontent.com/pablosanjose/Quantica.jl/master/docs/src/assets/badge.svg)](https://github.com/pablosanjose/Quantica.jl)
 [![License](https://img.shields.io/badge/License-GPL--3.0-blue.svg)](LICENSE.md)
 
-This repository contains the code used to perform numerical calculations and generate all figures for the manuscript "Absence of Quasi-Majorana False Positives in Full-Shell Hybrid Nanowires".
+This repository contains the code used to perform numerical calculations and generate all figures for the publication ["Absence of Quasi-Majorana False Positives in Full-Shell Hybrid Nanowires"](https://doi.org/10.1103/w9tp-3bbq).
 
 ## Abstract
 
-Tunneling spectroscopy cannot be used as an unambiguous detection tool for Majorana zero modes (MZMs) in conventional partial-shell nanowires. The presence of smooth confinement at the end of the hybrid wire (among other sources of disorder) can create exponentially pinned zero-energy states, called quasi-MZMs, that mimic all local signatures of MZMs but lack topological protection. We find that this is not the case in full-shell hybrid nanowires, an alternative nanowire design where a superconducting shell fully surrounds the semiconductor core. Acting as a synthetic vortex, a full-shell hybrid nanowire hosts Caroli-de Gennes-Matricon analog states. In the presence of smooth confinement, these states create a topologically trivial skin at the wire's end that prevents the local probe from detecting quasi-MZMs. Conversely, the trivial skin disappears when true MZMs form at the edge. This renders tunneling spectroscopy a reliable MZM detection technique in the presence of smooth disorder.
+Tunneling spectroscopy cannot be used as an unambiguous detection tool for Majorana zero modes (MZMs) in conventional partial-shell nanowires. The presence of smooth confinement at the end of the hybrid wire (among other sources of disorder) can create exponentially pinned zero-energy states, called quasi-MZMs, that mimic all local signatures of MZMs but lack topological protection. We find that this ambiguity in MZM detection does not occur in full-shell hybrid nanowires, an alternative nanowire design where a superconducting shell fully surrounds the semiconductor core. Acting as a synthetic vortex, a full-shell hybrid nanowire hosts Caroli-de Gennes-Matricon state analogs. In the presence of smooth confinement, these states create a topologically trivial skin at the wire's end that prevents the local probe from detecting quasi-MZMs. In this way, the same  mechanism that creates MZM impostors makes them invisible in tunneling spectroscopy, avoiding false positives produced by smooth disorder.
 
 ## About
 
@@ -91,15 +92,8 @@ make CLUSTER=esbirro sync
 
 ### Generating Figures
 
-Activate the plotting environment and include the figure scripts:
+Run the code in `plots/plots.jl` to generate all figures from the precomputed data in `data/`. This script will produce PDF figures in the `plots/figures/` directory.
 
-```bash
-julia --project=plots -e 'include("plots/plots.jl"); include("plots/figure_wyG.jl")'
-julia --project=plots -e 'include("plots/plots.jl"); include("plots/figure_wyS.jl")'
-julia --project=plots -e 'include("plots/plots.jl"); include("plots/figure_skin.jl")'
-```
-
-Generated figures are saved in `plots/figures/`.
 
 ## Repository Structure
 
@@ -107,42 +101,50 @@ Generated figures are saved in `plots/figures/`.
 ├── src/                    # Main source code
 │   ├── main.jl             # Entry point for numerical calculations
 │   ├── builders/           # Geometry and Hamiltonian builders
-│   ├── calculations/       # DOS, LDOS, phase-diagram, and wavefunction routines
+│   ├── calculations/       # DOS, LDOS, conductance, phase-diagram, and wavefunction routines
 │   ├── models/             # Full-shell and partial-shell parameter sets
 │   ├── operators/          # Green's functions and Pfaffian utilities
 │   └── parallelizers/      # Parallel execution helpers
 ├── plots/                  # Figure generation environment and scripts
-│   ├── plotters/           # Plotting utilities
+│   ├── plots.jl            # Runs all figure scripts
 │   ├── figure_wyG.jl       # Main comparison figure
 │   ├── figure_wyS.jl       # Smooth-confinement LDOS figures
 │   ├── figure_skin.jl      # Trivial-skin schematic and phase-diagram figure
+│   ├── figure_conductance.jl # Conductance figure
+│   ├── figure_temperature.jl # Temperature-dependence figure
+│   ├── plotters/           # Plotting utilities
+│   ├── sketches/           # Device schematic source images
+│   ├── tests/              # Plotting sanity-check scripts
 │   └── figures/            # Generated PDF figures
 ├── bin/                    # Local and cluster launch scripts
 ├── config/                 # Cluster configuration and job prologue/epilogue scripts
-├── data/                   # Precomputed numerical results in JLD2 format
+├── data/                   # Precomputed numerical results (published) in JLD2 format
 └── README.md
 ```
 
-## Dependencies
-
-### Core Packages
+## Core Dependencies
 
 - [Quantica.jl](https://github.com/pablosanjose/Quantica.jl): Quantum tight-binding calculations
 - [FullShell.jl](https://github.com/CarlosP24/FullShell.jl): Full-shell hybrid nanowire Hamiltonians
-- [JLD2.jl](https://github.com/JuliaIO/JLD2.jl): Data serialization
-- [Arpack.jl](https://github.com/JuliaLinearAlgebra/Arpack.jl): Eigenvalue computations
-- [ArnoldiMethod.jl](https://github.com/JuliaLinearAlgebra/ArnoldiMethod.jl): Iterative eigensolvers
 
-### Computational Environment
-
-- [CairoMakie.jl](https://github.com/MakieOrg/Makie.jl): Figure generation
-- [ProgressMeter.jl](https://github.com/timholy/ProgressMeter.jl): Progress tracking
-- [Parameters.jl](https://github.com/mauro3/Parameters.jl): Parameter handling
-- [SlurmClusterManager.jl](https://github.com/JuliaParallel/SlurmClusterManager.jl): SLURM integration
 
 ## Citation
 
-If you use this code in your research, please cite the associated manuscript. A formal citation entry will be added here once the preprint or journal version is publicly available.
+If you use this code in your research, please cite the associated publication:
+
+```bibtex
+@article{w9tp-3bbq,
+  title = {Absence of quasi-Majorana false positives in full-shell hybrid nanowires},
+  author = {Payá, Carlos and Robles, César and San-Jose, Pablo and Prada, Elsa},
+  journal = {Phys. Rev. Lett.},
+  pages = {},
+  year = {2026},
+  month = {Aug},
+  publisher = {American Physical Society},
+  doi = {10.1103/w9tp-3bbq},
+  url = {https://link.aps.org/doi/10.1103/w9tp-3bbq}
+}
+```
 
 ## License
 
