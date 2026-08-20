@@ -133,7 +133,7 @@ function sketch_partial(pos; path = "plots/sketches/partial-shell.png")
     xlims!(ax_wf, 0, 0.075)
     hidespines!(ax)
 
-    text!(ax, 0.12, 0.92; text = L"U(z)", align = (:center, :center), fontsize = 16)
+    text!(ax, 0.13, 0.93; text = L"e\phi_g(z)", align = (:center, :center), fontsize = 14)
 
     return ax 
 end
@@ -243,7 +243,7 @@ function sketch_FS(pos; path = "plots/sketches/full-shell.png")
 
     hidespines!(ax)
 
-    text!(ax, 0.12, 0.92; text = L"U(z)", align = (:center, :center), fontsize = 16)
+    text!(ax, 0.13, 0.93; text = L"e\phi_g(z)", align = (:center, :center), fontsize = 14)
 
     return ax 
 end
