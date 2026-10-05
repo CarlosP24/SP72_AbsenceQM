@@ -102,6 +102,15 @@ if endswith(input, "_wfs")
     exit(0)
 end
 
+if endswith(input, "_echi")
+    name = replace(input, "_echi" => "")
+    @info "Calculating lowest-state energy vs χ for $(name)"
+    res = calc_E_chi(name)
+    @info "Saving results to $(res.path)"
+    save(res.path, "res", res)
+    exit(0)
+end
+
 if endswith(input, "_ldosvB")
     name = replace(input, "_ldosvB" => "")
     @info "Calculating LDOS for $(name)"
