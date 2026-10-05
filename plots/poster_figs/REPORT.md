@@ -71,6 +71,14 @@ Plotting helpers in `plots/plotters/` and the builders in `src/builders/` are re
 - Phase labels are spelled out: Insulator, Topological, Trivial, and **Trivial skin**. "Skin"
   never appears on its own in either figure.
 
+## Hero regime divider (revision 3)
+
+- A white dashed line at χ* = 18.9 nm sits in both full-shell LDOS panels. χ* is the χ beyond
+  which the end signal stays below 1 % of its maximum in both panels (computed in
+  `χ_vanish` from the LDOS data: 18.9 nm true MZM, 18.4 nm Q-MZM).
+- Labels: "sharp end: probe works" (left) and "smooth end: trivial skin hides all" (right).
+- The ✗ / ✓ carry "ZBP ⇒ ?" (partial shell: a ZBP does not identify the state) and "ZBP ⇏ Q-MZM" (full shell: a ZBP cannot come from a Q-MZM).
+
 ## Numbers for the poster text
 
 - **Full-shell end-LDOS signal vanishes** (Q-MZM, Φ^(2), z = 0, m_J = 0). The peak LDOS in

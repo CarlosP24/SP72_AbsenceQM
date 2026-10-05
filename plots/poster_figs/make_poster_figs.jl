@@ -22,6 +22,7 @@ const mm = 72 / 25.4
 
 const fs_tick  = 22
 const fs_label = 26
+const fs_axis  = 32                     # axis labels
 const fs_title = 28
 const fs_row   = 30
 
@@ -47,7 +48,7 @@ const ldos_max = 1e-2                    # shared LDOS normalisation (all heatma
 
 axis_style = (
     xticklabelsize = fs_tick, yticklabelsize = fs_tick,
-    xlabelsize = fs_label, ylabelsize = fs_label,
+    xlabelsize = fs_axis, ylabelsize = fs_axis,
     spinewidth = lw_spine, xtickwidth = lw_spine, ytickwidth = lw_spine,
     xgridvisible = false, ygridvisible = false,
 )
@@ -242,6 +243,9 @@ function device!(pos, shell::Symbol)
     ax = Axis(pos; aspect = DataAspect(), backgroundcolor = :transparent)
     img = load(shell == :partial ? "plots/sketches/partial-shell.png" : "plots/sketches/full-shell.png")
     image!(ax, reverse(img, dims = 1)')
+    # flux threading the full-shell cross-section, marked on the core face
+    shell == :full && text!(ax, 178, size(img, 1) - 195; text = L"\Phi", color = :red,
+        fontsize = 48, align = (:center, :center))
     hidedecorations!(ax); hidespines!(ax)
     return ax
 end
@@ -254,6 +258,13 @@ function load_ldos(name, key)
     M = res.LDOS[key]
     M = cat(M, reverse(M, dims = 2)[:, 2:end], dims = 2)
     return collect(χrng), ω, M
+end
+
+# χ beyond which the end-LDOS signal of a panel stays below `frac` of its maximum
+function χ_vanish(name, key; frac = 0.01)
+    χ, ω, M = load_ldos(name, key)
+    pk = vec(maximum(M, dims = 2))
+    return χ[findlast(pk .>= frac * maximum(pk)) + 1]
 end
 
 # ωmax: energy half-range (Δ₀). The full-shell row is zoomed ~3× so that its true-MZM
@@ -348,7 +359,8 @@ function hero(; verdict = true)
         axs[(r, cols.rs)] = ax
 
         ax = Axis(fig[r, cols.mzm]; axis_style..., xlabel = L"\chi\ \mathrm{(nm)}", ylabel = L"\omega/\Delta_0",
-            yticklabelspace = 62.0)        # same in both rows so the ω/Δ₀ labels line up
+            yticklabelspace = 62.0,        # same in both rows so the ω/Δ₀ labels line up
+            ylabelpadding = -12)
         ldos_panel!(ax, lname, "Majo"; ωscale[shell]...)
         axs[(r, cols.mzm)] = ax
 
@@ -361,7 +373,7 @@ function hero(; verdict = true)
     # Field / flux of each LDOS panel (paper Fig. 1c,h marks)
     for (r, c, lab) in ((1, cols.mzm, L"V_\mathrm{Z} = V_\mathrm{Z}^{(1)}"), (1, cols.qmzm, L"V_\mathrm{Z} = V_\mathrm{Z}^{(2)}"),
                         (2, cols.mzm, L"\Phi = \Phi^{(1)}"), (2, cols.qmzm, L"\Phi = \Phi^{(2)}"))
-        text!(axs[(r, c)], 0.5, 0.96; space = :relative, text = lab, color = :white,
+        text!(axs[(r, c)], 0.6, 0.96; space = :relative, text = lab, color = :white,
             fontsize = fs_label, align = (:center, :top))
     end
 
@@ -370,6 +382,17 @@ function hero(; verdict = true)
     text!(axs[(2, cols.qmzm)], 0.97, 0.43; space = :relative,
         text = "Q-MZM exists,\ninvisible at end", color = :white, fontsize = fs_tick,
         align = (:right, :top), justification = :right)
+
+    # Full shell: χ* where the end signal vanishes (both panels), separating the two regimes
+    χstar = max(χ_vanish("base_fs_szoom", "Majo"), χ_vanish("base_fs_szoom", "QMajo"))
+    for c in (cols.mzm, cols.qmzm)
+        vlines!(axs[(2, c)], χstar; color = :white, linestyle = :dash, linewidth = lw_data)
+    end
+    axF = axs[(2, cols.mzm)]
+    text!(axF, χstar / 1.25, -0.062; text = "sharp end:\nprobe works", color = :white,
+        fontsize = fs_tick, align = (:right, :bottom), justification = :right)
+    text!(axF, χstar * 1.25, -0.062; text = "smooth end:\ntrivial skin hides all", color = :white,
+        fontsize = fs_tick, align = (:left, :bottom), justification = :left)
 
     # Shared x axes per column: x label only on the bottom row
     for c in (cols.rs, cols.mzm, cols.qmzm)
@@ -393,6 +416,14 @@ function hero(; verdict = true)
     else
         mark!(axs[(1, cols.qmzm)], false)
         mark!(axs[(2, cols.qmzm)], true)
+        # sans text like the other annotations; arrows taken from the bundled math font
+        mathfont = joinpath(dirname(pathof(Makie.MathTeXEngine)), "..", "assets", "fonts",
+            "NewComputerModern", "NewCMMath-Regular.otf")
+        arrow(c) = rich(" $(c) "; font = mathfont)
+        for (r, lab) in ((1, rich("ZBP", arrow("⇒"), "?")), (2, rich("ZBP", arrow("⇏"), "Q-MZM")))
+            text!(axs[(r, cols.qmzm)], 0.97, 0.76; space = :relative, text = lab, color = :white,
+                fontsize = fs_label, align = (:right, :top))
+        end
     end
 
     # One colorbar per row (same normalisation); label pulled in between the tick labels
