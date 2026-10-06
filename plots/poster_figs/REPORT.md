@@ -1,7 +1,7 @@
 # Poster figures: report
 
 Run `julia plots/poster_figs/make_poster_figs.jl` (plots env, ~50 s) to regenerate
-`hero_A.pdf`, `hero_B.pdf`, `fig2.pdf` and their 150 dpi `*_preview.png`.
+`hero_A.pdf`, `hero_B.pdf`, `hero_C.pdf`, `fig2.pdf` and their 150 dpi `*_preview.png`.
 
 ## Data and scripts reused
 
@@ -71,6 +71,19 @@ Plotting helpers in `plots/plotters/` and the builders in `src/builders/` are re
 - Phase labels are spelled out: Insulator, Topological, Trivial, and **Trivial skin**. "Skin"
   never appears on its own in either figure.
 
+## Hero MZM / Q-MZM strips (revision 4)
+
+- The hero is now **771 × 300 mm** (2186 × 850 pt), 25 % taller than the original spec.
+- Each real-space cell has the device cut on top, then an **MZM** strip (V_Z^(1) / Φ^(1)), then a
+  **Q-MZM** strip (V_Z^(2) / Φ^(2)), sharing the z/χ axis.
+- MZM strips use `data/wfs/*.jld2`, key `Majo`. Only the probe-end Majorana is drawn; its
+  partner sits at the far end of the simulated wire (z ≈ 100χ).
+- **Partial shell, V_Z^(1):** topological along the whole wire.
+- **Full shell, Φ^(1):** trivial skin for 0 < z < 3.42χ (μ^ts = 0.972 μ_bulk at Φ = 0.65), then
+  topological. The barrier projection uses the m_J = 0, m_r = 1 radial mode at Φ = 0.65.
+- The χ dimension bar now sits in the full-shell MZM strip; e·φ_g(z) is labelled only in the
+  MZM strips. "Insulator" is 20 pt to fit under the barrier peak.
+
 ## Hero regime divider (revision 3)
 
 - A white dashed line at χ* = 18.9 nm sits in both full-shell LDOS panels. χ* is the χ beyond
@@ -78,6 +91,43 @@ Plotting helpers in `plots/plotters/` and the builders in `src/builders/` are re
   `χ_vanish` from the LDOS data: 18.9 nm true MZM, 18.4 nm Q-MZM).
 - Labels: "sharp end: probe works" (left) and "smooth end: trivial skin hides all" (right).
 - The ✗ / ✓ carry "ZBP ⇒ ?" (partial shell: a ZBP does not identify the state) and "ZBP ⇏ Q-MZM" (full shell: a ZBP cannot come from a Q-MZM).
+
+## Hero variant C (vertical layout)
+
+- `hero_C.pdf`, 771 × 240 mm (2186 × 680 pt), the original hero height. Left half: partial shell.
+  Right half: full shell. Each half has a header (3D render, shell name and longitudinal cut)
+  over two columns, "True MZM" and "Quasi-MZM", each with the real-space strip above its
+  end-LDOS heatmap. Each half also has its own LDOS colorbar (same normalisation).
+- To save space, the axis labels sit inline, in the tick-label band:
+  - z goes between the 2χ and 4χ ticks (partial) or the 4χ and 6χ ticks (full). The strip
+    ticks read 0, 2χ, 4χ, … in all hero variants.
+  - ω/Δ₀ goes at ω = 0, left of the "0" tick label, between the ± tick labels.
+  - χ (nm) stays as a normal x label below the LDOS panels.
+- LDOS data, normalisation, energy ranges and annotations are the same as in hero_B
+  (`ldos_overlays!` is shared).
+- The partial-shell strips use z/χ ∈ [−1, 6] and the full-shell strips [−1, 9]. On the common
+  range, the "Topological" label does not fit the narrow partial-shell Q-MZM band
+  (0 < z < 1.86χ). The partial shell has no structure beyond ≈5χ.
+
+## Real-space strips (revision 4, all hero variants)
+
+- Wavefunctions: |Ψ_L|² is navy (#23427F, lighter than the black barrier) and |Ψ_R|² is orange
+  (#E07A00). Both contrast with the red-tint topological, green-tint skin and grey regions.
+- Both are drawn over the whole wire, from z = 0 to the panel edge, including where they
+  vanish. The true-MZM strips show only the end Majorana |Ψ_L|². The wire is semi-infinite,
+  so the simulated partner at z ≈ 100χ is not drawn.
+- The μ line and its label are dashed grey (#606060), distinct from the black eφ_g(z) and
+  from the orange |Ψ_R|².
+- χ bar in both true-MZM strips. Full shell: on the curve, as before. Partial shell: at the
+  top left, because the |Ψ_L|² oscillations fill 0 < z < χ.
+
+## Fig. 2 (revision 4)
+
+- Each trajectory is labelled MZM or Q-MZM: vertical text on its left, reading up from μ = 0.
+  The labels go on the left because the χ tick labels sit on the right.
+- In the full-shell panel, "Trivial skin" is set on two lines to leave room for these labels.
+- The μ_bulk line and label use the hero's μ grey (#606060).
+- Band-filling panel: "CdGMs" label with arrows to three white states on the left parabola.
 
 ## Numbers for the poster text
 
@@ -133,5 +183,4 @@ Plotting helpers in `plots/plotters/` and the builders in `src/builders/` are re
    1057 × 425 pt (target 1057.3 × 425.2), so the error is ≤ 0.2 mm.
 7. **Fonts.** TeX Gyre Heros for text and New Computer Modern for math (two families), all
    embedded as text (checked with `pdffonts`).
-8. **Wavefunction colours.** Left Q-MZM is the paper's dark red. Right Q-MZM is #1B5E20, darker
-   than the skin green #007749 and distinct from the skin tint.
+8. **Wavefunction colours.** Navy (left) and orange (right), see revision 4.

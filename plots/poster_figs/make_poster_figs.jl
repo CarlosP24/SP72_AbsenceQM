@@ -37,10 +37,15 @@ const c_skin      = colorant"#007749"   # PANTONE 3415 C
 const c_skin_tint = colorant"#B3D6C8"   # ~30 % tint of 3415 C
 const c_ins       = colorant"#BDBDBD"
 const c_triv      = colorant"#F4F4F4"
-const c_wfL       = colorant"#8B0000"   # paper's :darkred
-const c_wfR       = colorant"#1B5E20"   # darker than skin green
+const c_wfL       = colorant"#23427F"   # left (probe-side) MZM / Q-MZM: navy, lighter than the black barrier
+const c_wfR       = colorant"#E07A00"   # right Q-MZM: orange (contrasts on all region tints)
+const c_mu        = colorant"#606060"   # chemical potential line: grey, apart from the black eφ_g(z)
 const c_grey      = colorant"#8C8C8C"
 const c_insline   = colorant"#555555"   # trajectory segment inside the Ins region
+
+# Bundled math font (New Computer Modern), for math glyphs inside sans text
+const mathfont = joinpath(dirname(pathof(Makie.MathTeXEngine)), "..", "assets", "fonts",
+    "NewComputerModern", "NewCMMath-Regular.otf")
 
 const Δ0 = 0.23
 const cmap = :thermal
@@ -79,7 +84,8 @@ function μz_full_factory(; Φ = 0.88)
     U = bessel_barrier_kernel(pw.R, 100)
     return z -> 1 - sum(ρ .* [U(z, r, 1.0, 1.0) for r in rs])
 end
-const μz_full = μz_full_factory()
+const μz_full = μz_full_factory()                 # Φ^(2): Q-MZM case
+const μz_full1 = μz_full_factory(; Φ = 0.65)      # Φ^(1): MZM case
 
 # z/χ where μ(z)/μ_bulk crosses y (monotonic bisection)
 function z_of_μ(f, y; lo = 0.0, hi = 30.0)
@@ -99,8 +105,11 @@ function phase_data()
     cp = res.system.calc_params
     j = argmin(abs.(cp.Φrng_PD .- 0.88))
     μts, μtop = pd_transitions(cp.μrng, res.PD[:, j]) ./ 22.8
+    j1 = argmin(abs.(cp.Φrng_PD .- 0.65))
+    μts1 = first(pd_transitions(cp.μrng, res.PD[:, j1])) / 22.8     # Φ^(1): topo up to μ_bulk
     return (;
-        μc_partial, μts, μtop,
+        μc_partial, μts, μtop, μts1,
+        zF1_skin_end = z_of_μ(μz_full1, μts1),
         zP_topo_end = z_of_μ(μz_partial, μc_partial),
         zF_skin_end = z_of_μ(μz_full, μts),
         zF_topo_end = z_of_μ(μz_full, μtop),
@@ -139,86 +148,107 @@ function band_label!(ax, x, txt; color = :black, font = :regular, y = y_lbl)
     text!(ax, x, y; text = txt, color, font, fontsize = fs_tick, align = (:center, :center))
 end
 
-function realspace!(ax, shell::Symbol)
-    zmin, zmax = zlims
+# Real-space strip for one case: :majo (V_Z^(1) / Φ^(1)) or :qmajo (V_Z^(2) / Φ^(2))
+function realspace!(ax, shell::Symbol, case::Symbol; zl = zlims)
+    zmin, zmax = zl
     vspan!(ax, zmin, 0; color = c_ins)
     if shell == :partial
-        z1 = PH.zP_topo_end
-        vspan!(ax, 0, z1; color = c_topo_tint)
-        vspan!(ax, z1, zmax; color = c_triv)
-        band_label!(ax, z1 / 2, "Topological")
-        band_label!(ax, (z1 + zmax) / 2, "Trivial")
         name, χ, μz = "base_partial", 200, μz_partial
+        if case == :majo                          # topological all along the wire
+            vspan!(ax, 0, zmax; color = c_topo_tint)
+            band_label!(ax, zmax / 2, "Topological")
+        else
+            z1 = PH.zP_topo_end
+            vspan!(ax, 0, z1; color = c_topo_tint)
+            vspan!(ax, z1, zmax; color = c_triv)
+            band_label!(ax, z1 / 2, "Topological")
+            band_label!(ax, (z1 + zmax) / 2, "Trivial")
+        end
+        param = case == :majo ? L"V_\mathrm{Z} = V_\mathrm{Z}^{(1)}" : L"V_\mathrm{Z} = V_\mathrm{Z}^{(2)}"
     else
-        z1, z2 = PH.zF_skin_end, PH.zF_topo_end
-        vspan!(ax, 0, z1; color = c_skin_tint)
-        vspan!(ax, z1, z2; color = c_topo_tint)
-        vspan!(ax, z2, zmax; color = c_triv)
+        name, χ = "base_fs", 1000
+        if case == :majo                          # trivial skin, then topological
+            μz, z1 = μz_full1, PH.zF1_skin_end
+            vspan!(ax, 0, z1; color = c_skin_tint)
+            vspan!(ax, z1, zmax; color = c_topo_tint)
+            band_label!(ax, z1 / 2, "Trivial skin"; color = c_skin, font = :bold)
+            band_label!(ax, (z1 + zmax) / 2, "Topological")
+        else
+            μz, z1, z2 = μz_full, PH.zF_skin_end, PH.zF_topo_end
+            vspan!(ax, 0, z1; color = c_skin_tint)
+            vspan!(ax, z1, z2; color = c_topo_tint)
+            vspan!(ax, z2, zmax; color = c_triv)
+            band_label!(ax, z1 / 2, "Trivial skin"; color = c_skin, font = :bold)
+            band_label!(ax, (z1 + z2) / 2, "Topological")
+            band_label!(ax, (z2 + zmax) / 2, "Trivial")
+        end
         vlines!(ax, [0, z1]; color = c_skin, linewidth = lw_spine)
-        band_label!(ax, z1 / 2, "Trivial skin"; color = c_skin, font = :bold)
-        band_label!(ax, (z1 + z2) / 2, "Topological")
-        band_label!(ax, (z2 + zmax) / 2, "Trivial")
-        name, χ, μz = "base_fs", 1000, μz_full
+        param = case == :majo ? L"\Phi = \Phi^{(1)}" : L"\Phi = \Phi^{(2)}"
     end
-    text!(ax, zmin / 2, 0.55; text = "Insulator", rotation = π/2, fontsize = fs_tick,
+    # rotated label tucked under the barrier peak (20 pt to fit the shorter strips)
+    text!(ax, -0.4, 0.68; text = "Insulator", rotation = π/2, fontsize = 20,
         align = (:center, :center))
+    text!(ax, zmax - 0.1, yE0 + hE + 0.07; text = param, fontsize = fs_label, align = (:right, :bottom))
 
-    # Barrier: band bottom eφ_g(z) and chemical potential μ
+    # Barrier: band bottom eφ_g(z) (black) and chemical potential μ (own colour, so the
+    # eφ_g(z) label above it is not read as its label)
     Ec = band_bottom(μz)
     zs = range(zmin, zmax, length = 800)
-    hlines!(ax, yE0 + hE; color = :black, linestyle = :dash, linewidth = 2.5)
-    text!(ax, zmax - 0.1, yE0 + hE; text = L"\mu", fontsize = fs_label, align = (:right, :bottom))
+    hlines!(ax, yE0 + hE; color = c_mu, linestyle = :dash, linewidth = 2.5)
+    text!(ax, zmax - 0.1, yE0 + hE; text = L"\mu", color = c_mu, fontsize = fs_label, align = (:right, :top))
     lines!(ax, zs, yE0 .+ hE .* Ec.(zs); color = :black, linewidth = lw_barrier)
-    text!(ax, 0.3, yE0 + hE + 0.04; text = L"e\phi_g(z)", fontsize = fs_tick,
+    case == :majo && text!(ax, 0.3, yE0 + hE + 0.04; text = L"e\phi_g(z)", fontsize = fs_tick,
         align = (:left, :bottom))
 
-    # Decay length χ of the barrier: dimension bar from z = 0 to z = χ, ending on the curve
-    # (drawn in the full-shell strip, where 0 < z < χ is free of wavefunction weight)
-    if shell == :full
-        yχ = yE0 + hE * Ec(1.0)
+    # Decay length χ of the barrier: dimension bar from z = 0 to z = χ (MZM strips). Full shell:
+    # on the curve, χ between bar and curve (the |Ψ|² baselines run below). Partial shell: the |Ψ_L|²
+    # oscillations fill that region, so the bar sits at the top, left of the phase label.
+    if case == :majo
+        yχ = shell == :full ? yE0 + hE * Ec(1.0) : 2.17
         lines!(ax, [0, 1], [yχ, yχ]; color = :black, linewidth = 3)
         for x in (0, 1)
             lines!(ax, [x, x], [yχ - 0.07, yχ + 0.07]; color = :black, linewidth = 3)
         end
-        text!(ax, 0.5, yχ - 0.015; text = L"\chi", fontsize = fs_title, align = (:center, :top))
+        shell == :full ?
+            text!(ax, 0.27, yχ + 0.02; text = L"\chi", fontsize = fs_title, align = (:center, :bottom)) :
+            text!(ax, 1.08, yχ; text = L"\chi", fontsize = fs_title, align = (:left, :center))
     end
 
-    # Quasi-MZM wavefunctions, each normalised to its own maximum
+    # Wavefunctions, each normalised to its own maximum and drawn over the whole wire
+    # (z ≥ 0), also where they vanish. MZM case: only the end Majorana (the wire is
+    # semi-infinite; the simulated partner at z ≈ 100χ is not drawn).
     @load "data/wfs/$(name).jld2" res
-    ΨL, ΨR = res.Psis["QMajo"]
+    ΨL, ΨR = res.Psis[case == :majo ? "Majo" : "QMajo"]
     z = (0:length(ΨL)-1) .* 5 ./ χ
     keep = z .<= zmax
-    # leading/trailing tails below 0.3 % of the peak are not drawn, so the humps don't
-    # overlap along y = 0 (the curve stays continuous between its first and last point above)
-    function tailcut(Ψ)
-        y = Ψ[keep] ./ maximum(Ψ)
-        i0, i1 = findfirst(>(3e-3), y), findlast(>(3e-3), y)
-        return [i0 <= i <= i1 ? wf_scale * y[i] : NaN for i in eachindex(y)]
-    end
-    lines!(ax, z[keep], tailcut(ΨL); color = c_wfL, linewidth = lw_rs)
-    lines!(ax, z[keep], tailcut(ΨR); color = c_wfR, linewidth = lw_rs)
+    case == :qmajo && lines!(ax, z[keep], wf_scale .* ΨR[keep] ./ maximum(ΨR); color = c_wfR, linewidth = lw_rs)
+    lines!(ax, z[keep], wf_scale .* ΨL[keep] ./ maximum(ΨL); color = c_wfL, linewidth = lw_rs)
     zL, zR = z[argmax(ΨL)], z[argmax(ΨR)]
     labL, labR = L"|\Psi_\mathrm{L}|^2", L"|\Psi_\mathrm{R}|^2"
     if shell == :partial
-        text!(ax, zL + 0.4, 1.08; text = labL, color = c_wfL, fontsize = fs_label, align = (:left, :center))
-        text!(ax, zR + 0.75, 0.8wf_scale; text = labR, color = c_wfR, fontsize = fs_label, align = (:left, :center))
+        text!(ax, zL + 0.4, 1.0; text = labL, color = c_wfL, fontsize = fs_label, align = (:left, :center))
+        case == :qmajo && text!(ax, zR + 0.75, 0.8wf_scale; text = labR, color = c_wfR, fontsize = fs_label, align = (:left, :center))
     else
         text!(ax, zL - 0.3, 0.8wf_scale; text = labL, color = c_wfL, fontsize = fs_label, align = (:right, :center))
-        text!(ax, zR - 1.2, 0.8wf_scale; text = labR, color = c_wfR, fontsize = fs_label, align = (:right, :center))
+        case == :qmajo && text!(ax, zR - 1.2, 0.8wf_scale; text = labR, color = c_wfR, fontsize = fs_label, align = (:right, :center))
     end
 
-    xlims!(ax, zlims...)
+    xlims!(ax, zl...)
     ylims!(ax, -0.05, 2.42)
-    ax.xticks = 0:2:8
-    hideydecorations!(ax)
+    # ticks in units of χ: 0, 2χ, 4χ, … (sans digits, math-italic χ as in the other labels)
+    zt = 0:2:floor(Int, zmax)
+    ax.xticks = (collect(zt), [n == 0 ? rich("0") : rich("$(n)", rich("𝜒"; font = mathfont)) for n in zt])
+    ax.ylabel = case == :majo ? "MZM" : "Q-MZM"
+    ax.ylabelsize = fs_label
+    ax.ylabelpadding = 2
+    hideydecorations!(ax; label = false)
     return ax
 end
 
 # Device sketch (paper Fig. 1a,d): longitudinal cut aligned with z/χ
-function sketch!(pos, shell::Symbol)
+function sketch!(pos, shell::Symbol; zend = zlims[2])
     ax = Axis(pos; backgroundcolor = :transparent)
     hidedecorations!(ax); hidespines!(ax)
-    zend = zlims[2]
     ySM = (0.3, 0.64)
     ymid = sum(ySM) / 2
     band!(ax, [-1, -0.75], ySM...; color = color_probe)
@@ -228,12 +258,10 @@ function sketch!(pos, shell::Symbol)
     text!(ax, -0.95, ySM[2] + 0.04; text = "probe", fontsize = fs_tick, align = (:left, :bottom))
     text!(ax, 0.2, ySM[2] + 0.15; text = "SC", fontsize = fs_tick, align = (:left, :center))
     text!(ax, 0.2, ymid; text = "SM", fontsize = fs_tick, align = (:left, :center))
-    arrows2d!(ax, [2.5], [ymid], [5.5], [ymid]; argmode = :endpoint, color = :red,
+    xB0, xB1 = (2.5, 5.5) .* (zend / 9)            # B arrow scales with the z range
+    arrows2d!(ax, [xB0], [ymid], [xB1], [ymid]; argmode = :endpoint, color = :red,
         shaftwidth = 4, tiplength = 18, tipwidth = 18)
-    text!(ax, 5.7, ymid; text = L"B", color = :red, fontsize = fs_label, align = (:left, :center))
-    # the real-space strip shows the Q-MZM case
-    text!(ax, 6.7, ymid; text = shell == :partial ? L"V_\mathrm{Z} = V_\mathrm{Z}^{(2)}" : L"\Phi = \Phi^{(2)}",
-        color = :red, fontsize = fs_label, align = (:left, :center))
+    text!(ax, xB1 + 0.2, ymid; text = L"B", color = :red, fontsize = fs_label, align = (:left, :center))
     ylims!(ax, 0, 1)
     return ax
 end
@@ -331,11 +359,54 @@ function mark!(ax, ok::Bool)
         color = ok ? c_skin : c_topo, strokecolor = :white, strokewidth = 2)
 end
 
+# Energy range of the LDOS panels per shell. The full-shell row is zoomed ~3× so that its
+# true-MZM zero-energy line has the same apparent thickness as the partial-shell one.
+const ωscale = Dict(:partial => (ωmax = 0.2, ωticks = ([-0.2, 0, 0.2], ["−0.2", "0", "0.2"])),
+                    :full => (ωmax = 0.07, ωticks = ([-0.05, 0, 0.05], ["−0.05", "0", "0.05"])))
+
+# Annotations on the four LDOS panels (P/F: partial/full shell, M/Q: MZM/Q-MZM).
+# marks = true adds the ✗ / ✓ with their "ZBP ⇒ ?" / "ZBP ⇏ Q-MZM" captions.
+function ldos_overlays!(axPM, axPQ, axFM, axFQ; marks = true)
+    # Field / flux of each LDOS panel (paper Fig. 1c,h marks)
+    for (ax, lab) in ((axPM, L"V_\mathrm{Z} = V_\mathrm{Z}^{(1)}"), (axPQ, L"V_\mathrm{Z} = V_\mathrm{Z}^{(2)}"),
+                      (axFM, L"\Phi = \Phi^{(1)}"), (axFQ, L"\Phi = \Phi^{(2)}"))
+        text!(ax, 0.6, 0.96; space = :relative, text = lab, color = :white,
+            fontsize = fs_label, align = (:center, :top))
+    end
+
+    # Hidden quasi-MZM in the full shell (NEW)
+    hidden_state!(axFQ, "base_fs_szoom")
+    text!(axFQ, 0.97, 0.43; space = :relative,
+        text = "Q-MZM exists,\ninvisible at end", color = :white, fontsize = fs_tick,
+        align = (:right, :top), justification = :right)
+
+    # Full shell: χ* where the end signal vanishes (both panels), separating the two regimes
+    χstar = max(χ_vanish("base_fs_szoom", "Majo"), χ_vanish("base_fs_szoom", "QMajo"))
+    for ax in (axFM, axFQ)
+        vlines!(ax, χstar; color = :white, linestyle = :dash, linewidth = lw_data)
+    end
+    text!(axFM, χstar / 1.25, -0.062; text = "sharp end:\nprobe works", color = :white,
+        fontsize = fs_tick, align = (:right, :bottom), justification = :right)
+    text!(axFM, χstar * 1.25, -0.062; text = "smooth end:\ntrivial skin hides all", color = :white,
+        fontsize = fs_tick, align = (:left, :bottom), justification = :left)
+
+    marks || return nothing
+    mark!(axPQ, false)
+    mark!(axFQ, true)
+    # sans text like the other annotations; arrows taken from the bundled math font
+    arrow(c) = rich(" $(c) "; font = mathfont)
+    for (ax, lab) in ((axPQ, rich("ZBP", arrow("⇒"), "?")), (axFQ, rich("ZBP", arrow("⇏"), "Q-MZM")))
+        text!(ax, 0.97, 0.76; space = :relative, text = lab, color = :white,
+            fontsize = fs_label, align = (:right, :top))
+    end
+    return nothing
+end
+
 ## ---------------------------------------------------------------------------
-## Hero figure, 771 × 240 mm
+## Hero figure, 771 × 300 mm
 ## ---------------------------------------------------------------------------
 function hero(; verdict = true)
-    W, H = 771, 240
+    W, H = 771, 300
     fig = Figure(size = (W * mm, H * mm), figure_padding = 4mm, fontsize = fs_tick,
         backgroundcolor = :white)
 
@@ -343,19 +414,22 @@ function hero(; verdict = true)
                      (dev = 2, rs = 3, mzm = 4, qmzm = 5, ver = 0, cb = 6)
 
     axs = Dict{Tuple{Int,Int},Axis}()
-    ωscale = Dict(:partial => (ωmax = 0.2, ωticks = ([-0.2, 0, 0.2], ["−0.2", "0", "0.2"])),
-                  :full => (ωmax = 0.07, ωticks = ([-0.05, 0, 0.05], ["−0.05", "0", "0.05"])))
     for (r, shell, lname) in ((1, :partial, "base_partial_szoom"), (2, :full, "base_fs_szoom"))
+        # sketch on top, then the MZM and the Q-MZM real-space strips (shared z/χ axis)
         gl = fig[r, cols.rs] = GridLayout()
-        ax = Axis(gl[2, 1]; axis_style..., xlabel = L"z/\chi")
-        realspace!(ax, shell)
         axsk = sketch!(gl[1, 1], shell)
-        linkxaxes!(axsk, ax)
-        xlims!(axsk, zlims...)
-        xlims!(ax, zlims...)
-        rowsize!(gl, 1, Auto(0.4))
+        axM = Axis(gl[2, 1]; axis_style...)
+        realspace!(axM, shell, :majo)
+        ax = Axis(gl[3, 1]; axis_style..., xlabel = L"z")
+        realspace!(ax, shell, :qmajo)
+        linkxaxes!(axsk, axM, ax)
+        for a in (axsk, axM, ax)
+            xlims!(a, zlims...)
+        end
+        hidexdecorations!(axM; ticks = false)
+        rowsize!(gl, 1, Auto(0.45))
+        rowgap!(gl, 2mm)
         device!(fig[r, cols.dev], shell)
-        rowgap!(gl, 1, 2mm)
         axs[(r, cols.rs)] = ax
 
         ax = Axis(fig[r, cols.mzm]; axis_style..., xlabel = L"\chi\ \mathrm{(nm)}", ylabel = L"\omega/\Delta_0",
@@ -370,29 +444,8 @@ function hero(; verdict = true)
         axs[(r, cols.qmzm)] = ax
     end
 
-    # Field / flux of each LDOS panel (paper Fig. 1c,h marks)
-    for (r, c, lab) in ((1, cols.mzm, L"V_\mathrm{Z} = V_\mathrm{Z}^{(1)}"), (1, cols.qmzm, L"V_\mathrm{Z} = V_\mathrm{Z}^{(2)}"),
-                        (2, cols.mzm, L"\Phi = \Phi^{(1)}"), (2, cols.qmzm, L"\Phi = \Phi^{(2)}"))
-        text!(axs[(r, c)], 0.6, 0.96; space = :relative, text = lab, color = :white,
-            fontsize = fs_label, align = (:center, :top))
-    end
-
-    # Hidden quasi-MZM in the full shell (NEW)
-    hidden_state!(axs[(2, cols.qmzm)], "base_fs_szoom")
-    text!(axs[(2, cols.qmzm)], 0.97, 0.43; space = :relative,
-        text = "Q-MZM exists,\ninvisible at end", color = :white, fontsize = fs_tick,
-        align = (:right, :top), justification = :right)
-
-    # Full shell: χ* where the end signal vanishes (both panels), separating the two regimes
-    χstar = max(χ_vanish("base_fs_szoom", "Majo"), χ_vanish("base_fs_szoom", "QMajo"))
-    for c in (cols.mzm, cols.qmzm)
-        vlines!(axs[(2, c)], χstar; color = :white, linestyle = :dash, linewidth = lw_data)
-    end
-    axF = axs[(2, cols.mzm)]
-    text!(axF, χstar / 1.25, -0.062; text = "sharp end:\nprobe works", color = :white,
-        fontsize = fs_tick, align = (:right, :bottom), justification = :right)
-    text!(axF, χstar * 1.25, -0.062; text = "smooth end:\ntrivial skin hides all", color = :white,
-        fontsize = fs_tick, align = (:left, :bottom), justification = :left)
+    ldos_overlays!(axs[(1, cols.mzm)], axs[(1, cols.qmzm)], axs[(2, cols.mzm)], axs[(2, cols.qmzm)];
+        marks = !verdict)
 
     # Shared x axes per column: x label only on the bottom row
     for c in (cols.rs, cols.mzm, cols.qmzm)
@@ -413,24 +466,11 @@ function hero(; verdict = true)
     if verdict
         verdict!(fig[1, cols.ver], c_topo, "False positive", "ZEP looks\nlike an MZM")
         verdict!(fig[2, cols.ver], c_skin, "No false\npositive", "impostor buried\nby trivial skin")
-    else
-        mark!(axs[(1, cols.qmzm)], false)
-        mark!(axs[(2, cols.qmzm)], true)
-        # sans text like the other annotations; arrows taken from the bundled math font
-        mathfont = joinpath(dirname(pathof(Makie.MathTeXEngine)), "..", "assets", "fonts",
-            "NewComputerModern", "NewCMMath-Regular.otf")
-        arrow(c) = rich(" $(c) "; font = mathfont)
-        for (r, lab) in ((1, rich("ZBP", arrow("⇒"), "?")), (2, rich("ZBP", arrow("⇏"), "Q-MZM")))
-            text!(axs[(r, cols.qmzm)], 0.97, 0.76; space = :relative, text = lab, color = :white,
-                fontsize = fs_label, align = (:right, :top))
-        end
     end
 
     # One colorbar per row (same normalisation); label pulled in between the tick labels
     for r in 1:2
-        Colorbar(fig[r, cols.cb]; colormap = cmap, limits = (0, 1), ticks = ([0, 1], ["0", "1"]),
-            label = "LDOS (arb. u.)", labelsize = fs_label, ticklabelsize = fs_tick,
-            spinewidth = lw_spine, tickwidth = lw_spine, labelpadding = -16, width = 6mm)
+        ldos_colorbar!(fig[r, cols.cb])
     end
 
     widths = verdict ? [0.035, 0.09, 0.29, 0.2, 0.2, 0.11, 0.03] :
@@ -448,6 +488,97 @@ function hero(; verdict = true)
 end
 
 ## ---------------------------------------------------------------------------
+## Hero figure, variant C: 771 × H mm, partial shell (left half) | full shell (right half)
+## Per half: device header, then one column per case (true MZM, Q-MZM) holding the
+## real-space strip on top of its end-LDOS heatmap.
+## ---------------------------------------------------------------------------
+# Axis labels set inline, in the tick-label band (saves the label row/column). The x label is
+# centred at data x between two tick labels; the y label is rotated, centred at data y.
+function inline_xlabel!(ax, label, x)
+    pos = lift(ax.scene.viewport, ax.finallimits, ax.xticksize, ax.xticklabelpad) do vp, lims, ts, pad
+        s = ax.xscale[]
+        lo, hi = lims.origin[1], lims.origin[1] + lims.widths[1]
+        f = (s(x) - s(lo)) / (s(hi) - s(lo))
+        Point2f(vp.origin[1] + f * vp.widths[1], vp.origin[2] - ts - pad - fs_tick / 2)
+    end
+    text!(ax.blockscene, pos; text = label, fontsize = fs_axis, align = (:center, :center))
+end
+
+# `clear`: extra horizontal offset (pt), e.g. to clear a short tick label at the same height
+function inline_ylabel!(ax, label, y; fontsize = fs_axis, clear = 0)
+    pos = lift(ax.scene.viewport, ax.finallimits, ax.yticksize, ax.yticklabelpad) do vp, lims, ts, pad
+        f = (y - lims.origin[2]) / lims.widths[2]
+        Point2f(vp.origin[1] - ts - pad - clear, vp.origin[2] + f * vp.widths[2])
+    end
+    text!(ax.blockscene, pos; text = label, fontsize, rotation = π/2, align = (:center, :bottom))
+end
+
+function ldos_colorbar!(pos)
+    Colorbar(pos; colormap = cmap, limits = (0, 1), ticks = ([0, 1], ["0", "1"]),
+        label = "LDOS (arb. u.)", labelsize = fs_label, ticklabelsize = fs_tick,
+        spinewidth = lw_spine, tickwidth = lw_spine, labelpadding = -16, width = 6mm)
+end
+
+## ---------------------------------------------------------------------------
+## Hero figure, variant C: 771 × H mm, partial shell (left half) | full shell (right half)
+## Per half: device header, then one column per case (true MZM, Q-MZM) holding the
+## real-space strip on top of its end-LDOS heatmap, and an LDOS colorbar.
+## ---------------------------------------------------------------------------
+function hero_C(; H = 240)
+    W = 771
+    fig = Figure(size = (W * mm, H * mm), figure_padding = 4mm, fontsize = fs_tick,
+        backgroundcolor = :white)
+
+    # grid rows: 1 header, 2 case titles, 3 real space, 4 LDOS
+    # grid cols: 1–2 partial, 3 its colorbar, 4–5 full, 6 its colorbar
+    # The partial shell has no structure beyond z ≈ 5χ: its shorter z/χ range leaves room
+    # for the narrow topological band label in the Q-MZM strip. zlab: z label position.
+    halves = ((:partial, 1:3, "Partial shell", "base_partial_szoom", (-1.0, 6.0), 3.0),
+              (:full, 4:6, "Full shell", "base_fs_szoom", zlims, 5.0))
+    axL = Dict{Tuple{Symbol,Symbol},Axis}()
+    for (shell, cs, title, lname, zl, zlab) in halves
+        # header: 3D render, and the shell name over the longitudinal cut
+        hd = fig[1, cs] = GridLayout()
+        device!(hd[1:2, 1], shell)
+        Label(hd[1, 2], title; fontsize = fs_row, font = :bold, halign = :left, tellwidth = false)
+        axsk = sketch!(hd[2, 2], shell; zend = zl[2])
+        xlims!(axsk, zl...)
+        colsize!(hd, 2, Relative(0.68))
+        rowgap!(hd, 0)
+        colgap!(hd, 6mm)
+
+        for (c, case, key, ctitle) in ((cs[1], :majo, "Majo", "True MZM"), (cs[2], :qmajo, "QMajo", "Quasi-MZM"))
+            Label(fig[2, c], ctitle; fontsize = fs_title, tellwidth = false)
+            ax = Axis(fig[3, c]; axis_style...)
+            realspace!(ax, shell, case; zl)
+            hideydecorations!(ax)
+            inline_xlabel!(ax, L"z", zlab)
+            ax = Axis(fig[4, c]; axis_style..., xlabel = L"\chi\ \mathrm{(nm)}", xlabelpadding = 0)
+            ldos_panel!(ax, lname, key; ωscale[shell]...)
+            if case == :majo                   # ω/Δ₀ left of the "0" tick label, between the ± ones
+                inline_ylabel!(ax, L"\omega/\Delta_0", 0.0; clear = 0.6fs_tick + 8)
+            else
+                hideydecorations!(ax; ticks = false)
+            end
+            axL[(shell, case)] = ax
+        end
+        ldos_colorbar!(fig[4, cs[3]])
+    end
+    ldos_overlays!(axL[(:partial, :majo)], axL[(:partial, :qmajo)], axL[(:full, :majo)], axL[(:full, :qmajo)])
+
+    colgap!(fig.layout, 4mm)
+    colgap!(fig.layout, 2, 3mm)           # LDOS → colorbar
+    colgap!(fig.layout, 5, 3mm)
+    colgap!(fig.layout, 3, 12mm)          # between the two halves
+    rowgap!(fig.layout, 3mm)
+    rowgap!(fig.layout, 1, 4mm)
+    rowgap!(fig.layout, 2, 1mm)
+    rowsize!(fig.layout, 1, Fixed(40mm))
+    rowsize!(fig.layout, 3, Fixed(54mm))
+    return fig
+end
+
+## ---------------------------------------------------------------------------
 ## Fig. 2, 373 × 150 mm: why the skin appears
 ## ---------------------------------------------------------------------------
 const μlims = (-0.2, 1.1)
@@ -460,6 +591,13 @@ function trajectory!(ax, x, segments)
     tipcolor = last(segments)[3]          # arrowhead coloured by the bulk phase reached
     scatter!(ax, Point2f(x, 1.0); marker = :utriangle, markersize = 24, color = tipcolor,
         strokecolor = :white, strokewidth = 1)
+end
+
+# Case label (MZM / Q-MZM) set vertically along a trajectory, on its left (the χ tick labels
+# sit on the right in the full shell), reading upwards from just above μ = 0
+function traj_label!(ax, x, txt; y = 0.015)
+    text!(ax, x, y; text = txt, fontsize = fs_tick, rotation = π/2, offset = (-8, 0),
+        align = (:left, :bottom))
 end
 
 # Labels on z = χ, 2χ, 3χ ticks. valign lets close-by labels spread up/down from their tick.
@@ -503,8 +641,8 @@ function pd_partial!(ax)
     y = cp.μrngP ./ 2
     heatmap!(ax, x, y, res.PD'; colormap = [c_triv, c_topo_tint], colorrange = (-1, 1), interpolate = true, rasterize = 5)
     hspan!(ax, μlims[1], 0; color = c_ins)
-    hlines!(ax, 1; color = :black, linestyle = :dash, linewidth = lw_guide)
-    text!(ax, 1.98, 1.0; text = L"\mu_\mathrm{bulk}", align = (:right, :bottom), fontsize = fs_tick)
+    hlines!(ax, 1; color = c_mu, linestyle = :dash, linewidth = lw_guide)
+    text!(ax, 1.98, 1.0; text = L"\mu_\mathrm{bulk}", color = c_mu, align = (:right, :bottom), fontsize = fs_tick)
 
     B1, B2 = 1.5, 0.9
     # MZM: Ins → Topo all the way up
@@ -514,6 +652,8 @@ function pd_partial!(ax)
     trajectory!(ax, B2, [(μlims[1], 0, c_insline, 4), (0, μc, c_topo, 4), (μc, 1, :black, 4)])
     ticks_on_trajectory!(ax, B2, μz_partial; side = -1)
     ticks_on_trajectory!(ax, B1, μz_partial; labels = (nothing, nothing, nothing))
+    traj_label!(ax, B1, "MZM")
+    traj_label!(ax, B2, "Q-MZM")
 
     xlims!(ax, 0, 2)
     ax.xticks = ([0, B2, B1, 2], ["0", L"V_\mathrm{Z}^{(2)}", L"V_\mathrm{Z}^{(1)}", "2"])
@@ -545,8 +685,8 @@ function pd_full!(ax)
     heatmap!(ax, Φs, ys, M; colormap = [c_topo_tint, c_triv], colorrange = (-1, 1),
         interpolate = true, rasterize = 5)
     hspan!(ax, μlims[1], 0; color = c_ins)
-    hlines!(ax, 1; color = :black, linestyle = :dash, linewidth = lw_guide)
-    text!(ax, 1.49, 1.0; text = L"\mu_\mathrm{bulk}", align = (:right, :bottom), fontsize = fs_tick)
+    hlines!(ax, 1; color = c_mu, linestyle = :dash, linewidth = lw_guide)
+    text!(ax, 1.49, 1.0; text = L"\mu_\mathrm{bulk}", color = c_mu, align = (:right, :bottom), fontsize = fs_tick)
 
     Φ1, Φ2 = 0.65, 0.88
     yts, ytop = Yμ(μts), Yμ(μtop)
@@ -555,8 +695,10 @@ function pd_full!(ax)
     trajectory!(ax, Φ2, [(μlims[1], 0, c_insline, 4), skin, (yts, ytop, c_topo, 4), (ytop, 1, :black, 4)])
     ticks_on_trajectory!(ax, Φ2, μz_full; Y = Yμ, side = 1, valigns = (:center, :center, :bottom))
     ticks_on_trajectory!(ax, Φ1, μz_full; Y = Yμ, labels = (nothing, nothing, nothing))
-    text!(ax, 1.2, 0.18; text = "Trivial skin", color = c_skin, font = :bold,
-        fontsize = fs_label, align = (:center, :center))
+    traj_label!(ax, Φ1, "MZM")
+    traj_label!(ax, Φ2, "Q-MZM")
+    text!(ax, 1.22, 0.18; text = "Trivial\nskin", color = c_skin, font = :bold,
+        fontsize = fs_label, align = (:center, :center), justification = :center)
 
     xlims!(ax, 0.5, 1.5)
     ax.xticks = ([0.5, Φ1, Φ2, 1.5], ["0.5", L"\Phi^{(1)}", L"\Phi^{(2)}", "1.5"])
@@ -590,6 +732,19 @@ function filling!(ax)
     end
     text!(ax, 0.45, μts + 0.03; text = rich(rich("m"; font = :italic), subscript("J"; font = :italic), " = 0"),
         color = c_topo, fontsize = fs_tick, align = (:left, :bottom))
+
+    # The other (white) states are CdGM levels: label inside the left parabola, arrows to
+    # three of its states. Tips stop short of the markers; sx, sy ≈ pt per data unit.
+    xc, yc = -1.0, 0.955
+    text!(ax, xc, yc + 0.012; text = "CdGMs", color = c_insline, fontsize = fs_tick,
+        align = (:center, :bottom))
+    sx, sy = 61, 400
+    for xd in xS[2:4]
+        yd = fL(xd)
+        t = 1 - 13 / hypot((xd - xc) * sx, (yd - yc) * sy)
+        arrows2d!(ax, [xc], [yc], [xc + t * (xd - xc)], [yc + t * (yd - yc)]; argmode = :endpoint,
+            color = c_insline, shaftwidth = 2, tiplength = 12, tipwidth = 11)
+    end
 
     xlims!(ax, -2.1, 2.1)
     ylims!(ax, ylo, yhi)
@@ -633,5 +788,6 @@ end
 if abspath(PROGRAM_FILE) == @__FILE__
     render(hero(; verdict = true), "hero_A")
     render(hero(; verdict = false), "hero_B")
+    render(hero_C(), "hero_C")
     render(fig2(), "fig2")
 end
