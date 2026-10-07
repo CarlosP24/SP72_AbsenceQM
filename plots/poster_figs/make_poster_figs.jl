@@ -353,6 +353,18 @@ const check_marker = BezierPath([
     LineTo(Point2f(0.36, 0.50)), LineTo(Point2f(0.54, 0.32)), LineTo(Point2f(-0.12, -0.34)),
     ClosePath()])
 
+# Rounded tag with white bold text, top right of a panel (pixel space, sized to the text).
+# ytop: top edge as a fraction of the panel height.
+function verdict_tag!(ax, txt, color; ytop = 0.78, fontsize = fs_label, padx = 10, pady = 7)
+    tw = Makie.text_bb(txt, Makie.to_font("TeX Gyre Heros Makie Bold"), fontsize).widths[1]
+    w, h = tw + 2padx, fontsize + 2pady
+    corner = lift(vp -> Point2f(vp.widths[1] - 12, ytop * vp.widths[2]), ax.scene.viewport)
+    poly!(ax, lift(c -> rounded_rect(c[1] - w, c[2] - h, w, h, 8), corner); space = :pixel,
+        color, strokecolor = :white, strokewidth = 1.5)
+    text!(ax, lift(c -> c .- Point2f(w / 2, h / 2), corner); space = :pixel, text = txt,
+        font = :bold, color = :white, fontsize, align = (:center, :center))
+end
+
 function mark!(ax, ok::Bool)
     scatter!(ax, Point2f(0.93, 0.85); space = :relative,
         marker = ok ? check_marker : :xcross, markersize = 40,
@@ -365,8 +377,9 @@ const ωscale = Dict(:partial => (ωmax = 0.2, ωticks = ([-0.2, 0, 0.2], ["−0
                     :full => (ωmax = 0.07, ωticks = ([-0.05, 0, 0.05], ["−0.05", "0", "0.05"])))
 
 # Annotations on the four LDOS panels (P/F: partial/full shell, M/Q: MZM/Q-MZM).
-# marks = true adds the ✗ / ✓ with their "ZBP ⇒ ?" / "ZBP ⇏ Q-MZM" captions.
-function ldos_overlays!(axPM, axPQ, axFM, axFQ; marks = true)
+# Verdict on the Q-MZM panels. marks = :marks: ✗ / ✓ with their "ZBP ⇒ ?" / "ZBP ⇏ Q-MZM"
+# captions; :tags: "False positive" / "No false positive" tags; :none: nothing.
+function ldos_overlays!(axPM, axPQ, axFM, axFQ; marks = :marks)
     # Field / flux of each LDOS panel (paper Fig. 1c,h marks)
     for (ax, lab) in ((axPM, L"V_\mathrm{Z} = V_\mathrm{Z}^{(1)}"), (axPQ, L"V_\mathrm{Z} = V_\mathrm{Z}^{(2)}"),
                       (axFM, L"\Phi = \Phi^{(1)}"), (axFQ, L"\Phi = \Phi^{(2)}"))
@@ -390,7 +403,12 @@ function ldos_overlays!(axPM, axPQ, axFM, axFQ; marks = true)
     text!(axFM, χstar * 1.25, -0.062; text = "smooth end:\ntrivial skin hides all", color = :white,
         fontsize = fs_tick, align = (:left, :bottom), justification = :left)
 
-    marks || return nothing
+    marks == :none && return nothing
+    if marks == :tags
+        verdict_tag!(axPQ, "False positive", c_topo)
+        verdict_tag!(axFQ, "No false positive", c_skin)
+        return nothing
+    end
     mark!(axPQ, false)
     mark!(axFQ, true)
     # sans text like the other annotations; arrows taken from the bundled math font
@@ -445,7 +463,7 @@ function hero(; verdict = true)
     end
 
     ldos_overlays!(axs[(1, cols.mzm)], axs[(1, cols.qmzm)], axs[(2, cols.mzm)], axs[(2, cols.qmzm)];
-        marks = !verdict)
+        marks = verdict ? :none : :marks)
 
     # Shared x axes per column: x label only on the bottom row
     for c in (cols.rs, cols.mzm, cols.qmzm)
@@ -564,7 +582,8 @@ function hero_C(; H = 240)
         end
         ldos_colorbar!(fig[4, cs[3]])
     end
-    ldos_overlays!(axL[(:partial, :majo)], axL[(:partial, :qmajo)], axL[(:full, :majo)], axL[(:full, :qmajo)])
+    ldos_overlays!(axL[(:partial, :majo)], axL[(:partial, :qmajo)], axL[(:full, :majo)], axL[(:full, :qmajo)];
+        marks = :tags)
 
     colgap!(fig.layout, 4mm)
     colgap!(fig.layout, 2, 3mm)           # LDOS → colorbar
@@ -730,7 +749,7 @@ function filling!(ax)
         scatter!(ax, others, f.(others); color = :white, strokecolor = c_grey, strokewidth = 2, markersize = 16)
         scatter!(ax, [xJ], [f(xJ)]; color = c_topo, markersize = 22)
     end
-    text!(ax, 0.45, μts + 0.03; text = rich(rich("m"; font = :italic), subscript("J"; font = :italic), " = 0"),
+    text!(ax, 0.22, μts + 0.03; text = rich(rich("m"; font = :italic), subscript("L"; font = :italic), " = ±½"),
         color = c_topo, fontsize = fs_tick, align = (:left, :bottom))
 
     # The other (white) states are CdGM levels: label inside the left parabola, arrows to

@@ -105,6 +105,8 @@ Plotting helpers in `plots/plotters/` and the builders in `src/builders/` are re
   - χ (nm) stays as a normal x label below the LDOS panels.
 - LDOS data, normalisation, energy ranges and annotations are the same as in hero_B
   (`ldos_overlays!` is shared).
+- In place of hero_B's ✗ / ✓ and ZBP captions, the Q-MZM panels carry rounded tags: a red
+  "False positive" (partial shell) and a green "No false positive" (full shell).
 - The partial-shell strips use z/χ ∈ [−1, 6] and the full-shell strips [−1, 9]. On the common
   range, the "Topological" label does not fit the narrow partial-shell Q-MZM band
   (0 < z < 1.86χ). The partial shell has no structure beyond ≈5χ.
@@ -128,6 +130,7 @@ Plotting helpers in `plots/plotters/` and the builders in `src/builders/` are re
 - In the full-shell panel, "Trivial skin" is set on two lines to leave room for these labels.
 - The μ_bulk line and label use the hero's μ grey (#606060).
 - Band-filling panel: "CdGMs" label with arrows to three white states on the left parabola.
+- Band-filling panel: the red pair is labelled m_L = ±½ (single ½ glyph: "±1/2" does not fit the panel width).
 
 ## Numbers for the poster text
 
