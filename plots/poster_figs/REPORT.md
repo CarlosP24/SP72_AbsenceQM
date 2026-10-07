@@ -129,8 +129,31 @@ Plotting helpers in `plots/plotters/` and the builders in `src/builders/` are re
   The labels go on the left because the χ tick labels sit on the right.
 - In the full-shell panel, "Trivial skin" is set on two lines to leave room for these labels.
 - The μ_bulk line and label use the hero's μ grey (#606060).
+- Phase diagrams are vector, not rasterised heatmaps. The topological region is the level-0
+  filled contour of the ±1 phase map after a small Gaussian blur (`gblur`, `pd_topo!`). The blur
+  is wider along V_Z or Φ, so the grid staircase becomes a smooth edge:
+  - partial shell: σ = 5 × 1.5 cells, where the μ grid step is 0.02 μ_bulk;
+  - full shell: σ = 9 × 5 cells, on the 501 × 1200 display grid.
+
+  For straight edges the boundary stays in place. The trajectory colour changes still sit on
+  it.
+- Partial-shell panel: the label "μ(z) along the wire" (top-left corner) has a pointer to the Q-MZM
+  trajectory, explaining what the arrows are.
+- The partial-shell phase diagram carries region labels "Ins.", "Topo." and "Triv.".
 - Band-filling panel: "CdGMs" label with arrows to three white states on the left parabola.
 - Band-filling panel: the red pair is labelled m_L = ±½ (single ½ glyph: "±1/2" does not fit the panel width).
+
+## Vector output (revision 5)
+
+- **LDOS maps** (all hero variants) are vector filled contours instead of rasterised heatmaps.
+  - There are 96 colour bands of `:thermal` between 0 and `ldos_max`; values above it take the
+    top colour, as with `highclip` before.
+  - The bands are stacked: band k fills all of {LDOS ≥ level k} over the band below. Adjacent
+    bands therefore overlap rather than share antialiased edges, so no hairline seams appear.
+- **Colorbars** are drawn as the same 96 bands (`ldos_colorbar!`), so they are vector too.
+- **Remaining rasters:** the only raster images left in the hero PDFs are the two 3D device
+  renders (`plots/sketches/*.png`), kept on purpose. Fig. 2 has none (`pdfimages -list`).
+- **File sizes:** hero_C is 1.3 MB.
 
 ## Numbers for the poster text
 

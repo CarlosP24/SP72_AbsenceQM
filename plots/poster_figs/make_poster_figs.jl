@@ -50,6 +50,10 @@ const mathfont = joinpath(dirname(pathof(Makie.MathTeXEngine)), "..", "assets", 
 const Δ0 = 0.23
 const cmap = :thermal
 const ldos_max = 1e-2                    # shared LDOS normalisation (all heatmaps)
+# LDOS maps are drawn as vector filled contours with nlev colour bands (no raster images);
+# the colorbars use the same bands. Values above ldos_max take the top colour (clipped).
+const nlev = 96
+const ldos_colors = Makie.resample_cmap(cmap, nlev)
 
 axis_style = (
     xticklabelsize = fs_tick, yticklabelsize = fs_tick,
@@ -299,8 +303,14 @@ end
 # zero-energy line has the same apparent thickness as the partial-shell one.
 function ldos_panel!(ax, name, key; ωmax = 0.2, ωticks = [-0.2, 0, 0.2])
     χ, ω, M = load_ldos(name, key)
-    heatmap!(ax, χ, ω, M; colormap = cmap, colorrange = (0, ldos_max),
-        highclip = last(to_colormap(cmap)), rasterize = 5)
+    # stacked fills: band k paints all of {M ≥ level k} over the band below, so adjacent bands
+    # overlap instead of sharing antialiased edges (no seams). Top band includes M > ldos_max.
+    ax.backgroundcolor = first(ldos_colors)
+    top = max(maximum(M), ldos_max) * 1.01
+    for k in 2:nlev
+        c = ldos_colors[k]
+        contourf!(ax, χ, ω, M; levels = [(k - 1) * ldos_max / nlev, top], colormap = [c, c])
+    end
     ax.xscale = log10
     xlims!(ax, 1, maximum(χ))
     ylims!(ax, -ωmax, ωmax)
@@ -531,10 +541,16 @@ function inline_ylabel!(ax, label, y; fontsize = fs_axis, clear = 0)
     text!(ax.blockscene, pos; text = label, fontsize, rotation = π/2, align = (:center, :bottom))
 end
 
+# Vector colorbar: the nlev bands of the LDOS contours (slightly overlapping, no seams)
 function ldos_colorbar!(pos)
-    Colorbar(pos; colormap = cmap, limits = (0, 1), ticks = ([0, 1], ["0", "1"]),
-        label = "LDOS (arb. u.)", labelsize = fs_label, ticklabelsize = fs_tick,
-        spinewidth = lw_spine, tickwidth = lw_spine, labelpadding = -16, width = 6mm)
+    ax = Axis(pos; width = 6mm, limits = (0, 1, 0, 1), yaxisposition = :right,
+        yticks = ([0, 1], ["0", "1"]), ylabel = "LDOS (arb. u.)", ylabelrotation = π/2,
+        ylabelsize = fs_label, yticklabelsize = fs_tick, ylabelpadding = -16,
+        spinewidth = lw_spine, ytickwidth = lw_spine, xgridvisible = false, ygridvisible = false)
+    hidexdecorations!(ax)
+    h = 1 / nlev
+    poly!(ax, [Rect2f(0, (i - 1) * h, 1, 1.5h) for i in 1:nlev]; color = ldos_colors, strokewidth = 0)
+    return ax
 end
 
 ## ---------------------------------------------------------------------------
@@ -558,7 +574,7 @@ function hero_C(; H = 240)
         # header: 3D render, and the shell name over the longitudinal cut
         hd = fig[1, cs] = GridLayout()
         device!(hd[1:2, 1], shell)
-        Label(hd[1, 2], title; fontsize = fs_row, font = :bold, halign = :left, tellwidth = false)
+        Label(hd[1, 2], title; fontsize = 40, font = :bold, halign = :left, tellwidth = false)
         axsk = sketch!(hd[2, 2], shell; zend = zl[2])
         xlims!(axsk, zl...)
         colsize!(hd, 2, Relative(0.68))
@@ -592,7 +608,7 @@ function hero_C(; H = 240)
     rowgap!(fig.layout, 3mm)
     rowgap!(fig.layout, 1, 4mm)
     rowgap!(fig.layout, 2, 1mm)
-    rowsize!(fig.layout, 1, Fixed(40mm))
+    rowsize!(fig.layout, 1, Fixed(44mm))
     rowsize!(fig.layout, 3, Fixed(54mm))
     return fig
 end
@@ -611,6 +627,10 @@ function trajectory!(ax, x, segments)
     scatter!(ax, Point2f(x, 1.0); marker = :utriangle, markersize = 24, color = tipcolor,
         strokecolor = :white, strokewidth = 1)
 end
+
+# Phase-region label (Ins. / Topo. / Triv.), black like the hero's region labels
+region_label!(ax, x, y, txt; align = (:center, :center)) =
+    text!(ax, x, y; text = txt, fontsize = fs_tick, align)
 
 # Case label (MZM / Q-MZM) set vertically along a trajectory, on its left (the χ tick labels
 # sit on the right in the full shell), reading upwards from just above μ = 0
@@ -652,13 +672,41 @@ function μaxis(μts; w = 0.005)
 end
 const Yμ, Yμinv = μaxis(PH.μts)
 
+# Separable Gaussian blur of a grid (σ in grid cells per dimension; edges clamped)
+function gblur(Z, σs...)
+    A = Float64.(Z)
+    for (dim, σ) in enumerate(σs)
+        σ > 0 || continue
+        r = ceil(Int, 3σ)
+        w = exp.(-((-r:r) .^ 2) ./ (2σ^2))
+        w ./= sum(w)
+        n = size(A, dim)
+        B = similar(A)
+        for I in CartesianIndices(A)
+            t = Tuple(I)
+            B[I] = sum(wk * A[Base.setindex(t, clamp(t[dim] + k, 1, n), dim)...] for (k, wk) in zip(-r:r, w))
+        end
+        A = B
+    end
+    return A
+end
+
+# Topological region (Z > 0) as vector polygons: level-0 contour of the blurred phase map.
+# The blur (wider along the field/flux axis) averages the grid staircase of the binary
+# phase diagram into a smooth boundary; for straight edges the contour stays in place.
+pd_topo!(ax, xs, ys, Z; σ = (4, 1.5)) =
+    contourf!(ax, xs, ys, gblur(Z, σ...); levels = [0.0, 2.0], colormap = [c_topo_tint, c_topo_tint])
+
 function pd_partial!(ax)
     # linear μ axis (μ/μ_bulk), no scale shown
     @load "data/PD_mu_B/base_partial.jld2" res
     cp = res.system.calc_params
     x = cp.Brng ./ 2
     y = cp.μrngP ./ 2
-    heatmap!(ax, x, y, res.PD'; colormap = [c_triv, c_topo_tint], colorrange = (-1, 1), interpolate = true, rasterize = 5)
+    xi, yi = findall(x .<= 2.2), findall(-0.4 .<= y .<= 1.3)      # plotted window + margin
+    Z = replace(res.PD'[xi, yi], NaN => -1)                        # +1 topological, −1 trivial
+    ax.backgroundcolor = c_triv
+    pd_topo!(ax, x[xi], y[yi], Z; σ = (5, 1.5))
     hspan!(ax, μlims[1], 0; color = c_ins)
     hlines!(ax, 1; color = c_mu, linestyle = :dash, linewidth = lw_guide)
     text!(ax, 1.98, 1.0; text = L"\mu_\mathrm{bulk}", color = c_mu, align = (:right, :bottom), fontsize = fs_tick)
@@ -673,6 +721,15 @@ function pd_partial!(ax)
     ticks_on_trajectory!(ax, B1, μz_partial; labels = (nothing, nothing, nothing))
     traj_label!(ax, B1, "MZM")
     traj_label!(ax, B2, "Q-MZM")
+    region_label!(ax, 1.95, -0.1, "Ins."; align = (:right, :center))
+    region_label!(ax, 1.95, 0.45, "Topo."; align = (:right, :center))
+    region_label!(ax, 0.05, 0.42, "Triv."; align = (:left, :center))
+
+    # what the arrows are: label in the empty trivial corner, pointer to the Q-MZM trajectory
+    text!(ax, 0.05, 0.96; text = rich(rich("𝜇(𝑧)"; font = mathfont), "\nalong\nthe wire"),
+        color = c_insline, fontsize = fs_tick, align = (:left, :top))
+    arrows2d!(ax, [0.45], [0.58], [B2 - 0.035], [0.45]; argmode = :endpoint, color = c_insline,
+        shaftwidth = 2, tiplength = 12, tipwidth = 11)
 
     xlims!(ax, 0, 2)
     ax.xticks = ([0, B2, B1, 2], ["0", L"V_\mathrm{Z}^{(2)}", L"V_\mathrm{Z}^{(1)}", "2"])
@@ -701,8 +758,8 @@ function pd_full!(ax)
             μ = 22.8 * Yμinv(y)
             first(μz_) <= μ <= last(μz_) ? lerp(μz_, view(PDz, :, j), μ) : lerp(μc_, view(PDc, :, j), μ)
          end for j in eachindex(Φs), y in ys]
-    heatmap!(ax, Φs, ys, M; colormap = [c_topo_tint, c_triv], colorrange = (-1, 1),
-        interpolate = true, rasterize = 5)
+    ax.backgroundcolor = c_triv
+    pd_topo!(ax, Φs, ys, -M; σ = (9, 5))                           # here −1 is topological
     hspan!(ax, μlims[1], 0; color = c_ins)
     hlines!(ax, 1; color = c_mu, linestyle = :dash, linewidth = lw_guide)
     text!(ax, 1.49, 1.0; text = L"\mu_\mathrm{bulk}", color = c_mu, align = (:right, :bottom), fontsize = fs_tick)
@@ -783,7 +840,7 @@ function fig2()
     pd_partial!(axP)
     axF = Axis(fig[1, 2]; axis_style..., title = "Full shell", titlesize = fs_title, titlefont = :regular)
     pd_full!(axF)
-    axB = Axis(fig[1, 3]; axis_style..., title = rich(rich("m"; font = :italic), subscript("J"; font = :italic), " = 0 threshold"), titlesize = fs_title, titlefont = :regular)
+    axB = Axis(fig[1, 3]; axis_style..., title = "Topo threshold", titlesize = fs_title, titlefont = :regular)
     filling!(axB)
 
     linkyaxes!(axP, axF)
