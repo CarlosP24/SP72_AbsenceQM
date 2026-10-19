@@ -1,0 +1,16 @@
+{
+ "eq_vzc": "V_\\mathrm{Z} > V_\\mathrm{Z}^\\mathrm{c} = \\sqrt{\\Delta_0^2 + \\mu_\\mathrm{bulk}^2}",
+ "eq_muz": "\\mu(z) = \\mu_\\mathrm{bulk}\\,\\bigl(1 - e^{-z/\\chi}\\bigr)",
+ "eq_local": "V_\\mathrm{Z} > \\sqrt{\\Delta_0^2 + \\mu(z)^2}",
+ "eq_chi": "\\chi \\gg \\frac{\\hbar\\alpha\\,\\mu_\\mathrm{bulk}}{V_\\mathrm{Z}\\,\\Delta_0}",
+ "eq_flux": "\\Phi = \\pi R^2 B, \\qquad n = \\lfloor \\Phi/\\Phi_0 \\rceil, \\qquad \\Phi_0 = \\frac{h}{2e}",
+ "eq_cdgm_vortex": "\\delta E \\sim \\frac{\\Delta^2}{E_F} \\approx 10^{-4}\\,\\Delta",
+ "eq_cdgm_fs": "\\delta E \\sim \\Delta",
+ "eq_jz": "[H, J_z] = 0, \\qquad J_z = -i\\partial_\\varphi + \\tfrac{1}{2}\\sigma_z + \\tfrac{1}{2}n\\,\\tau_z",
+ "eq_phs": "\\mathcal{P}\\,\\Psi_{m_J}(E) = \\Psi_{-m_J}(-E)",
+ "eq_mj0": "m_J = 0 \\;\\Rightarrow\\; n\\ \\mathrm{odd}",
+ "eq_bessel": "e\\phi_g(r, z) = \\mu_\\mathrm{bulk} \\sum_{\\nu = 1}^{\\infty}\\frac{2}{k_\\nu J_1(k_\\nu)}\\, J_0\\!\\Bigl(k_\\nu \\frac{r}{R}\\Bigr)\\, e^{-k_\\nu z / k_1 \\chi}",
+ "eq_h_partial": "H = \\Bigl[\\frac{p_z^2}{2m^*} - \\mu_\\mathrm{bulk} + e\\phi_g(z)\\Bigr]\\tau_z + \\alpha\\, p_z \\sigma_y \\tau_z + V_\\mathrm{Z}\\,\\sigma_z + \\Sigma_\\mathrm{SC}(\\omega, V_\\mathrm{Z})",
+ "eq_sigma_sc": "\\Sigma_\\mathrm{SC} = \\Gamma_\\mathrm{NS}\\,\\frac{\\Delta(V_\\mathrm{Z})\\,\\tau_x - \\omega}{\\sqrt{\\Delta(V_\\mathrm{Z})^2 - \\omega^2}}, \\qquad \\Delta(V_\\mathrm{Z}) = \\Delta_0 \\sqrt{1 - (V_\\mathrm{Z}/V_C)^2}",
+ "eq_mu_eff": "\\mu(z) \\simeq \\mu_\\mathrm{bulk}\\,\\bigl(1 - 0.85\\, e^{-z/\\chi}\\bigr)"
+}

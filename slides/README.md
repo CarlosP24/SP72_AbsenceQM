@@ -1,0 +1,32 @@
+# Talk: Joint ICTP–WE Heraeus College on Advances in Topological Quantum Matter
+
+Contributed talk, Trieste, 30 October 2026 (20 + 5 min). Figures and equations for the
+deck, built from the published data of this repository.
+
+## Contents
+
+| Path | What |
+|---|---|
+| `style.jl` | Slide style: Montserrat text, New Computer Modern math, poster palette, figure sizes in inches on a 13.33 × 7.5 in slide |
+| `make_figs.jl` | All figures, at their final size on the slide. Step-by-step builds are exported as layers (same canvas, transparent background) |
+| `make_equations.py` | Equations, typeset with LaTeX at their final size; sources in `equations/sources.json` |
+| `calc_sharp_ldos.jl` | Illustrative intro calculation: end LDOS vs V_Z of the partial-shell wire with an abrupt end (χ = 1 nm) |
+| `calc_cdgm_bands.jl` | Illustrative intro calculation: hollow-core bands and end LDOS (CdGM analogs), reusing the thesis builder in `PT_Thesis/PT3_CdGM` |
+| `figs/`, `equations/` | Outputs (`.svg` placed in the deck, `.pdf` vector copies, `.png` fallbacks) |
+| `data/` | Results of the two illustrative calculations |
+
+No result of the paper is recomputed: every result figure reads `data/` (and, as the
+poster, `data_unpublished/PD_mu_flux/base_fs.jld2`). The CdGM slide also reads the
+Deng et al., PRL 134, 206302 (2025) data kept in `PT_Thesis/PT3_CdGM/data`.
+
+## Regenerate
+
+```bash
+julia --project=. slides/calc_sharp_ldos.jl                       # ~1 min
+julia --project=<PhD>/PT_Thesis/PT3_CdGM slides/calc_cdgm_bands.jl  # seconds
+julia slides/make_figs.jl [prefix ...]                            # plots environment, ~2 min
+python3 slides/make_equations.py                                  # needs pdflatex, pdftocairo
+```
+
+`assets/` (photos and logos from earlier decks) and `wip/` (review sheets) are not
+tracked. The deck itself is kept in `PhD/Presentations/2026_10_ICTP/`.
