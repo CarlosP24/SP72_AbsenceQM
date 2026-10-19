@@ -31,7 +31,7 @@ EQS = {
     # slide 7
     "eq_flux": r"\Phi = \pi R^2 B, \qquad n = \lfloor \Phi/\Phi_0 \rceil, \qquad \Phi_0 = \frac{h}{2e}",
     # slide 8
-    "eq_cdgm_vortex": r"\delta E \sim \frac{\Delta^2}{E_F} \approx 10^{-4}\,\Delta",
+    "eq_cdgm_vortex": r"\delta E \simeq \frac{\Delta^2}{2E_F} \sim 10^{-3}\,\Delta",
     "eq_cdgm_fs": r"\delta E \sim \Delta",
     # slide 10
     "eq_jz": r"[H, J_z] = 0, \qquad J_z = -i\partial_\varphi + \tfrac{1}{2}\sigma_z + \tfrac{1}{2}n\,\tau_z",

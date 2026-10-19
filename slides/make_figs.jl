@@ -229,10 +229,10 @@ const yE0, hE = 0.0, 1.35
 const y_lbl = 2.20
 
 function realspace!(ax, shell::Symbol, case::Symbol; zl = (-1.0, 6.0), fs = fs_tick,
-        χbar = (case == :majo), zlabel = false)
+        χbar = (case == :majo && shell == :partial), zlabel = false, minimal = false)
     zmin, zmax = zl
     lab!(x, txt; color = c_ink, font = :regular) =
-        text!(ax, x, y_lbl; text = txt, color, font, fontsize = fs, align = (:center, :center))
+        !minimal && text!(ax, x, y_lbl; text = txt, color, font, fontsize = fs, align = (:center, :center))
     vspan!(ax, zmin, 0; color = c_ins)
     if shell == :partial
         name, χ, μz = "base_partial", 200, μz_partial
@@ -265,20 +265,20 @@ function realspace!(ax, shell::Symbol, case::Symbol; zl = (-1.0, 6.0), fs = fs_t
         vlines!(ax, [0, z1]; color = c_skin, linewidth = lw_spine)
         plab = case == :majo ? L"\Phi = \Phi^{(1)}" : L"\Phi = \Phi^{(2)}"
     end
-    text!(ax, zmin + 0.22, 0.05; text = "Ins.", rotation = π/2, fontsize = fs - 1,
+    minimal || text!(ax, zmin + 0.22, 0.05; text = "Ins.", rotation = π/2, fontsize = fs - 1,
         align = (:left, :center))
-    text!(ax, zmax - 0.08, yE0 + hE + 0.08; text = plab, fontsize = fs + 2, align = (:right, :bottom))
+    minimal || text!(ax, zmax - 0.08, yE0 + hE + 0.08; text = plab, fontsize = fs + 2, align = (:right, :bottom))
 
     Ec = band_bottom(μz)
     zs = range(zmin, zmax, length = 800)
     hlines!(ax, yE0 + hE; color = c_mu, linestyle = :dash, linewidth = 2)
-    text!(ax, zmax - 0.08, yE0 + hE - 0.03; text = L"\mu", color = c_mu, fontsize = fs + 2,
+    minimal || text!(ax, zmax - 0.08, yE0 + hE - 0.03; text = L"\mu", color = c_mu, fontsize = fs + 2,
         align = (:right, :top))
-    lines!(ax, zs, yE0 .+ hE .* Ec.(zs); color = :black, linewidth = lw_barrier)
-    case == :majo && text!(ax, shell == :full ? 0.55 : 0.2, yE0 + hE + 0.05;
+    lines!(ax, zs, yE0 .+ hE .* Ec.(zs); color = :black, linewidth = minimal ? 2 : lw_barrier)
+    case == :majo && !minimal && text!(ax, shell == :full ? 0.55 : 0.2, yE0 + hE + 0.05;
         text = L"e\phi_g(z)", fontsize = fs + 1, align = (:left, :bottom))
 
-    if χbar                                       # decay length of the barrier
+    if χbar && !minimal                           # decay length of the barrier
         yχ = shell == :full ? yE0 + hE * Ec(1.0) : 2.17
         x1 = shell == :full ? 1.0 : 1.0
         lines!(ax, [0, x1], [yχ, yχ]; color = :black, linewidth = 2.5)
@@ -296,7 +296,8 @@ function realspace!(ax, shell::Symbol, case::Symbol; zl = (-1.0, 6.0), fs = fs_t
     lines!(ax, z[keep], wf_scale .* ΨL[keep] ./ maximum(ΨL); color = c_wfL, linewidth = lw_wf)
     zL, zR = z[argmax(ΨL)], z[argmax(ΨR)]
     labL, labR = L"|\Psi_\mathrm{L}|^2", L"|\Psi_\mathrm{R}|^2"
-    if shell == :partial
+    if minimal
+    elseif shell == :partial
         text!(ax, zL + 0.45, 0.98; text = labL, color = c_wfL, fontsize = fs + 2, align = (:left, :center))
         case == :qmajo && text!(ax, zR + 0.6, 0.78wf_scale; text = labR, color = c_wfR, fontsize = fs + 2, align = (:left, :center))
     else
@@ -583,8 +584,9 @@ function fig_ldos_grid(layer::Symbol)
                     fontsize = fs_tick, align = (:left, :top), justification = :left)
             end
         end
-    elseif layer == :tags
+    elseif layer in (:tagP, :tagF)
         for (r, t, c) in ((1, "False positive", c_topo), (2, "No false positive", c_skin))
+            (r == 1) == (layer == :tagP) || continue
             ax = pax(fig, GRD.x2, r == 1 ? GRD.y1 : GRD.y2, GRD.w, GRD.h)
             overlay_axis!(ax)
             tag!(ax, t, c; y = 0.94)
@@ -765,8 +767,8 @@ function fig_filling(layer::Symbol)
             scatter!(ax, others, f.(others); color = :white, strokecolor = c_grey, strokewidth = 2, markersize = 14)
             scatter!(ax, [xJ], [f(xJ)]; color = c_topo, markersize = 18)
         end
-        text!(ax, 0.0, μts + 0.035; text = rich(rich("m"; font = :italic), subscript("J"; font = :italic), " = 0"),
-            color = c_topo, fontsize = fs_label, font = :semibold, align = (:center, :bottom))
+        text!(ax, 0.36, μts + 0.02; text = rich(rich("m"; font = :italic), subscript("J"; font = :italic), " = 0"),
+            color = c_topo, fontsize = fs_label, font = :semibold, align = (:left, :bottom))
         xc, yc = -1.0, 0.985
         text!(ax, xc, yc + 0.01; text = "CdGM analogs", color = c_insline, fontsize = fs_tick,
             align = (:center, :bottom))
@@ -934,8 +936,6 @@ function fig_bands(layer::Symbol)
         end
         isan && lines!(axl, d["ldos"][:, j] ./ maximum(d["ldos"]), d["ωs"] ./ Δ; color = c, linewidth = 2)
     end
-    hlines!(axb, [-1, 1]; color = c_ink2, linestyle = :dash, linewidth = 1.2)
-    hlines!(axl, [-1, 1]; color = c_ink2, linestyle = :dash, linewidth = 1.2)
     xlims!(axb, -0.035, 0.035); ylims!(axb, -emax, emax)
     xlims!(axl, 0, 1.05); ylims!(axl, -emax, emax)
     axb.yticks = ([-2, -1, 0, 1, 2], ["−2", "−1", "0", "1", "2"])
@@ -1005,6 +1005,49 @@ function fig_exp_theory(layer::Symbol)
 end
 
 ## ===========================================================================
+## Slide 16 (conclusions): small panels without axes
+## ===========================================================================
+const THB = (W = 2.4, H = 1.35)
+function fig_thumb(which::Symbol)
+    fig = newfig(THB.W, THB.H; transparent = false)
+    ax = pax(fig, 0.02, 0.02, THB.W - 0.04, THB.H - 0.04)
+    if which == :skin
+        realspace!(ax, :full, :qmajo; zl = (-1.0, 9.0), fs = 12, minimal = true)
+        hidexdecorations!(ax)
+    else
+        name = which == :partial ? "base_partial_szoom" : "base_fs_szoom"
+        ldos_chi!(ax, name, "QMajo")
+        hidedecorations!(ax)
+        which == :partial ? tag!(ax, "False positive", c_topo; fontsize = 12, y = 0.95) :
+                            tag!(ax, "No false positive", c_skin; fontsize = 12, y = 0.95)
+    end
+    return fig
+end
+
+# Numbers quoted on the slides and backups, from the same data as the figures
+function write_numbers()
+    nums = Dict(
+        "Phi_c" => Φc,
+        "partial_topo_end_chi" => PH.zP_topo_end,          # V_Z^(2): topological for 0 < z < this
+        "full_skin_end_chi_Phi1" => PH.zF1_skin_end,       # Φ^(1): trivial skin for 0 < z < this
+        "full_skin_end_chi_Phi2" => PH.zF_skin_end,        # Φ^(2)
+        "full_topo_end_chi_Phi2" => PH.zF_topo_end,
+        "mu_ts_over_mubulk_Phi2" => PH.μts,
+        "chi_vanish_full_MZM_nm" => χ_vanish("base_fs_szoom", "Majo"),
+        "chi_vanish_full_QMZM_nm" => χ_vanish("base_fs_szoom", "QMajo"),
+    )
+    open(joinpath(figdir, "numbers.json"), "w") do io
+        println(io, "{")
+        ks = sort(collect(keys(nums)))
+        for (i, k) in enumerate(ks)
+            println(io, "  \"$k\": ", round(nums[k]; sigdigits = 4), i < length(ks) ? "," : "")
+        end
+        println(io, "}")
+    end
+    return nums
+end
+
+## ===========================================================================
 ## Render
 ## ===========================================================================
 const FIGS = Dict{String, Function}(
@@ -1046,9 +1089,14 @@ const FIGS = Dict{String, Function}(
     "s14_grid_fullM" => () -> fig_ldos_grid(:fullM),
     "s14_grid_fullQ" => () -> fig_ldos_grid(:fullQ),
     "s14_grid_ann" => () -> fig_ldos_grid(:ann),
-    "s14_grid_tags" => () -> fig_ldos_grid(:tags),
+    "s14_grid_tagP" => () -> fig_ldos_grid(:tagP),
+    "s14_grid_tagF" => () -> fig_ldos_grid(:tagF),
     "s15_disorder_partial" => () -> fig_disorder(:partial),
     "s15_disorder_full" => () -> fig_disorder(:full),
+    # slide 16, conclusions
+    "s16_thumb_partial" => () -> fig_thumb(:partial),
+    "s16_thumb_skin" => () -> fig_thumb(:skin),
+    "s16_thumb_full" => () -> fig_thumb(:full),
 )
 
 if abspath(PROGRAM_FILE) == @__FILE__
@@ -1058,4 +1106,5 @@ if abspath(PROGRAM_FILE) == @__FILE__
         export_fig(FIGS[n](), n)
         println("  ", n)
     end
+    isempty(ARGS) || "numbers" in ARGS ? println(write_numbers()) : nothing
 end

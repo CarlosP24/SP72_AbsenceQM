@@ -1,0 +1,10 @@
+{
+  "Phi_c": 0.8383,
+  "chi_vanish_full_MZM_nm": 18.88,
+  "chi_vanish_full_QMZM_nm": 18.37,
+  "full_skin_end_chi_Phi1": 3.416,
+  "full_skin_end_chi_Phi2": 3.505,
+  "full_topo_end_chi_Phi2": 7.012,
+  "mu_ts_over_mubulk_Phi2": 0.9744,
+  "partial_topo_end_chi": 1.859
+}
