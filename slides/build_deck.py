@@ -800,22 +800,43 @@ def slide_deep(deck):
 
 
 def slide_no_fp(deck):
+    """Two slides joined by Morph. 15a: partial row; on click the full-shell true-MZM panel with
+    its colorbar right next to it. 15b: the quasi-MZM panel arrives and the colorbar ("!!cbarF"
+    on both) slides to the right of it; then annotations, tag and box."""
+    # grid canvas at x = 0.92: true-MZM panel 2.35–6.35, quasi-MZM 6.75–10.75, colorbars at 10.92;
+    # the colorbar picture has its bar 0.02 in from its left edge
+    cb_near, cb_far = 0.92 + (2.35 + 4.0 + 0.17) - 0.02, 0.92 + 10.92 - 0.02
+
+    def common(s):
+        lay = {n: fig(s, n, 0.92, 1.25, descr=n.replace("_", " "))
+               for n in ("s14_grid_partial", "s14_grid_tagP", "s14_grid_fullM")}
+        cite(s, [PAPER_SHORT + ", Fig. 2"])
+        return lay
+
     s = deck.new("No false positives in full shells")
-    names = ["s14_grid_partial", "s14_grid_tagP", "s14_grid_fullM", "s14_grid_fullQ", "s14_grid_ann",
-             "s14_grid_tagF"]
-    lay = [fig(s, n, 0.92, 1.25, descr=n.replace("_", " ")) for n in names]
-    lay = [lay[0], lay[2], lay[3], lay[4], lay[5]]
-    cb = box(s, 0.92, 6.08, 11.5, 0.72, "The smooth potential that creates the impostor also hides it: <b>a ZBP at "
-             "the end of a full-shell wire cannot be a quasi-Majorana</b>", size=17, border=SKIN)
-    builds(s, [[lay[1]], [lay[2]], [lay[3]], [lay[4]], [cb]])
-    cite(s, [PAPER_SHORT + ", Fig. 2"])
-    notes(s, f"(1:45) The key result: end LDOS versus smoothness. Partial shell, as before: the MZM gives a ZBP for "
-             f"any χ and the quasi-MZM becomes indistinguishable for smooth ends: a false positive. Full shell, "
-             f"true MZM: visible for sharp ends, but the skin grows with χ and the end signal is gone beyond "
-             f"~{NUM['chi_vanish_full_MZM_nm']:.0f} nm. Quasi-MZM: some split states for very sharp ends, and then "
-             f"nothing. Nothing appears at the end, not even when the quasi-MZMs pin to zero energy deep inside "
-             f"the wire. The same smooth potential that creates the impostor hides it. Caveat: the skin also "
-             f"hides true MZMs when the end is smooth.")
+    lay = common(s)
+    cb = add_svg(s, FIGS / "s14_grid_cbarF.svg", FIGS / "s14_grid_cbarF.png", cb_near, 1.25, name="!!cbarF",
+                 descr="Full-shell row colour bar, LDOS (arb. u.)")
+    builds(s, [[lay["s14_grid_fullM"], cb]])
+    notes(s, f"(0:50) The key result: end LDOS versus smoothness. Partial shell, as before: the MZM gives a ZBP "
+             f"for any χ and the quasi-MZM becomes indistinguishable for smooth ends: a false positive. Full "
+             f"shell, true MZM: visible for sharp ends, but the skin grows with χ and the end signal is gone "
+             f"beyond ~{NUM['chi_vanish_full_MZM_nm']:.0f} nm.")
+
+    s = deck.new("No false positives in full shells")
+    common(s)
+    fig(s, "s14_grid_fullQ", 0.92, 1.25, descr="s14 grid fullQ")
+    add_svg(s, FIGS / "s14_grid_cbarF.svg", FIGS / "s14_grid_cbarF.png", cb_far, 1.25, name="!!cbarF",
+            descr="Full-shell row colour bar, LDOS (arb. u.)")
+    ann = fig(s, "s14_grid_ann", 0.92, 1.25, descr="s14 grid ann")
+    tagF = fig(s, "s14_grid_tagF", 0.92, 1.25, descr="s14 grid tagF")
+    box_ = box(s, 0.92, 6.08, 11.5, 0.72, "The smooth potential that creates the impostor also hides it: <b>a ZBP at "
+               "the end of a full-shell wire cannot be a quasi-Majorana</b>", size=17, border=SKIN)
+    builds(s, [[ann], [tagF], [box_]])
+    notes(s, "(0:55) Quasi-MZM: some split states for very sharp ends, and then nothing. Nothing appears at the "
+             "end, not even when the quasi-MZMs pin to zero energy deep inside the wire. The same smooth "
+             "potential that creates the impostor hides it. Caveat: the skin also hides true MZMs when the end "
+             "is smooth.")
 
 
 def slide_robust(deck):

@@ -574,9 +574,9 @@ function fig_ldos_grid(layer::Symbol)
         rowlabel!(1, :partial, "Partial shell")
         colorbar_axis!(fig, GRD.cb, GRD.y1, 0.14, GRD.h)
     elseif layer == :fullM
+        # the lower-row colorbar is its own picture (s14_grid_cbarF), moved by Morph on the slide
         panel(2, 1)
         rowlabel!(2, :full, "Full shell")
-        colorbar_axis!(fig, GRD.cb, GRD.y2, 0.14, GRD.h)
     elseif layer == :fullQ
         panel(2, 2)
     elseif layer == :ann
@@ -602,6 +602,15 @@ function fig_ldos_grid(layer::Symbol)
             tag!(ax, t, c; y = 0.94)
         end
     end
+    return fig
+end
+
+# Lower-row colorbar alone: same height as the grid canvas, bar at the row's y and 0.02 in
+# from its left edge, so it can sit next to the true-MZM panel or at GRD.cb
+const GRD_CB = (W = 0.62, x = 0.02)
+function fig_ldos_grid_cbar()
+    fig = newfig(GRD_CB.W, GRD.H)
+    colorbar_axis!(fig, GRD_CB.x, GRD.y2, 0.14, GRD.h)
     return fig
 end
 
@@ -1170,6 +1179,7 @@ const FIGS = Dict{String, Function}(
     "s14_grid_ann" => () -> fig_ldos_grid(:ann),
     "s14_grid_tagP" => () -> fig_ldos_grid(:tagP),
     "s14_grid_tagF" => () -> fig_ldos_grid(:tagF),
+    "s14_grid_cbarF" => fig_ldos_grid_cbar,
     "s15_disorder_partial" => () -> fig_disorder(:partial),
     "s15_disorder_full" => () -> fig_disorder(:full),
     # slide 16, conclusions
