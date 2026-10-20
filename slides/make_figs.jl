@@ -189,7 +189,7 @@ function zticks(zmax)
 end
 
 # Longitudinal cut of the device, aligned with z/χ (paper Fig. 1a, d; poster sketch!)
-function cut!(ax, shell::Symbol; zl = (-1.0, 6.0))
+function cut!(ax, shell::Symbol; zl = (-1.0, 6.0), probe_label = true)
     zmin, zend = zl
     ySM = (0.28, 0.62)
     ymid = sum(ySM) / 2
@@ -197,7 +197,8 @@ function cut!(ax, shell::Symbol; zl = (-1.0, 6.0))
     band!(ax, [zmin + 0.25, zend], ySM...; color = c_semi)
     band!(ax, [0, zend], ySM[2], ySM[2] + 0.3; color = c_super)
     shell == :full && band!(ax, [0, zend], ySM[1] - 0.28, ySM[1]; color = c_super)
-    text!(ax, zmin + 0.05, ySM[2] + 0.04; text = "probe", fontsize = fs_tick, align = (:left, :bottom))
+    probe_label && text!(ax, zmin + 0.05, ySM[2] + 0.04; text = "probe", fontsize = fs_tick,
+        align = (:left, :bottom))
     text!(ax, 0.5, ySM[2] + 0.15; text = "SC", fontsize = fs_tick, align = (:left, :center))
     text!(ax, 0.5, ymid; text = "SM", fontsize = fs_tick, align = (:left, :center))
     xB0, xB1 = 0.32zend, 0.62zend
@@ -427,9 +428,16 @@ function fig_rs(shell, case; zl = (-1.0, 6.0), zlabel = true)
     return fig
 end
 function fig_cut(shell; zl = (-1.0, 6.0))
-    fig = newfig(RSP.W, 0.75)
-    ax = pax(fig, RSP.x, 0.0, RSP.w, 0.75)
-    cut!(ax, shell; zl)
+    H = 0.75
+    fig = newfig(RSP.W, H)
+    ax = pax(fig, RSP.x, 0.0, RSP.w, H)
+    cut!(ax, shell; zl, probe_label = false)
+    # "probe" on the figure canvas, at the probe's left edge unless it would run into the
+    # shell (z = 0): the full shell's longer z range leaves a shorter bare section
+    ipu = RSP.w / (zl[2] - zl[1])                                   # inches per unit of z/χ
+    wtxt = Makie.text_bb("probe", Makie.to_font(slide_fonts.regular), fs_tick).widths[1] / inch
+    x = min(RSP.x + 0.05ipu, RSP.x - zl[1] * ipu - 0.07 - wtxt)
+    text!(canvas(fig), x, 0.66H; text = "probe", fontsize = fs_tick, align = (:left, :bottom))
     return fig
 end
 
