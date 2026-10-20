@@ -265,12 +265,14 @@ function realspace!(ax, shell::Symbol, case::Symbol; zl = (-1.0, 6.0), fs = fs_t
         vlines!(ax, [0, z1]; color = c_skin, linewidth = lw_spine)
         plab = case == :majo ? L"\Phi = \Phi^{(1)}" : L"\Phi = \Phi^{(2)}"
     end
-    minimal || text!(ax, zmin + 0.22, 0.05; text = "Ins.", rotation = π/2, fontsize = fs - 1,
-        align = (:left, :center))
     minimal || text!(ax, zmax - 0.08, yE0 + hE + 0.08; text = plab, fontsize = fs + 2, align = (:right, :bottom))
 
     Ec = band_bottom(μz)
     zs = range(zmin, zmax, length = 800)
+    # "Ins." under the top of the barrier bump, clear of its steep flanks
+    zpk = argmax(Ec, range(zmin, 0, length = 200))
+    minimal || text!(ax, zpk, 0.05; text = "Ins.", rotation = π/2, fontsize = fs - 1,
+        align = (:left, :center))
     hlines!(ax, yE0 + hE; color = c_mu, linestyle = :dash, linewidth = 2)
     minimal || text!(ax, zmax - 0.08, yE0 + hE - 0.03; text = L"\mu", color = c_mu, fontsize = fs + 2,
         align = (:right, :top))
