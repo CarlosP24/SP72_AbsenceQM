@@ -630,7 +630,7 @@ end
 # which exists only in odd lobes (:mj0); χ = 1 µm, DOS where μ(z) varies
 const LOB = (W = 6.3, H = 4.85, x = 0.85, w = 5.15, h = 1.60, y1 = 0.40, y2 = 2.50)
 mJ_rich(rest) = rich(rich("m"; font = :italic), subscript("J"; font = :italic), rest)
-function fig_dos_lobes(layer::Symbol)
+function fig_dos_lobes(layer::Symbol; crange_mj0 = (0, 0.8))
     fig = newfig(LOB.W, LOB.H)
     res = loadres("data/DOS/base_fs_Zs.jld2")
     cp = res.system.calc_params
@@ -645,7 +645,7 @@ function fig_dos_lobes(layer::Symbol)
         M = mirror_M(res.DOS[0])
         odd = 0.5 .<= Φ .< 1.5
         M[.!odd, :] .= NaN
-        heat!(ax, Φ, ω, M; crange = (0, 0.6), nan_color = :transparent)
+        heat!(ax, Φ, ω, M; crange = crange_mj0, nan_color = :transparent)
         ax.backgroundcolor = c_triv
         for xx in (0.25, 2.0)
             text!(ax, xx, 0.0; text = rich("no ", mJ_rich(" = 0\nsector")), color = c_ink2,
@@ -657,9 +657,18 @@ function fig_dos_lobes(layer::Symbol)
     text!(ax, 0.985, 0.04; space = :relative, text = txt, color = layer == :total ? :white : c_ink,
         fontsize = fs_tick, font = :semibold, align = (:right, :bottom))
     vlines!(ax, [0.5, 1.5]; color = (:white, 0.6), linestyle = :dot, linewidth = 1.5)
-    xlims!(ax, 0, 2.5); ylims!(ax, -1.1, 1.1)
+    xlims!(ax, 0, 2.5)
     ax.xticks = ([0, 0.5, 1, 1.5, 2, 2.5], ["0", "0.5", "1", "1.5", "2", "2.5"])
-    ax.yticks = ([-1, 0, 1], ["−1", "0", "1"])
+    if layer == :total
+        ylims!(ax, -1.1, 1.1)
+        ax.yticks = ([-1, 0, 1], ["−1", "0", "1"])
+    else
+        # zoom on the zero mode. Tick-label space of the top panel ("−1"), so that both
+        # ω/Δ0 labels line up on the slide; "−0.2" only reaches into it at the axis ends.
+        ylims!(ax, -0.2, 0.2)
+        ax.yticks = ([-0.2, 0, 0.2], ["−0.2", "0", "0.2"])
+        ax.yticklabelspace = Float64(Makie.text_bb("−1", Makie.to_font(slide_fonts.regular), fs_tick).widths[1])
+    end
     ax.ylabel = L"\omega/\Delta_0"; ax.ylabelpadding = 2
     # fluxoid number of each Little–Parks lobe, on top
     layer == :total && top_marks!(fig, ax, [0.25, 1.0, 2.0], ["n = 0", "n = 1", "n = 2"]; fs = fs_tick)
