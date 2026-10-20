@@ -965,7 +965,12 @@ end
 
 # Deng et al. PRL 134, 206302 (2025): measured dI/dV (device 1, Fig. 2a, recovered from
 # the figure PDF in PT3_CdGM) and the published model dI/dv (Fig. 3d, imported unchanged)
-const EXT = (W = 8.9, H = 4.45, x1 = 0.85, x2 = 5.05, w = 3.1, h = 3.0, y = 0.78, cb1 = 4.03, cb2 = 8.23)
+# Both maps are dI/dV in e²/h and share one colour scale: (0, 0.5) covers the experiment's
+# recovered range (capped at the published colour-bar top, 0.49) and saturates only the
+# top ~0.5% of the theory map (the published theory panel used (0, 0.4)). One colorbar,
+# right of the theory panel, drawn in the experiment layer (visible from the first step).
+const EXT = (W = 8.9, H = 4.45, x1 = 0.85, x2 = 4.45, w = 3.45, h = 3.0, y = 0.78, cb = 8.05)
+const exp_theory_crange = (0.0, 0.5)
 function json_array(s, key)
     m = match(Regex("\"$key\":\\s*\\[([^\\]]*)\\]"), s)
     return parse.(Float64, split(m[1], ','))
@@ -979,9 +984,8 @@ function fig_exp_theory(layer::Symbol)
         s = crops[findfirst("\"fig2a_dIdV\"", crops)[end]:end]
         s = s[1:findfirst('}', s)]
         Bw, Vw = json_array(s, "B_T"), json_array(s, "V_mV")
-        cr = Tuple(json_array(e["meta"], "colourbar_range"))
         ax = pax(fig, EXT.x1, EXT.y, EXT.w, EXT.h)
-        heat!(ax, e["x"], e["y"], e["z"]; crange = cr)
+        heat!(ax, e["x"], e["y"], e["z"]; crange = exp_theory_crange)
         limits!(ax, Bw..., Vw...)
         ax.xlabel = L"B\ \mathrm{(T)}"; ax.ylabel = L"V\ \mathrm{(mV)}"; ax.ylabelpadding = 2
         ax.xticks = ([0, 0.1, 0.2, 0.3], ["0", "0.1", "0.2", "0.3"])
@@ -990,13 +994,13 @@ function fig_exp_theory(layer::Symbol)
         top_marks!(fig, ax, [0, Bp, 2Bp], [L"0", L"\Phi_0", L"2\Phi_0"])
         text!(cv, EXT.x1 + EXT.w / 2, EXT.H - 0.04; text = "Experiment", font = :semibold,
             fontsize = fs_title, align = (:center, :top))
-        cb = colorbar_axis!(fig, EXT.cb1, EXT.y, 0.12, EXT.h; label = L"dI/dV\ (e^2/h)")
-        cb.yticks = ([0, 1], ["0", "0.49"])
+        cb = colorbar_axis!(fig, EXT.cb, EXT.y, 0.12, EXT.h; label = L"dI/dV\ (e^2/h)")
+        cb.yticks = ([0, 1], ["0", "$(exp_theory_crange[2])"])
     else
         t = JLD2.load(joinpath(PT3, "data/prl25/conductance.jld2"))
         G = sum(values(t["maps"]))
         ax = pax(fig, EXT.x2, EXT.y, EXT.w, EXT.h)
-        heat!(ax, t["Φ"], t["ω"], G; crange = (0, 0.4))
+        heat!(ax, t["Φ"], t["ω"], G; crange = exp_theory_crange)
         Bw = (-0.0925, 0.3325)
         Rlp = 72.0                                          # nm, theory (PRL Fig. 3)
         Φper = π * (Rlp * 1e-9)^2 / 2.067833848e-15          # Φ/Φ0 per tesla
@@ -1007,8 +1011,6 @@ function fig_exp_theory(layer::Symbol)
         hideydecorations!(ax; ticks = false)
         text!(cv, EXT.x2 + EXT.w / 2, EXT.H - 0.04; text = "Theory", font = :semibold,
             fontsize = fs_title, align = (:center, :top))
-        cb = colorbar_axis!(fig, EXT.cb2, EXT.y, 0.12, EXT.h; label = L"dI/dV\ (e^2/h)")
-        cb.yticks = ([0, 1], ["0", "0.4"])
     end
     return fig
 end
