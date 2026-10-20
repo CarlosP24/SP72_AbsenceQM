@@ -517,6 +517,9 @@ def slide_majo_tunneling(deck):
 def slide_smooth_partial(deck):
     s = deck.new("Smooth confinement at the wire's end")
     cut = fig(s, "s04_cut_partial", 0.92, 1.34, descr="Longitudinal cut of the partial-shell wire")
+    # electrostatics only, with the first text; the MZM strip fades in on top with the MZM path
+    bare = fig(s, "s04_rs_partial_bare", 0.92, 2.12,
+               descr="Electrostatics at the wire's end: insulating barrier and hybrid wire")
     rm = fig(s, "s04_rs_partial_majo", 0.92, 2.12, descr="Local phases and MZM wavefunction, V_Z^(1)")
     rq = fig(s, "s04_rs_partial_qmajo", 0.92, 4.02, morph=True,
              descr="Local phases and quasi-MZM wavefunctions, V_Z^(2)")
@@ -531,7 +534,7 @@ def slide_smooth_partial(deck):
     t3 = textbox(s, 0.92, 5.95, 6.3, 0.62, ["Below <i>V</i><sub>Z</sub><sup>c</sup>, only a segment of length ~<i>χ</i> "
                                             "turns topological: <b>two boundaries, two Majorana components</b>"],
                  size=16)
-    builds(s, [[t1, e1], [t2, e2], [rm, pm], [rq, pq, t3]])
+    builds(s, [[t1, e1, bare], [t2, e2], [rm, pm], [rq, pq, t3]])
     cite(s, [PAPER_SHORT,
              "E. Prada <i>et al.</i> PRB 86, 180503(R) (2012) | G. Kells <i>et al.</i> PRB 86, 100503(R) (2012)"])
     notes(s, "(1:15) In a real device the tunnel gate depletes the end of the wire, and the potential heals "

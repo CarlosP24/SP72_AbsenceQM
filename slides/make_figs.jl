@@ -229,15 +229,18 @@ const wf_scale = 0.9
 const yE0, hE = 0.0, 1.35
 const y_lbl = 2.20
 
+# bare = true: electrostatics only (insulating end, neutral "Hybrid wire", band bottom, μ, χ),
+# without local phases, field label or wavefunctions (slide 4 builds it up in two steps)
 function realspace!(ax, shell::Symbol, case::Symbol; zl = (-1.0, 6.0), fs = fs_tick,
-        χbar = (case == :majo && shell == :partial), zlabel = false, minimal = false)
+        χbar = (case == :majo && shell == :partial), zlabel = false, minimal = false, bare = false)
     zmin, zmax = zl
     lab!(x, txt; color = c_ink, font = :regular) =
         !minimal && text!(ax, x, y_lbl; text = txt, color, font, fontsize = fs, align = (:center, :center))
     vspan!(ax, zmin, 0; color = c_ins)
     if shell == :partial
         name, χ, μz = "base_partial", 200, μz_partial
-        if case == :majo
+        if bare
+        elseif case == :majo
             vspan!(ax, 0, zmax; color = c_topo_tint)
             lab!(zmax / 2, "Topological")
         else
@@ -249,7 +252,9 @@ function realspace!(ax, shell::Symbol, case::Symbol; zl = (-1.0, 6.0), fs = fs_t
         plab = case == :majo ? L"V_\mathrm{Z} = V_\mathrm{Z}^{(1)}" : L"V_\mathrm{Z} = V_\mathrm{Z}^{(2)}"
     else
         name, χ = "base_fs", 1000
-        if case == :majo
+        μz = case == :majo ? μz_full1 : μz_full2
+        if bare
+        elseif case == :majo
             μz, z1 = μz_full1, PH.zF1_skin_end
             vspan!(ax, 0, z1; color = c_skin_tint)
             vspan!(ax, z1, zmax; color = c_topo_tint)
@@ -263,10 +268,15 @@ function realspace!(ax, shell::Symbol, case::Symbol; zl = (-1.0, 6.0), fs = fs_t
             lab!(z1 / 2, "Trivial skin"; color = c_skin, font = :bold)
             lab!((z1 + z2) / 2, "Topological"); lab!((z2 + zmax) / 2, "Trivial")
         end
-        vlines!(ax, [0, z1]; color = c_skin, linewidth = lw_spine)
+        bare || vlines!(ax, [0, PH.zF1_skin_end * (case == :majo) + PH.zF_skin_end * (case != :majo)];
+            color = c_skin, linewidth = lw_spine)
         plab = case == :majo ? L"\Phi = \Phi^{(1)}" : L"\Phi = \Phi^{(2)}"
     end
-    minimal || text!(ax, zmax - 0.08, yE0 + hE + 0.08; text = plab, fontsize = fs + 2, align = (:right, :bottom))
+    if bare
+        vspan!(ax, 0, zmax; color = :white)
+        lab!(zmax / 2, "Hybrid wire")
+    end
+    minimal || bare || text!(ax, zmax - 0.08, yE0 + hE + 0.08; text = plab, fontsize = fs + 2, align = (:right, :bottom))
 
     Ec = band_bottom(μz)
     zs = range(zmin, zmax, length = 800)
@@ -293,13 +303,14 @@ function realspace!(ax, shell::Symbol, case::Symbol; zl = (-1.0, 6.0), fs = fs_t
 
     Ψs = loadres("data/wfs/$(name).jld2").Psis
     ΨL, ΨR = Ψs[case == :majo ? "Majo" : "QMajo"]
+    bare && (ΨL = ΨR = fill(NaN, length(ΨL)))      # no wavefunctions in the bare strip
     z = (0:length(ΨL)-1) .* 5 ./ χ
     keep = z .<= zmax
     case == :qmajo && lines!(ax, z[keep], wf_scale .* ΨR[keep] ./ maximum(ΨR); color = c_wfR, linewidth = lw_wf)
     lines!(ax, z[keep], wf_scale .* ΨL[keep] ./ maximum(ΨL); color = c_wfL, linewidth = lw_wf)
     zL, zR = z[argmax(ΨL)], z[argmax(ΨR)]
     labL, labR = L"|\Psi_\mathrm{L}|^2", L"|\Psi_\mathrm{R}|^2"
-    if minimal
+    if minimal || bare
     elseif shell == :partial
         text!(ax, zL + 0.45, 0.98; text = labL, color = c_wfL, fontsize = fs + 2, align = (:left, :center))
         case == :qmajo && text!(ax, zR + 0.6, 0.78wf_scale; text = labR, color = c_wfR, fontsize = fs + 2, align = (:left, :center))
@@ -421,10 +432,10 @@ end
 
 # Real-space strips and the longitudinal cut (slides 4, 5, 13)
 const RSP = (W = 6.3, H = 1.80, x = 0.10, y = 0.06, w = 5.85, h = 1.30)
-function fig_rs(shell, case; zl = (-1.0, 6.0), zlabel = true)
+function fig_rs(shell, case; zl = (-1.0, 6.0), zlabel = true, bare = false)
     fig = newfig(RSP.W, RSP.H; transparent = false)
     ax = pax(fig, RSP.x, RSP.y, RSP.w, RSP.h)
-    realspace!(ax, shell, case; zl, zlabel)
+    realspace!(ax, shell, case; zl, zlabel, bare)
     return fig
 end
 function fig_cut(shell; zl = (-1.0, 6.0))
@@ -1146,6 +1157,7 @@ const FIGS = Dict{String, Function}(
     "s06_ldos_vB_smooth" => () -> fig_ldos_vB(:smooth),
     "s04_cut_partial" => () -> fig_cut(:partial),
     "s04_rs_partial_majo" => () -> fig_rs(:partial, :majo),
+    "s04_rs_partial_bare" => () -> fig_rs(:partial, :majo; bare = true),
     "s04_rs_partial_qmajo" => () -> fig_rs(:partial, :qmajo),
     "s05_dos_partial" => fig_dos_partial,
     "s06_ldos_chi_partial_majo" => () -> fig_ldos_chi_partial(:majo),
