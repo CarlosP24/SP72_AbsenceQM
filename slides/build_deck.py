@@ -741,31 +741,38 @@ def slide_mj(deck):
 
 def slide_smooth_full(deck):
     s = deck.new("Smooth confinement in full shells")
-    cut = fig(s, "s11_cut_full", 0.92, 1.40, descr="Longitudinal cut of the full-shell wire")
-    t1 = textbox(s, 0.92, 2.22, 6.0, 0.7, ["Laplace equation inside the grounded shell, with the gate depleting "
+    # left: the electrostatics; the strip sits right under the cut, z-aligned with it as on slides 4
+    # and 14, and fades in before the mu(z) paths
+    cut = fig(s, "s11_cut_full", 0.92, 1.34, descr="Longitudinal cut of the full-shell wire")
+    bare = fig(s, "s11_rs_full_bare", 0.92, 2.12,
+               descr="Electrostatics at the full-shell wire's end: insulating barrier, hybrid wire, gate potential "
+                     "and its decay length chi")
+    t1 = textbox(s, 0.92, 4.00, 6.0, 0.7, ["Laplace equation inside the grounded shell, with the gate depleting "
                                            "the end (<i>z</i> = 0):"], size=16)
-    e1 = eq(s, "eq_bessel", 0.98, 2.98, scale=0.92)
-    t2 = textbox(s, 0.92, 3.95, 6.0, 0.65, ["The slowest mode sets the smoothness <i>χ</i> (<i>R</i>/<i>k</i><sub>1</sub> "
+    e1 = eq(s, "eq_bessel", 0.98, 4.76, scale=0.92)
+    t2 = textbox(s, 0.92, 5.73, 6.0, 0.65, ["The slowest mode sets the smoothness <i>χ</i> (<i>R</i>/<i>k</i><sub>1</sub> "
                                             "without screening; free parameter)"], size=14, color=INK2)
-    pd = fig(s, "s11_pd_full", 7.02, 1.22, descr="Phase diagram of the full-shell wire versus flux and mu")
-    pm = fig(s, "s11_pd_full_mzm", 7.02, 1.22, descr="mu(z) path for Phi^(1)")
-    pq = fig(s, "s11_pd_full_qmzm", 7.02, 1.22, descr="mu(z) path for Phi^(2)")
-    ps = fig(s, "s11_pd_full_skin", 7.02, 1.22, descr="Trivial skin label")
-    cb = box(s, 0.92, 4.85, 6.0, 1.05, "<i>μ</i>(<i>z</i>) must cross a trivial region before turning "
+    # right: phase diagram 5.0 in wide at slide 4's top (legend clear of the logo), skin box and remark
+    pd = fig(s, "s11_pd_full", 7.42, 1.30, w=5.0, descr="Phase diagram of the full-shell wire versus flux and mu")
+    pm = fig(s, "s11_pd_full_mzm", 7.42, 1.30, w=5.0, descr="mu(z) path for Phi^(1)")
+    pq = fig(s, "s11_pd_full_qmzm", 7.42, 1.30, w=5.0, descr="mu(z) path for Phi^(2)")
+    ps = fig(s, "s11_pd_full_skin", 7.42, 1.30, w=5.0, descr="Trivial skin label")
+    cb = box(s, 7.42, 5.13, 5.0, 1.0, "<i>μ</i>(<i>z</i>) must cross a trivial region before turning "
              "topological: a <grn><b>trivial skin</b></grn> at the wire's end", size=16, border=SKIN)
-    t3 = textbox(s, 7.12, 5.35, 5.3, 0.75, ["MZM for <i>Φ</i> < <i>Φ</i><sup>c</sup>, quasi-MZM for "
+    t3 = textbox(s, 7.42, 6.17, 5.0, 0.62, ["MZM for <i>Φ</i> < <i>Φ</i><sup>c</sup>, quasi-MZM for "
                                             "<i>Φ</i> > <i>Φ</i><sup>c</sup>: inverted with respect to partial "
                                             "shells"], size=14, color=INK2)
-    builds(s, [[t2], [pm], [pq], [ps, cb], [t3]])
+    builds(s, [[t2, bare], [pm], [pq], [ps, cb], [t3]])
     cite(s, [PAPER_SHORT + ", End Matter A"])
     notes(s, "(1:15) Now the same smooth confinement in a full shell. The grounded shell screens external gates, "
              "so their potential only enters through the uncovered end; solving Laplace's equation inside the "
-             "core gives a sum of evanescent Bessel modes, and the slowest one sets the smoothness χ, which we "
-             "keep as a free parameter. Again μ(z) traces a vertical path in the phase diagram, now versus flux "
-             "inside lobe 1. The MZM case: the path does not enter the topological region directly, it first "
-             "crosses a trivial region. Same for the quasi-MZM case. That trivial segment at the end of the wire "
-             "is the trivial skin. Note the inversion: here the MZM is at the lower flux and the quasi-MZM at the "
-             "higher one.")
+             "core gives a sum of evanescent Bessel modes. [click] The slowest one sets the smoothness χ, which we "
+             "keep as a free parameter: again the gate depletes the end and the potential heals over χ. [click] "
+             "Again μ(z) traces a vertical path in the phase diagram, now versus flux inside lobe 1. The MZM case: "
+             "the path does not enter the topological region directly, it first crosses a trivial region. [click] "
+             "Same for the quasi-MZM case. [click] That trivial segment at the end of the wire is the trivial "
+             "skin. [click] Note the inversion: here the MZM is at the lower flux and the quasi-MZM at the higher "
+             "one.")
 
 
 def slide_skin_origin(deck):

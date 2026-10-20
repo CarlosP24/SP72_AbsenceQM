@@ -295,9 +295,8 @@ function realspace!(ax, shell::Symbol, case::Symbol; zl = (-1.0, 6.0), fs = fs_t
     case == :majo && !minimal && text!(ax, shell == :full ? 0.55 : 0.2, yE0 + hE + 0.05;
         text = L"e\phi_g(z)", fontsize = fs + 1, align = (:left, :bottom))
 
-    if χbar && !minimal                           # decay length of the barrier
-        yχ = shell == :full ? yE0 + hE * Ec(1.0) : 2.17
-        x1 = shell == :full ? 1.0 : 1.0
+    if χbar && !minimal                           # decay length of the barrier, above the curve
+        yχ, x1 = 2.17, 1.0
         lines!(ax, [0, x1], [yχ, yχ]; color = :black, linewidth = 2.5)
         for x in (0, x1)
             lines!(ax, [x, x], [yχ - 0.08, yχ + 0.08]; color = :black, linewidth = 2.5)
@@ -441,10 +440,10 @@ end
 
 # Real-space strips and the longitudinal cut (slides 4, 5, 13)
 const RSP = (W = 6.3, H = 1.80, x = 0.10, y = 0.06, w = 5.85, h = 1.30)
-function fig_rs(shell, case; zl = (-1.0, 6.0), zlabel = true, bare = false)
+function fig_rs(shell, case; zl = (-1.0, 6.0), zlabel = true, bare = false, kw...)
     fig = newfig(RSP.W, RSP.H; transparent = false)
     ax = pax(fig, RSP.x, RSP.y, RSP.w, RSP.h)
-    realspace!(ax, shell, case; zl, zlabel, bare)
+    realspace!(ax, shell, case; zl, zlabel, bare, kw...)
     return fig
 end
 function fig_cut(shell; zl = (-1.0, 6.0))
@@ -1240,6 +1239,7 @@ const FIGS = Dict{String, Function}(
     "s10_dos_lobes_mj0" => () -> fig_dos_lobes(:mj0),
     # slides 11–15, full shell with smooth confinement
     "s11_cut_full" => () -> fig_cut(:full; zl = (-1.0, 9.0)),
+    "s11_rs_full_bare" => () -> fig_rs(:full, :majo; zl = (-1.0, 9.0), bare = true, χbar = true),
     "s11_pd_full" => () -> fig_pd_full(:base),
     "s11_pd_full_mzm" => () -> fig_pd_full(:mzm),
     "s11_pd_full_qmzm" => () -> fig_pd_full(:qmzm),
