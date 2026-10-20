@@ -231,8 +231,11 @@ const y_lbl = 2.20
 
 # bare = true: electrostatics only (insulating end, neutral "Hybrid wire", band bottom, μ, χ),
 # without local phases, field label or wavefunctions (slide 4 builds it up in two steps)
+# wf = (ΨL, ΨR, χ) replaces the published wavefunctions, corner the field label and
+# labR = (z, y) the position of the |Ψ_R|² label
 function realspace!(ax, shell::Symbol, case::Symbol; zl = (-1.0, 6.0), fs = fs_tick,
-        χbar = (case == :majo && shell == :partial), zlabel = false, minimal = false, bare = false)
+        χbar = (case == :majo && shell == :partial), zlabel = false, minimal = false, bare = false,
+        wf = nothing, corner = nothing, labR = nothing)
     zmin, zmax = zl
     lab!(x, txt; color = c_ink, font = :regular) =
         !minimal && text!(ax, x, y_lbl; text = txt, color, font, fontsize = fs, align = (:center, :center))
@@ -276,6 +279,7 @@ function realspace!(ax, shell::Symbol, case::Symbol; zl = (-1.0, 6.0), fs = fs_t
         vspan!(ax, 0, zmax; color = :white)
         lab!(zmax / 2, "Hybrid wire")
     end
+    isnothing(corner) || (plab = corner)
     minimal || bare || text!(ax, zmax - 0.08, yE0 + hE + 0.08; text = plab, fontsize = fs + 2, align = (:right, :bottom))
 
     Ec = band_bottom(μz)
@@ -301,22 +305,27 @@ function realspace!(ax, shell::Symbol, case::Symbol; zl = (-1.0, 6.0), fs = fs_t
         text!(ax, x1 + 0.1, yχ; text = L"\chi", fontsize = fs + 4, align = (:left, :center))
     end
 
-    Ψs = loadres("data/wfs/$(name).jld2").Psis
-    ΨL, ΨR = Ψs[case == :majo ? "Majo" : "QMajo"]
+    if isnothing(wf)
+        Ψs = loadres("data/wfs/$(name).jld2").Psis
+        ΨL, ΨR = Ψs[case == :majo ? "Majo" : "QMajo"]
+    else
+        ΨL, ΨR, χ = wf
+    end
     bare && (ΨL = ΨR = fill(NaN, length(ΨL)))      # no wavefunctions in the bare strip
     z = (0:length(ΨL)-1) .* 5 ./ χ
     keep = z .<= zmax
     case == :qmajo && lines!(ax, z[keep], wf_scale .* ΨR[keep] ./ maximum(ΨR); color = c_wfR, linewidth = lw_wf)
     lines!(ax, z[keep], wf_scale .* ΨL[keep] ./ maximum(ΨL); color = c_wfL, linewidth = lw_wf)
     zL, zR = z[argmax(ΨL)], z[argmax(ΨR)]
-    labL, labR = L"|\Psi_\mathrm{L}|^2", L"|\Psi_\mathrm{R}|^2"
+    labL = L"|\Psi_\mathrm{L}|^2"
     if minimal || bare
     elseif shell == :partial
         text!(ax, zL + 0.45, 0.98; text = labL, color = c_wfL, fontsize = fs + 2, align = (:left, :center))
-        case == :qmajo && text!(ax, zR + 0.6, 0.78wf_scale; text = labR, color = c_wfR, fontsize = fs + 2, align = (:left, :center))
+        posR = isnothing(labR) ? (zR + 0.6, 0.78wf_scale) : labR
+        case == :qmajo && text!(ax, posR...; text = L"|\Psi_\mathrm{R}|^2", color = c_wfR, fontsize = fs + 2, align = (:left, :center))
     else
         text!(ax, zL - 0.25, 0.75wf_scale; text = labL, color = c_wfL, fontsize = fs + 2, align = (:right, :center))
-        case == :qmajo && text!(ax, zR - 1.1, 0.80wf_scale; text = labR, color = c_wfR, fontsize = fs + 2, align = (:right, :center))
+        case == :qmajo && text!(ax, zR - 1.1, 0.80wf_scale; text = L"|\Psi_\mathrm{R}|^2", color = c_wfR, fontsize = fs + 2, align = (:right, :center))
     end
     xlims!(ax, zl...)
     ylims!(ax, -0.05, 2.45)
@@ -452,6 +461,24 @@ function fig_cut(shell; zl = (-1.0, 6.0))
     return fig
 end
 
+# Slide 5, one row per end: the quasi-MZM pair at V_Z^(2) and the DOS vs V_Z where μ(z)
+# varies, for the paper's smooth end (χ = 200 nm, published data/wfs and data/DOS, paper
+# Fig. 1c) and a sharper one (χ = 50 nm, illustrative: slides/calc_qmzm_wfs.jl and
+# slides/calc_qmzm_dos.jl), where the pair overlaps and splits
+function fig_rs_chi(which::Symbol)
+    fig = newfig(RSP.W, RSP.H; transparent = false)
+    ax = pax(fig, RSP.x, RSP.y, RSP.w, RSP.h)
+    if which == :smooth
+        realspace!(ax, :partial, :qmajo; zlabel = true, corner = L"\chi = 200\ \mathrm{nm}")
+    else
+        d = JLD2.load("slides/data/wfs_partial_chis.jld2")
+        i = findfirst(==(50), d["χs"])
+        realspace!(ax, :partial, :qmajo; zlabel = true, corner = L"\chi = 50\ \mathrm{nm}",
+            wf = (d["ΨL"][i], d["ΨR"][i], 50), labR = (4.55, 1.03))
+    end
+    return fig
+end
+
 # DOS vs V_Z where μ(z) varies (paper Fig. 1c), partial shell, χ = 200 nm
 const DSP = (W = 5.0, H = 3.15, x = 0.85, y = 0.40, w = 4.0, h = 2.0)
 function fig_dos_partial()
@@ -476,6 +503,40 @@ function fig_dos_partial()
     mbar!(ax, 0.66, 1.0, -0.17; cap = 0.07)
     text!(ax, 0.83, -0.25; text = "Q-MZM", color = :white, fontsize = fs_tick, font = :semibold, align = (:center, :top))
     top_marks!(fig, ax, [B2 / VZc, B1 / VZc], [L"V_\mathrm{Z}^{(2)}", L"V_\mathrm{Z}^{(1)}"])
+    return fig
+end
+
+# The slide-5 rows: same DOS where μ(z) varies, zoomed to the subgap states. Each map has its
+# own colour range: at χ = 50 nm the NDOS sites sample a 4× shorter region and the subgap
+# peaks are twice as high, so its range is doubled to keep the same contrast
+const DSR = (W = 5.0, H = 2.14, x = 0.85, y = 0.40, w = 4.0, h = 1.30)
+function fig_dos_row(which::Symbol)
+    fig = newfig(DSR.W, DSR.H)
+    ax = pax(fig, DSR.x, DSR.y, DSR.w, DSR.h)
+    if which == :smooth
+        res = loadres("data/DOS/base_partial.jld2")
+        cp = res.system.calc_params
+        B, ω, M, cmax = collect(cp.Brng), real.(collect(cp.ωrng)), res.DOS, 0.4
+    else
+        d = JLD2.load("slides/data/DOSvB_partial_chi50.jld2")
+        B, ω, M, cmax = d["Brng"], real.(d["ωrng"]), d["DOS"], 0.8
+    end
+    heat!(ax, B ./ VZc, mirror_ω(ω) ./ Δ0, mirror_M(M); crange = (0, cmax))
+    vlines!(ax, 1; color = c_crit, linestyle = :dash, linewidth = 2)
+    xlims!(ax, 0, 2); ylims!(ax, -0.5, 0.5)
+    ax.xticks = ([0, 1, 2], ["0", "1", "2"])
+    ax.yticks = ([-0.5, 0, 0.5], ["−0.5", "0", "0.5"])
+    ax.ylabel = L"\omega/\Delta_0"
+    ax.ylabelpadding = 2
+    inline_xlabel!(ax, L"V_\mathrm{Z}/V_\mathrm{Z}^\mathrm{c}", 1.5)
+    text!(ax, 0.99, 0.04; space = :relative, text = "DOS where μ(z) varies", color = :white,
+        fontsize = fs_tick - 2, font = :medium, align = (:right, :bottom))
+    text!(ax, 1.5, 0.08; text = "MZM", color = :white, fontsize = fs_tick, font = :semibold, align = (:center, :bottom))
+    # in the dark gap left of where the pair reaches zero energy
+    which == :smooth ?
+        text!(ax, 0.69, 0; text = "Q-MZM", color = :white, fontsize = fs_tick, font = :semibold, align = (:right, :center)) :
+        text!(ax, 0.72, 0; text = "split Q-MZMs", color = :white, fontsize = fs_tick, font = :semibold, align = (:right, :center))
+    top_marks!(fig, ax, [B2 / VZc], [L"V_\mathrm{Z}^{(2)}"])
     return fig
 end
 
@@ -1160,6 +1221,10 @@ const FIGS = Dict{String, Function}(
     "s04_rs_partial_bare" => () -> fig_rs(:partial, :majo; bare = true),
     "s04_rs_partial_qmajo" => () -> fig_rs(:partial, :qmajo),
     "s05_dos_partial" => fig_dos_partial,
+    "s05_rs_smooth" => () -> fig_rs_chi(:smooth),
+    "s05_rs_sharp" => () -> fig_rs_chi(:sharp),
+    "s05_dos_smooth" => () -> fig_dos_row(:smooth),
+    "s05_dos_sharp" => () -> fig_dos_row(:sharp),
     "s06_ldos_chi_partial_majo" => () -> fig_ldos_chi_partial(:majo),
     "s06_ldos_chi_partial_qmajo" => () -> fig_ldos_chi_partial(:qmajo),
     "s06_ldos_chi_partial_tag" => () -> fig_ldos_chi_partial(:tag),

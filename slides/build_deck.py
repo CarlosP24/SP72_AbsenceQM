@@ -548,31 +548,37 @@ def slide_smooth_partial(deck):
 
 def slide_quasimajo(deck):
     s = deck.new("Quasi-Majoranas: trivial zero modes")
-    rq = fig(s, "s04_rs_partial_qmajo", 0.92, 1.34, morph=True,
-             descr="Local phases and quasi-MZM wavefunctions, V_Z^(2)")
-    t1 = textbox(s, 0.92, 3.30, 6.3, 1.65, [
-        ("Two overlapping Majorana components, the <b>quasi-MZMs</b>", {"size": 18}),
-        ("<blu>|Ψ<sub>L</sub>|<sup>2</sup></blu> at the abrupt end: Fermi oscillations", {"bullet": True}),
-        ("<org>|Ψ<sub>R</sub>|<sup>2</sup></org> at the smooth interface: no oscillations", {"bullet": True}),
-        ("→ no coherent splitting: <b>exponentially pinned to zero energy</b> when", {"size": 16}),
-    ], size=16, space_after=4)
-    e1 = eq(s, "eq_chi", 2.4, 5.02)
-    dos = fig(s, "s05_dos_partial", 7.42, 1.30, descr="DOS where mu(z) varies versus Zeeman field")
-    t2 = textbox(s, 7.42, 4.55, 5.0, 1.4, [
-        ("The bulk gap closes at <i>V</i><sub>Z</sub><sup>c</sup>: MZM above it", {"bullet": True}),
-        ("The quasi-MZM peak sits at zero <b>before</b> <i>V</i><sub>Z</sub><sup>c</sup>, in the trivial phase",
-         {"bullet": True}),
-    ], size=16)
-    builds(s, [[t1, e1], [dos, t2]])
+    # One row per end: real-space pair at V_Z^(2) and DOS vs V_Z. The chi = 200 nm strip comes
+    # from slide 4 with the Morph (same name and box, only its corner label changes); the
+    # chi = 50 nm row is illustrative (slides/calc_qmzm_wfs.jl, slides/calc_qmzm_dos.jl)
+    y1, y2, xr = 1.50, 3.55, 7.42
+    dy = 0.40 - 0.06                          # DOS axis top level with the strip's
+    add_svg(s, FIGS / "s05_rs_smooth.svg", FIGS / "s05_rs_smooth.png", 0.92, y1,
+            name="!!s04_rs_partial_qmajo", descr="Quasi-MZM pair at V_Z^(2) for a smooth end, chi = 200 nm")
+    dos1 = fig(s, "s05_dos_smooth", xr, y1 - dy,
+               descr="DOS where mu(z) varies versus Zeeman field, chi = 200 nm: quasi-MZM at zero before V_Z^c")
+    rs2 = fig(s, "s05_rs_sharp", 0.92, y2, descr="Quasi-MZM pair at V_Z^(2) for a sharper end, chi = 50 nm")
+    dos2 = fig(s, "s05_dos_sharp", xr, y2 - dy,
+               descr="DOS where mu(z) varies versus Zeeman field, chi = 50 nm: split pair reaches zero only at V_Z^c")
+    yc = y2 + 1.80 + 0.50                     # criterion: text and equation centred on one line
+    t = textbox(s, 0.92, yc - 0.25, 3.75, 0.5, ["Pinned to zero energy only if"], size=18,
+                anchor=MSO_ANCHOR.MIDDLE)
+    e1 = eq(s, "eq_chi", 0.92 + 0.04 + 3.57 + 0.15, yc)
+    e1.top -= e1.height // 2
+    builds(s, [[dos1], [rs2, dos2], [t, e1]])
     cite(s, [PAPER_SHORT,
              "G. Kells <i>et al.</i> PRB 86, 100503(R) (2012) | F. Peñaranda <i>et al.</i> PRB 98, 235406 (2018)"])
-    notes(s, "(1:15) These are quasi-Majoranas. The outer component is abruptly confined at the end and "
-             "oscillates with the Fermi momentum; the inner one sits at a smooth interface and has no "
-             "oscillations. Although they overlap strongly, they cannot hybridize coherently, so their splitting "
-             "is exponentially small in the smoothness (Kells, Meidan, Brouwer 2012): they pin to zero energy for "
-             "χ ≫ ħαμ_bulk/(V_Z Δ0). In the DOS of the region where μ(z) varies we see the bulk transition at "
-             "V_Z^c and the MZM after it; but the quasi-MZM zero-energy peak appears well before V_Z^c, in the "
-             "trivial phase.")
+    notes(s, "(1:30) These are quasi-Majoranas: one Majorana component at each boundary of the topological "
+             "segment. The outer one is abruptly confined at the end and oscillates with the Fermi momentum; the "
+             "inner one sits at the smooth interface and has no oscillations. They barely hybridize (Kells, Meidan, "
+             "Brouwer 2012). [click] So for χ = 200 nm the pair sits at zero energy from about 0.7 V_Z^c on: a "
+             "zero-energy peak well before the bulk transition at V_Z^c, in the trivial phase. [click] Make the end "
+             "four times sharper, χ = 50 nm. In units of χ the potential is the same, but the Majorana components do "
+             "not shrink with it: they spread over the whole segment, overlap and split. The pair only reaches zero "
+             "energy at V_Z^c, together with the true MZM. [click] So quasi-MZMs pin to zero energy only for smooth "
+             "enough ends, χ ≫ ħαμ_bulk/(V_Z Δ0). "
+             "(The χ = 50 nm row is an illustrative calculation for the talk, same model and routines as the paper; "
+             "its DOS colour range is twice that of the χ = 200 nm one.)")
 
 
 def slide_false_positive(deck):
