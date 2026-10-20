@@ -663,32 +663,44 @@ def slide_cdgm(deck):
 
 
 def slide_cdgm_exp(deck):
+    """Two slides joined by Morph: the experiment with the shared colorbar next to it (9a), then
+    the theory appears and the colorbar ("!!cbar" on both) slides to its right (9b)."""
+    def common(s, cbar_x):
+        photo(s, ASSETS / "deng2025_cross_section.png", 0.92, 1.38, w=2.25, name="Cross-section",
+              descr="InAs/Al full-shell cross-section")
+        h1 = 2.25 * 1933 / 2142
+        line(s, 1.08, 1.38 + h1 - 0.16, 1.08 + 50 / 0.12631578947368421 / 2142 * 2.25, 1.38 + h1 - 0.16)
+        textbox(s, 1.0, 1.38 + h1 - 0.47, 1.0, 0.28, ["50 nm"], size=12, color="FFFFFF")
+        textbox(s, 0.92, 1.38 + h1 + 0.03, 2.25, 0.3, ["InAs core, 7 nm Al shell"], size=12, color=GREY,
+                align=PP_ALIGN.CENTER)
+        photo(s, ASSETS / "deng2025_device1.png", 1.42, 3.82, h=2.95, name="Device",
+              descr="False-colour SEM of device 1")
+        wsem = 2.95 * 1483 / 3458
+        # scale bar at the lower right of the SEM image (Carlos, 2026-10-20)
+        line(s, 2.157, 6.436, 2.157 + 1000 / 1.9108280254777081 / 1483 * wsem, 6.436)
+        textbox(s, 2.156, 6.16, 0.8, 0.28, ["1 µm"], size=12, color="FFFFFF")
+        fig(s, "s09_exp", 3.52, 1.28, descr="Measured dI/dV versus field and bias, device 1")
+        add_svg(s, FIGS / "s09_cbar.svg", FIGS / "s09_cbar.png", cbar_x, 1.28, name="!!cbar",
+                descr="Shared colour bar, dI/dV in e^2/h")
+        cite(s, ["M. T. Deng, <b>CP</b>, P. San-Jose, E. Prada, C. M. Marcus, S. Vaitiekėnas, PRL 134, 206302 (2025)"])
+
+    # colorbar picture: bar 0.02 in from its left edge; panels at 0.85–4.30 (exp), 4.45–7.90 (theory)
     s = deck.new("CdGM analogs in the experiment")
-    xs = photo(s, ASSETS / "deng2025_cross_section.png", 0.92, 1.38, w=2.25, name="Cross-section",
-               descr="InAs/Al full-shell cross-section")
-    h1 = 2.25 * 1933 / 2142
-    line(s, 1.08, 1.38 + h1 - 0.16, 1.08 + 50 / 0.12631578947368421 / 2142 * 2.25, 1.38 + h1 - 0.16)
-    textbox(s, 1.0, 1.38 + h1 - 0.47, 1.0, 0.28, ["50 nm"], size=12, color="FFFFFF")
-    textbox(s, 0.92, 1.38 + h1 + 0.03, 2.25, 0.3, ["InAs core, 7 nm Al shell"], size=12, color=GREY,
-            align=PP_ALIGN.CENTER)
-    sem = photo(s, ASSETS / "deng2025_device1.png", 1.42, 3.82, h=2.95, name="Device",
-                descr="False-colour SEM of device 1")
-    wsem = 2.95 * 1483 / 3458
-    line(s, 1.48, 3.82 + 2.95 - 0.12, 1.48 + 1000 / 1.9108280254777081 / 1483 * wsem, 3.82 + 2.95 - 0.12)
-    textbox(s, 1.44, 3.82 + 2.95 - 0.45, 0.8, 0.28, ["1 µm"], size=12, color="FFFFFF")
-    ex = fig(s, "s09_exp", 3.52, 1.28, descr="Measured dI/dV versus field and bias, device 1")
-    th = fig(s, "s09_theory", 3.52, 1.28, descr="Modelled dI/dV versus flux and bias")
+    common(s, 3.52 + 4.45 - 0.02)
+    notes(s, "(0:25) And we see them. Tunneling spectroscopy on InAs/Al full-shell wires from the Copenhagen "
+             "group: the zeroth lobe has a hard gap, while the first and second lobes are filled with discrete "
+             "subgap states that disperse and skew with flux.")
+    s = deck.new("CdGM analogs in the experiment")
+    common(s, 3.52 + 8.05 - 0.02)
+    fig(s, "s09_theory", 3.52, 1.28, descr="Modelled dI/dV versus flux and bias")
     t1 = textbox(s, 3.62, 5.85, 8.8, 0.9, [
         ("Lobe 0: hard gap. Lobes 1, 2: discrete subgap states that disperse and skew with flux, one per "
          "<i>m</i><sub>J</sub> subband", {"bullet": True}),
     ], size=16)
-    builds(s, [[th], [t1]])
-    cite(s, ["M. T. Deng, <b>CP</b>, P. San-Jose, E. Prada, C. M. Marcus, S. Vaitiekėnas, PRL 134, 206302 (2025)"])
-    notes(s, "(0:45) And we see them. Tunneling spectroscopy on InAs/Al full-shell wires from the Copenhagen "
-             "group: the zeroth lobe has a hard gap, while the first and second lobes are filled with discrete "
-             "subgap states that disperse and skew with flux. Our model reproduces them, including the skewness, "
-             "which tells us the average radius and angular momentum of each subband. So a full-shell wire never "
-             "has an empty odd lobe: CdGM analogs are always there.")
+    builds(s, [[t1]])
+    notes(s, "(0:20) Our model reproduces them, including the skewness, which tells us the average radius and "
+             "angular momentum of each subband. So a full-shell wire never has an empty odd lobe: CdGM analogs "
+             "are always there.")
 
 
 def slide_mj(deck):

@@ -4,3 +4,5 @@ assets/
 wip/
 # the deck itself lives in PhD/Presentations/2026_10_ICTP
 *.pptx
+# Python bytecode from importing build_deck.py
+__pycache__/

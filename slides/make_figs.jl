@@ -898,35 +898,85 @@ function winding_arrow!(ax, r; θ0 = 0.35, θ1 = 2π - 0.35, color = c_ink2, lw 
     arrows2d!(ax, [p[1] - 0.06d[1]], [p[2] - 0.06d[2]], [0.12d[1]], [0.12d[2]]; color,
         shaftwidth = lw, tiplength = 11, tipwidth = 10)
 end
-function andreev_orbit!(ax, x0, x1, y; lw = 3)
-    arrows2d!(ax, [x0], [y + 0.055], [x1 - x0], [0]; color = c_skin, shaftwidth = lw, tiplength = 11, tipwidth = 10)
-    arrows2d!(ax, [x1], [y - 0.055], [x0 - x1], [0]; color = c_wfR, shaftwidth = lw, tiplength = 11, tipwidth = 10)
-    text!(ax, (x0 + x1) / 2, y + 0.10; text = L"e", color = c_skin, fontsize = fs_label, align = (:center, :bottom))
-    text!(ax, (x0 + x1) / 2, y - 0.10; text = L"h", color = c_wfR, fontsize = fs_label, align = (:center, :top))
+# Electron–hole lens and Cooper-pair glyphs, after the thesis figure (PT_Thesis/
+# PT1_Introduction/src/plotters/vortex.jl, Fig. andreev_wall), scaled for the slide.
+# The e and h arrows retrace one chord (offset ±δ only so both are visible) and close at
+# the two Andreev reflections (red). Each reflection moves a Cooper pair across the wall:
+# e → h (right) hands a pair to the condensate, h → e (left) takes one back, so both pair
+# arrows point the same way and one pair 2e crosses the core per round trip.
+const c_pair = colorant"#37474F"          # neutral dark slate: the pair is not a quasiparticle
+const c_wall = c_accent                   # Andreev reflection
+
+function eh_lens!(ax, x1, x2, yc, δ; ecolor = c_skin, hcolor = c_wfR)
+    xa, xb = x1 + δ, x2 - δ
+    arrows2d!(ax, [xa], [yc + δ], [xb], [yc + δ]; argmode = :endpoint, color = ecolor,
+        shaftwidth = 3, tipwidth = 11, tiplength = 11)
+    arrows2d!(ax, [xb], [yc - δ], [xa], [yc - δ]; argmode = :endpoint, color = hcolor,
+        shaftwidth = 3, tipwidth = 11, tiplength = 11)
+    for (xc, θ) in ((xb, range(-π / 2, π / 2, length = 40)), (xa, range(π / 2, 3π / 2, length = 40)))
+        lines!(ax, xc .+ δ .* cos.(θ), yc .+ δ .* sin.(θ); color = c_wall, linewidth = 2.2)
+    end
+    scatter!(ax, [x1, x2], [yc, yc]; color = c_wall, markersize = 7, strokewidth = 0)
+    text!(ax, (x1 + x2) / 2, yc + δ + 0.04; text = L"e", color = ecolor, fontsize = fs_label,
+        align = (:center, :bottom))
+    text!(ax, (x1 + x2) / 2, yc - δ - 0.04; text = L"h", color = hcolor, fontsize = fs_label,
+        align = (:center, :top))
 end
+
+# Cooper pair at (x0, y0) moving horizontally by dx: two dots ringed by an ellipse.
+# arrow = :ahead: the pair leaving the wall (arrow from its far rim); :behind: the pair on
+# its way in (arrow tip on its near rim). White fill and halo keep it legible on the shading.
+function cooper_pair!(ax, x0, y0, dx; arrow = :ahead, sep = 0.055, ea = 0.075, kb = 2.2)
+    t = range(0, 2π, length = 120)
+    pts = Point2f.(x0 .+ ea .* cos.(t), y0 .+ kb * sep .* sin.(t))
+    s = sign(dx)
+    rim, far = x0 + s * ea, x0 - s * ea
+    tail, tip = arrow === :ahead ? (rim, x0 + dx) : (far - dx, far)
+    arrows2d!(ax, [tail], [y0], [tip], [y0]; argmode = :endpoint, color = :white,
+        shaftwidth = 5, tipwidth = 14, tiplength = 13)
+    poly!(ax, pts; color = :white, strokecolor = :white, strokewidth = 4)
+    poly!(ax, pts; color = :white, strokecolor = c_pair, strokewidth = 1.6)
+    arrows2d!(ax, [tail], [y0], [tip], [y0]; argmode = :endpoint, color = c_pair,
+        shaftwidth = 2, tipwidth = 9, tiplength = 9)
+    scatter!(ax, [x0, x0], [y0 + sep, y0 - sep]; color = c_pair, markersize = 8)
+end
+
+# The reflection cycle of one chord between ±xE: lens, the two pairs just outside the
+# turning points (both moving +x), and the 2e label under the outgoing one
+function andreev_cycle!(ax, xE; δ = 0.07, gap = 0.17, dx = 0.2)
+    eh_lens!(ax, -xE, xE, 0.0, δ)
+    cooper_pair!(ax, xE + gap, 0.0, dx; arrow = :ahead)
+    cooper_pair!(ax, -xE - gap, 0.0, dx; arrow = :behind)
+    text!(ax, xE + gap, -0.15; text = L"2e", color = c_pair, fontsize = fs_label - 1,
+        align = (:center, :top))
+end
+
 function fig_cartoon(which::Symbol)
     fig = newfig(VTX.W, VTX.H)
     ax = pax(fig, 0.0, 0.0, VTX.W, VTX.H; aspect = DataAspect(), backgroundcolor = :transparent)
     hidedecorations!(ax); hidespines!(ax)
     limits!(ax, -1.3, 1.3, -1.3, 1.3)
     if which == :vortex
+        # Δ(r) = Δ tanh(r/ξ); a state at E is turned back at r_E where Δ(r_E) = E (dashed)
+        rE = 0.38
         xs = range(-1, 1, 301)
         D = [hypot(x, y) <= 1 ? tanh(hypot(x, y) / 0.38) : NaN for x in xs, y in xs]
         heatmap!(ax, xs, xs, D; colormap = [colorant"#FFFFFF", c_super, colorant"#8EA3EE"],
             colorrange = (0, 1), nan_color = :transparent, rasterize = 4)
         lines!(ax, circle_pts(1.0, range(0, 2π, 200)); color = c_ink2, linewidth = 1.2)
-        lines!(ax, circle_pts(0.42, range(0, 2π, 200)); color = c_ink2, linewidth = 1.2, linestyle = :dot)
-        andreev_orbit!(ax, -0.36, 0.36, 0.0)
+        lines!(ax, circle_pts(rE, range(0, 2π, 200)); color = c_wall, linewidth = 1.2, linestyle = :dash)
+        andreev_cycle!(ax, rE; dx = 0.22)
         winding_arrow!(ax, 1.13)
-        text!(ax, 0.0, -0.52; text = L"\xi_0", fontsize = fs_label, align = (:center, :center))
         text!(ax, -1.27, 1.27; text = L"\Delta(r)\,e^{i\varphi}", fontsize = fs_label, align = (:left, :top))
     else
+        # Andreev reflection at the core–shell interface; the pairs go into the shell
+        Rc = 0.58
         lines!(ax, circle_pts(1.0, range(0, 2π, 200)); color = c_ink2, linewidth = 1.2)
         poly!(ax, circle_pts(1.0, range(0, 2π, 200)); color = c_super, strokewidth = 0)
-        poly!(ax, circle_pts(0.78, range(0, 2π, 200)); color = c_semi, strokecolor = c_ink2, strokewidth = 1.2)
-        andreev_orbit!(ax, -0.70, 0.70, 0.0)
+        poly!(ax, circle_pts(Rc, range(0, 2π, 200)); color = c_semi, strokecolor = c_ink2, strokewidth = 1.2)
+        andreev_cycle!(ax, Rc; gap = 0.165, dx = 0.18)
         winding_arrow!(ax, 1.13)
-        text!(ax, 0.0, -0.45; text = L"\Phi", color = :red, fontsize = fs_axis + 4, align = (:center, :center))
+        text!(ax, 0.0, -0.44; text = L"\Phi", color = :red, fontsize = fs_axis + 4, align = (:center, :center))
         text!(ax, -1.27, 1.27; text = L"\Delta\,e^{in\varphi}", fontsize = fs_label, align = (:left, :top))
     end
     return fig
@@ -977,9 +1027,11 @@ end
 # the figure PDF in PT3_CdGM) and the published model dI/dv (Fig. 3d, imported unchanged)
 # Both maps are dI/dV in e²/h and share one colour scale: (0, 0.5) covers the experiment's
 # recovered range (capped at the published colour-bar top, 0.49) and saturates only the
-# top ~0.5% of the theory map (the published theory panel used (0, 0.4)). One colorbar,
-# right of the theory panel, drawn in the experiment layer (visible from the first step).
-const EXT = (W = 8.9, H = 4.45, x1 = 0.85, x2 = 4.45, w = 3.45, h = 3.0, y = 0.78, cb = 8.05)
+# top ~0.5% of the theory map (the published theory panel used (0, 0.4)). The one shared
+# colorbar is its own picture (s09_cbar, same height, bar at the same y), so on the slide it
+# can sit next to the experiment first and slide to the right of the theory (Morph).
+const EXT = (W = 8.9, H = 4.45, x1 = 0.85, x2 = 4.45, w = 3.45, h = 3.0, y = 0.78)
+const EXT_CB = (W = 0.85, x = 0.02)       # colorbar canvas: width, bar offset
 const exp_theory_crange = (0.0, 0.5)
 function json_array(s, key)
     m = match(Regex("\"$key\":\\s*\\[([^\\]]*)\\]"), s)
@@ -1004,8 +1056,6 @@ function fig_exp_theory(layer::Symbol)
         top_marks!(fig, ax, [0, Bp, 2Bp], [L"0", L"\Phi_0", L"2\Phi_0"])
         text!(cv, EXT.x1 + EXT.w / 2, EXT.H - 0.04; text = "Experiment", font = :semibold,
             fontsize = fs_title, align = (:center, :top))
-        cb = colorbar_axis!(fig, EXT.cb, EXT.y, 0.12, EXT.h; label = L"dI/dV\ (e^2/h)")
-        cb.yticks = ([0, 1], ["0", "$(exp_theory_crange[2])"])
     else
         t = JLD2.load(joinpath(PT3, "data/prl25/conductance.jld2"))
         G = sum(values(t["maps"]))
@@ -1022,6 +1072,13 @@ function fig_exp_theory(layer::Symbol)
         text!(cv, EXT.x2 + EXT.w / 2, EXT.H - 0.04; text = "Theory", font = :semibold,
             fontsize = fs_title, align = (:center, :top))
     end
+    return fig
+end
+
+function fig_exp_theory_cbar()
+    fig = newfig(EXT_CB.W, EXT.H)
+    cb = colorbar_axis!(fig, EXT_CB.x, EXT.y, 0.12, EXT.h; label = L"dI/dV\ (e^2/h)")
+    cb.yticks = ([0, 1], ["0", "$(exp_theory_crange[2])"])
     return fig
 end
 
@@ -1092,6 +1149,7 @@ const FIGS = Dict{String, Function}(
     "s08_bands_n1" => () -> fig_bands(:n1),
     "s09_exp" => () -> fig_exp_theory(:exp),
     "s09_theory" => () -> fig_exp_theory(:theory),
+    "s09_cbar" => fig_exp_theory_cbar,
     "s10_dos_lobes_total" => () -> fig_dos_lobes(:total),
     "s10_dos_lobes_mj0" => () -> fig_dos_lobes(:mj0),
     # slides 11–15, full shell with smooth confinement
