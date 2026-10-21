@@ -48,6 +48,11 @@ EQS = {
                     r" \Delta(V_\mathrm{Z}) = \Delta_0 \sqrt{1 - (V_\mathrm{Z}/V_C)^2}"),
     # backup B2
     "eq_mu_eff": r"\mu(z) \simeq \mu_\mathrm{bulk}\,\bigl(1 - 0.85\, e^{-z/\chi}\bigr)",
+    # inverted transition (slide after "Only m_J = 0"): m_J = 0 block of the tubular core,
+    # thesis ch4 Eqs. (topo_vz), (reduced_flux_av), (fs_topo_condition)
+    "eq_vzeff": r"V_\mathrm{Z}^\mathrm{eff} = V_\mathrm{Z} + \frac{\tilde\phi}{2}\Bigl(\omega_R + \frac{\alpha}{R_\mathrm{av}}\Bigr)",
+    "eq_phit": r"\tilde\phi = n - \frac{R_\mathrm{av}^2}{R_\mathrm{LP}^2}\,\frac{\Phi}{\Phi_0}",
+    "eq_topo_fs": r"V_\mathrm{Z}^\mathrm{eff} > \sqrt{\Gamma_S^2 + \tilde\mu_0^2}",
 }
 
 PREAMBLE = r"""\documentclass[border=1.5pt]{standalone}

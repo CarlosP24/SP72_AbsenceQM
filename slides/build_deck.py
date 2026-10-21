@@ -776,6 +776,37 @@ def slide_mj(deck):
              "CdGM analogs of all other sectors: the topological phase is generically gapless.")
 
 
+def slide_inversion(deck):
+    s = deck.new("Why is the transition inverted in flux?")
+    # right: schematic effective Zeeman energy vs field, partial shell (top) and m_J = 0 full shell
+    fp = fig(s, "s10b_inv_partial", 6.95, 1.18, descr="Partial shell: V_Z grows with B, trivial then topological")
+    ff = fig(s, "s10b_inv_full", 6.95, 1.18,
+             descr="Full shell, m_J = 0: effective Zeeman energy falls with flux within the lobe, topological then trivial")
+    t1 = textbox(s, 0.92, 1.36, 5.8, 0.7, ["Partial shell: <i>V</i><sub>Z</sub> grows with <i>B</i> → trivial, "
+                                           "then topological above <i>V</i><sub>Z</sub><sup>c</sup>"], size=16)
+    t2 = textbox(s, 0.92, 2.30, 5.8, 0.7, ["Full shell, <i>m</i><sub>J</sub> = 0: a Majorana nanowire whose Zeeman "
+                                           "energy is mostly <b>orbital</b>:"], size=16)
+    e1 = eq(s, "eq_vzeff", 1.05, 3.05, scale=0.85)
+    e2 = eq(s, "eq_phit", 1.05, 3.85, scale=0.85)
+    t3 = textbox(s, 0.92, 4.62, 2.0, 0.5, ["Topological if"], size=16, anchor=MSO_ANCHOR.MIDDLE)
+    e3 = eq(s, "eq_topo_fs", 2.75, 4.58, scale=0.85)
+    cb = box(s, 0.92, 5.40, 5.8, 1.15, "Within a lobe <i>V</i><sub>Z</sub><sup>eff</sup> <b>falls</b> as <i>Φ</i> grows: "
+             "topological below <i>Φ</i><sup>c</sup>, trivial above → MZM at low flux, quasi\u2011MZM at high flux",
+             size=16, border=ORANGE)
+    builds(s, [[t2, e1, e2, t3, e3, ff], [cb]])
+    cite(s, ["S. Vaitiekėnas <i>et al.</i> Science 367, eaav3392 (2020) | <b>CP</b> <i>et al.</i> PRB 109, "
+             "115428 (2024)"])
+    notes(s, "(1:00) You may have noticed that in full shells everything is mirrored: the MZM appears at the lower "
+             "flux and the quasi-MZM at the higher one. Here is why. In a partial shell the Zeeman energy grows with "
+             "the field, so the wire goes from trivial to topological at V_Z^c. [click] In a full shell, the m_J = 0 "
+             "sector is again a Majorana nanowire, but its Zeeman energy is mostly orbital: proportional to the "
+             "reduced flux φ̃ = n − (R_av/R_LP)² Φ/Φ0, measured from the degeneracy point of the lobe, with "
+             "ω_R = ħ²/2m*R_av². It is there even at g = 0, and within a lobe it falls as the flux grows. So "
+             "increasing the flux takes the wire from topological to trivial at Φc: MZM below, quasi-MZM above. "
+             "[click] Everything that follows in flux looks inverted with respect to the partial shell. (Right: "
+             "schematic, with R_av²/R_LP² = 0.6 for illustration and the paper's Φc.)")
+
+
 def slide_smooth_full(deck):
     s = deck.new("Smooth confinement in full shells")
     # left: the electrostatics; the strip sits right under the cut, z-aligned with it as on slides 4
@@ -1114,6 +1145,7 @@ def main(out):
     slide_cdgm(deck)
     slide_cdgm_exp(deck)
     slide_mj(deck)
+    slide_inversion(deck)
     slide_smooth_full(deck)
     slide_skin_origin(deck)
     slide_deep(deck)

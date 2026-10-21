@@ -1174,6 +1174,62 @@ function fig_mj_blocks()
     return fig
 end
 
+# Why the full-shell transition is inverted (schematic): the Zeeman energy that drives the
+# transition grows with B in a partial shell, but in the m_J = 0 sector of a full shell it is
+# mostly orbital, V_Z^eff ∝ φ̃ = n − (R_av/R_LP)² Φ/Φ0, which falls with Φ within a lobe. Both
+# are drawn in units of their threshold; the full-shell line crosses it at the paper's Φc
+# (with an illustrative R_av²/R_LP² = 0.6). Layers :partial, :full.
+const INV = (W = 5.5, H = 5.55, x = 0.62, w = 4.75, h = 1.55, y1 = 0.72, y2 = 3.37)
+function fig_inversion(layer::Symbol)
+    fig = newfig(INV.W, INV.H)
+    y = layer == :partial ? INV.y1 : INV.y2
+    ax = pax(fig, INV.x, y, INV.w, INV.h)
+    yl = (-0.3, 2.1)
+    lbl!(x, yy, t; al = (:center, :center), kw...) = text!(ax, x, yy; text = t, fontsize = fs_tick, align = al, kw...)
+    if layer == :partial
+        x0, x1, f = 0.0, 2.0, identity
+        vspan!(ax, x0, 1; color = c_triv); vspan!(ax, 1, x1; color = c_topo_tint)
+        hlines!(ax, 1; color = c_ink2, linestyle = :dash, linewidth = 1.5)
+        lines!(ax, [x0, x1], [x0, x1]; color = c_ink, linewidth = 3)
+        lbl!(0.03, 1.05, "threshold"; al = (:left, :bottom), color = c_ink2)
+        lbl!(0.5, 1.8, "trivial"); lbl!(1.32, 1.85, "topological")
+        lbl!(1.05, 0.25, "grows with B"; al = (:left, :center), font = :italic, color = c_ink2)
+        pts = [B2 / VZc, B1 / VZc]
+        marks = [L"V_\mathrm{Z}^{(2)}", L"V_\mathrm{Z}^{(1)}"]
+        ax.xticks = ([0, 1, 2], ["0", "1", "2"]); ax.xlabel = L"V_\mathrm{Z}/V_\mathrm{Z}^\mathrm{c}"
+        lab, tlab = L"V_\mathrm{Z}", "Partial shell"
+    else
+        x0, x1, r2 = 0.0, 2.5, 0.6
+        c = 1 / (1 - r2 * Φc)                      # V_Z^eff(Φc) = threshold
+        f = Φ -> c * (1 - r2 * Φ)
+        for (a, b) in ((0.0, 0.5), (1.5, 2.5))
+            vspan!(ax, a, b; color = colorant"#E4E4E4")
+            text!(ax, (a + b) / 2, 0.9; text = rich("no ", mJ_rich(" = 0\nsector")), color = c_ink2,
+                fontsize = fs_tick - 1, align = (:center, :center), justification = :center)
+        end
+        vspan!(ax, 0.5, Φc; color = c_topo_tint); vspan!(ax, Φc, 1.5; color = c_triv)
+        lines!(ax, [0.5, 1.5], [1, 1]; color = c_ink2, linestyle = :dash, linewidth = 1.5)
+        lines!(ax, [0.5, 1.5], f.([0.5, 1.5]); color = c_ink, linewidth = 3)
+        vlines!(ax, Φc; color = c_crit, linestyle = :dash, linewidth = 2)
+        lbl!(Φc + 0.03, yl[1] + 0.06, L"\Phi^\mathrm{c}"; al = (:left, :bottom), color = c_crit)
+        lbl!(1.47, 1.05, "threshold"; al = (:right, :bottom), color = c_ink2)
+        lbl!(1.2, 1.8, "trivial")
+        lbl!(1.0, 0.05, "falls with Φ"; al = (:left, :center), font = :italic, color = c_ink2)
+        pts = [Φ1, Φ2]
+        marks = [L"\Phi^{(1)}", L"\Phi^{(2)}"]
+        ax.xticks = ([0, 0.5, 1, 1.5, 2, 2.5], ["0", "0.5", "1", "1.5", "2", "2.5"]); ax.xlabel = L"\Phi/\Phi_0"
+        lab, tlab = L"V_\mathrm{Z}^\mathrm{eff}", rich("Full shell, ", mJ_rich(" = 0"))
+    end
+    scatter!(ax, pts, f.(pts); color = c_ink, markersize = 11)
+    top_marks!(fig, ax, pts, marks; fs = fs_tick + 1)
+    xlims!(ax, x0, x1); ylims!(ax, yl...)
+    ax.yticks = ([0, 1], ["0", "1"]); ax.ylabel = lab; ax.ylabelpadding = 2
+    ax.xlabelpadding = 0
+    text!(canvas(fig), 0.05, INV.H - y + 0.33; text = tlab, fontsize = fs_label, font = :semibold,
+        align = (:left, :bottom))
+    return fig
+end
+
 # Colour key of the vortex sketches: |Δ| from 0 to the bulk gap Δ
 function fig_pairing_key()
     W, H = 2.3, 0.34
@@ -1459,6 +1515,8 @@ const FIGS = Dict{String, Function}(
     "s07b_lp_lobes" => fig_lp_lobes,
     "s07b_cyl" => fig_cyl_sketch,
     "s07b_blocks" => fig_mj_blocks,
+    "s10b_inv_partial" => () -> fig_inversion(:partial),
+    "s10b_inv_full" => () -> fig_inversion(:full),
     "s09_exp" => () -> fig_exp_theory(:exp),
     "s09_theory" => () -> fig_exp_theory(:theory),
     "s09_cbar" => fig_exp_theory_cbar,

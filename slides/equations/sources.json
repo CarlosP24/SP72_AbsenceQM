@@ -12,5 +12,8 @@
  "eq_bessel": "e\\phi_g(r, z) = \\mu_\\mathrm{bulk} \\sum_{\\nu = 1}^{\\infty}\\frac{2}{k_\\nu J_1(k_\\nu)}\\, J_0\\!\\Bigl(k_\\nu \\frac{r}{R}\\Bigr)\\, e^{-k_\\nu z / k_1 \\chi}",
  "eq_h_partial": "H = \\Bigl[\\frac{p_z^2}{2m^*} - \\mu_\\mathrm{bulk} + e\\phi_g(z)\\Bigr]\\tau_z + \\alpha\\, p_z \\sigma_y \\tau_z + V_\\mathrm{Z}\\,\\sigma_z + \\Sigma_\\mathrm{SC}(\\omega, V_\\mathrm{Z})",
  "eq_sigma_sc": "\\Sigma_\\mathrm{SC} = \\Gamma_\\mathrm{NS}\\,\\frac{\\Delta(V_\\mathrm{Z})\\,\\tau_x - \\omega}{\\sqrt{\\Delta(V_\\mathrm{Z})^2 - \\omega^2}}, \\qquad \\Delta(V_\\mathrm{Z}) = \\Delta_0 \\sqrt{1 - (V_\\mathrm{Z}/V_C)^2}",
- "eq_mu_eff": "\\mu(z) \\simeq \\mu_\\mathrm{bulk}\\,\\bigl(1 - 0.85\\, e^{-z/\\chi}\\bigr)"
+ "eq_mu_eff": "\\mu(z) \\simeq \\mu_\\mathrm{bulk}\\,\\bigl(1 - 0.85\\, e^{-z/\\chi}\\bigr)",
+ "eq_vzeff": "V_\\mathrm{Z}^\\mathrm{eff} = V_\\mathrm{Z} + \\frac{\\tilde\\phi}{2}\\Bigl(\\omega_R + \\frac{\\alpha}{R_\\mathrm{av}}\\Bigr)",
+ "eq_phit": "\\tilde\\phi = n - \\frac{R_\\mathrm{av}^2}{R_\\mathrm{LP}^2}\\,\\frac{\\Phi}{\\Phi_0}",
+ "eq_topo_fs": "V_\\mathrm{Z}^\\mathrm{eff} > \\sqrt{\\Gamma_S^2 + \\tilde\\mu_0^2}"
 }
