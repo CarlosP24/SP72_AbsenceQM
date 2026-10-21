@@ -1073,6 +1073,103 @@ function fig_cartoon(which::Symbol)
     return fig
 end
 
+# New slide after slide 7: Little–Parks lobes of the paper's shell (illustrative,
+# slides/calc_lp_lobes.jl: Usadel pair breaking of base_fs), with rings showing the phase
+# of Δ winding n times around the wire over each lobe
+const LPF = (W = 6.0, H = 3.3, x = 0.80, y = 0.92, w = 5.05, h = 1.62, rr = 0.21)
+const cmap_phase = :romaO
+function phase_ring!(ax, cx, cy, r, n; lw = 9)
+    θs = range(0, 2π, length = 241)
+    lines!(ax, [Point2f(cx + r * cos(θ), cy + r * sin(θ)) for θ in θs]; color = mod.(n .* θs, 2π),
+        colormap = cmap_phase, colorrange = (0, 2π), linewidth = lw)
+end
+function fig_lp_lobes()
+    fig = newfig(LPF.W, LPF.H)
+    ax = pax(fig, LPF.x, LPF.y, LPF.w, LPF.h)
+    d = JLD2.load("slides/data/lp_lobes.jld2")
+    Φ, Ωs = d["Φs"], d["Ωs"] ./ d["Δ0"]
+    band!(ax, Φ, zero(Ωs), Ωs; color = c_super)
+    lines!(ax, Φ, Ωs; color = c_ink, linewidth = 2.5)
+    vlines!(ax, [0.5, 1.5]; color = c_grey, linestyle = :dash, linewidth = 1.5)
+    xlims!(ax, -0.5, 2.5); ylims!(ax, 0, 1.12)
+    ax.xticks = ([0, 1, 2], ["0", "1", "2"])
+    ax.yticks = ([0, 0.5, 1], ["0", "0.5", "1"])
+    ax.xlabel = L"\Phi/\Phi_0"; ax.xlabelpadding = 0
+    ax.ylabel = L"\Omega/\Delta_0"; ax.ylabelpadding = 2
+    text!(ax, 2.45, 0.06; text = "shell gap", fontsize = fs_tick, align = (:right, :bottom))
+    # phase of Δ around the wire over each lobe, winding n times
+    cv = canvas(fig)
+    yr = LPF.H - LPF.y + 0.1 + LPF.rr
+    for n in 0:2
+        x = LPF.x + LPF.w * (n + 0.5) / 3
+        phase_ring!(cv, x, yr, LPF.rr, n)
+        text!(cv, x, yr; text = L"%$(n)", fontsize = fs_label, align = (:center, :center))
+    end
+    text!(cv, 0.12, yr; text = rich("fluxoid ", rich("n"; font = :italic), ":"), fontsize = fs_tick,
+        align = (:left, :center))
+    # key: phase of Δ, under the axis on the right
+    kx, ky = LPF.x + LPF.w - 0.95, 0.04
+    k = pax(fig, kx + 0.28, LPF.H - ky - 0.14, 0.55, 0.14)
+    heatmap!(k, range(0, 2π, 128), [0, 1], reshape(collect(range(0, 2π, 128)), :, 1); colormap = cmap_phase,
+        colorrange = (0, 2π))
+    hidedecorations!(k); k.spinewidth = 0.8
+    text!(cv, kx + 0.24, ky + 0.07; text = L"0", fontsize = fs_tick, align = (:right, :center))
+    text!(cv, kx + 0.87, ky + 0.07; text = L"2\pi", fontsize = fs_tick, align = (:left, :center))
+    text!(cv, kx + 0.04, ky + 0.07; text = L"\arg\Delta", fontsize = fs_tick, align = (:right, :center))
+    return fig
+end
+
+# Cross-section: the hexagonal wire and its cylindrical model (core yellow, shell blue)
+function fig_cyl_sketch()
+    W, H = 3.75, 1.9
+    fig = newfig(W, H)
+    ax = pax(fig, 0.0, 0.0, W, H; aspect = DataAspect(), backgroundcolor = :transparent)
+    hidedecorations!(ax); hidespines!(ax); limits!(ax, 0, W, 0, H)
+    hexpts(c, r) = [Point2f(c[1] + r * cos(θ), c[2] + r * sin(θ)) for θ in range(0, 2π, length = 7)]
+    c1, c2, Rs, Rc = (0.75, 1.02), (2.55, 1.02), 0.66, 0.5
+    poly!(ax, hexpts(c1, Rs); color = c_super, strokecolor = c_ink2, strokewidth = 1.2)
+    poly!(ax, hexpts(c1, Rc); color = c_semi, strokecolor = c_ink2, strokewidth = 1.2)
+    poly!(ax, circle_pts(Rs, range(0, 2π, 200); c = c2); color = c_super, strokecolor = c_ink2, strokewidth = 1.2)
+    poly!(ax, circle_pts(Rc, range(0, 2π, 200); c = c2); color = c_semi, strokecolor = c_ink2, strokewidth = 1.2)
+    text!(ax, 1.65, 1.02; text = L"\approx", fontsize = fs_axis + 8, align = (:center, :center))
+    # φ around the cylinder and r from its axis
+    θs = range(0.3, 2π - 0.3, 100)
+    lines!(ax, circle_pts(0.78, θs; c = c2); color = c_ink2, linewidth = 1.8)
+    p = circle_pts(0.78, [last(θs)]; c = c2)[1]; dd = Point2f(-sin(last(θs)), cos(last(θs)))
+    arrows2d!(ax, [p[1] - 0.05dd[1]], [p[2] - 0.05dd[2]], [0.1dd[1]], [0.1dd[2]]; color = c_ink2,
+        shaftwidth = 1.8, tipwidth = 9, tiplength = 9)
+    text!(ax, c2[1] + 0.86, c2[2] - 0.08; text = L"\varphi", fontsize = fs_label, align = (:left, :top))
+    arrows2d!(ax, [c2[1]], [c2[2]], [c2[1] - 0.36], [c2[2] + 0.36]; argmode = :endpoint, color = c_ink,
+        shaftwidth = 1.6, tipwidth = 8, tiplength = 8)
+    text!(ax, c2[1] - 0.1, c2[2] + 0.26; text = L"r", fontsize = fs_label, align = (:left, :center))
+    text!(ax, c1[1], 0.0; text = "device", fontsize = fs_tick, align = (:center, :bottom))
+    text!(ax, c2[1], 0.0; text = "model", fontsize = fs_tick, align = (:center, :bottom))
+    return fig
+end
+
+# Block-diagonal Hamiltonian: one block per angular momentum m_J
+function fig_mj_blocks()
+    W = 1.75
+    fig = newfig(W, W)
+    ax = pax(fig, 0.0, 0.0, W, W; aspect = DataAspect(), backgroundcolor = :transparent)
+    hidedecorations!(ax); hidespines!(ax); limits!(ax, 0, W, 0, W)
+    x0, L = 0.12, 1.5
+    lines!(ax, [x0 + 0.06, x0, x0, x0 + 0.06], [x0, x0, x0 + L, x0 + L]; color = c_ink, linewidth = 2)
+    lines!(ax, [x0 + L - 0.06, x0 + L, x0 + L, x0 + L - 0.06], [x0, x0, x0 + L, x0 + L]; color = c_ink,
+        linewidth = 2)
+    b = 0.4
+    for (k, lab) in enumerate((L"H_{-1}", L"H_0", L"H_{+1}"))
+        xa = x0 + 0.04 + (k - 1) * b
+        ya = x0 + L - 0.04 - k * b
+        poly!(ax, Rect2f(xa, ya, b, b); color = (c_super, 0.85), strokecolor = c_ink2, strokewidth = 1)
+        text!(ax, xa + b / 2, ya + b / 2; text = lab, fontsize = fs_tick + 1, align = (:center, :center))
+    end
+    text!(ax, x0 + 0.04 + 3.3b, x0 + L - 0.04 - 3.2b; text = L"\ddots", fontsize = fs_label, align = (:center, :center))
+    text!(ax, x0 + L - 0.3, x0 + L - 0.3; text = L"0", fontsize = fs_axis + 4, color = c_grey, align = (:center, :center))
+    text!(ax, x0 + 0.3, x0 + 0.3; text = L"0", fontsize = fs_axis + 4, color = c_grey, align = (:center, :center))
+    return fig
+end
+
 # Colour key of the vortex sketches: |Δ| from 0 to the bulk gap Δ
 function fig_pairing_key()
     W, H = 2.3, 0.34
@@ -1355,6 +1452,9 @@ const FIGS = Dict{String, Function}(
     "s08_bands" => () -> fig_bands(:single),
     "s08_wire_axial" => fig_wire_axial,
     "s08_pairing_key" => fig_pairing_key,
+    "s07b_lp_lobes" => fig_lp_lobes,
+    "s07b_cyl" => fig_cyl_sketch,
+    "s07b_blocks" => fig_mj_blocks,
     "s09_exp" => () -> fig_exp_theory(:exp),
     "s09_theory" => () -> fig_exp_theory(:theory),
     "s09_cbar" => fig_exp_theory_cbar,

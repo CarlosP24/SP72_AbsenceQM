@@ -636,6 +636,41 @@ def slide_fullshell(deck):
              "peaks in the first lobe in 2020.")
 
 
+def slide_lp_sectors(deck):
+    s = deck.new("Little–Parks lobes and <i>m</i><sub>J</sub> sectors")
+    # left: Little–Parks lobes of the paper's shell (illustrative, slides/calc_lp_lobes.jl)
+    lp = fig(s, "s07b_lp_lobes", 0.92, 1.28, descr="Little-Parks lobes: shell gap versus flux, with the phase "
+                                                    "winding of the pairing over each lobe")
+    t1 = textbox(s, 0.92, 4.68, 6.0, 1.7, [
+        ("Shell pairing <i>Δ</i>\u00a0e<sup><i>inφ</i></sup>: its phase winds <i>n</i> times around the wire",
+         {"bullet": True}),
+        ("Winding costs kinetic energy: <b>pair breaking</b> shrinks the gap away from integer flux, "
+         "and <i>n</i> jumps by one between lobes", {"bullet": True}),
+    ], size=16)
+    # right: cylindrical approximation and angular-momentum blocks
+    cy = fig(s, "s07b_cyl", 7.85, 1.28, descr="Hexagonal cross-section of the device and its cylindrical model")
+    t2 = textbox(s, 7.05, 3.30, 5.4, 0.4, ["Cylindrical approximation: <i>J</i><sub>z</sub> is conserved"], size=16)
+    e2 = eq(s, "eq_jz", 7.2, 3.74, scale=0.85)
+    bl = fig(s, "s07b_blocks", 7.0, 4.25, descr="Block-diagonal Hamiltonian, one block per m_J")
+    t3 = textbox(s, 8.85, 4.40, 3.6, 1.6, [
+        ("<i>H</i> splits into independent blocks, one per <b>generalized angular momentum</b> "
+         "<i>m</i><sub>J</sub>", {"size": 16}),
+        ("each a 2D problem in (<i>r</i>, <i>z</i>)", {"size": 14, "color": INK2}),
+    ], size=16)
+    builds(s, [[cy, t2, e2], [bl, t3]])
+    cite(s, ["P. San-Jose, <b>CP</b> <i>et al.</i> PRB 107, 155423 (2023) | <b>CP</b> <i>et al.</i> PRB 109, "
+             "115428 (2024)"])
+    notes(s, "(1:00) Two ingredients of full shells we will use throughout. First, the Little–Parks effect. "
+             "The shell's order parameter winds n times around the wire, with n the fluxoid, the integer "
+             "closest to Φ/Φ0. Winding costs kinetic energy, which breaks pairs, so the shell gap shrinks away "
+             "from integer flux and n jumps by one at half-integer flux: the Little–Parks lobes (here for our "
+             "shell, illustrative). [click] Second, the cylindrical approximation: the real wire is hexagonal, "
+             "but we model it as a cylinder. Then the generalized angular momentum J_z, orbital plus spin plus "
+             "the winding of the pairing, is conserved. [click] So the Hamiltonian splits into independent "
+             "blocks, one per m_J, each a 2D problem in r and z. We will find the CdGM analogs and the Majoranas "
+             "sector by sector.")
+
+
 def slide_cdgm(deck):
     s = deck.new("A synthetic vortex: CdGM analogs")
     v = fig(s, "s08_cartoon_vortex", 0.92, 1.38, descr="Abrikosov vortex cartoon")
@@ -721,24 +756,21 @@ def slide_mj(deck):
     s = deck.new("Only <i>m</i><sub>J</sub> = 0 can host Majoranas")
     tot = fig(s, "s10_dos_lobes_total", 6.12, 1.22, descr="DOS versus flux, all angular sectors")
     mj0 = fig(s, "s10_dos_lobes_mj0", 6.12, 1.22, descr="DOS versus flux, m_J = 0 sector")
-    t1 = textbox(s, 0.92, 1.36, 5.1, 0.4, ["Cylindrical symmetry:"], size=16)
-    e1 = eq(s, "eq_jz", 1.05, 1.78, scale=0.85)
-    t1b = textbox(s, 0.92, 2.22, 5.1, 0.7, ["→ one Hamiltonian per sector <i>m</i><sub>J</sub>; CdGM analogs "
-                                            "live in all of them"], size=16)
-    t2 = textbox(s, 0.92, 3.00, 5.1, 0.4, ["Particle–hole symmetry maps <i>m</i><sub>J</sub> → −<i>m</i><sub>J</sub>:"],
+    textbox(s, 0.92, 1.36, 5.1, 0.7, ["One Hamiltonian per sector <i>m</i><sub>J</sub>; CdGM analogs live in "
+                                      "all of them"], size=16)
+    t2 = textbox(s, 0.92, 2.30, 5.1, 0.4, ["Particle–hole symmetry maps <i>m</i><sub>J</sub> → −<i>m</i><sub>J</sub>:"],
                  size=16)
-    e2 = eq(s, "eq_phs", 1.05, 3.42, scale=0.9)
-    t3 = textbox(s, 0.92, 3.92, 5.1, 0.4, ["An unpaired MZM needs <i>m</i><sub>J</sub> = −<i>m</i><sub>J</sub>:"],
+    e2 = eq(s, "eq_phs", 1.05, 2.72, scale=0.9)
+    t3 = textbox(s, 0.92, 3.32, 5.1, 0.4, ["An unpaired MZM needs <i>m</i><sub>J</sub> = −<i>m</i><sub>J</sub>:"],
                  size=16)
-    e3 = eq(s, "eq_mj0", 1.05, 4.35, scale=0.9)
-    t3b = textbox(s, 3.15, 4.30, 2.9, 0.4, ["→ only <b>odd lobes</b>"], size=16)
+    e3 = eq(s, "eq_mj0", 1.05, 3.75, scale=0.9)
+    t3b = textbox(s, 3.15, 3.70, 2.9, 0.4, ["→ only <b>odd lobes</b>"], size=16)
     cb = box(s, 0.92, 5.20, 5.05, 1.0, "MZMs typically coexist with CdGM analogs of other <i>m</i><sub>J</sub> at "
              "zero energy: <b>gapless</b>", size=16, border=ORANGE)
-    builds(s, [[t1, e1, t1b], [t2, e2, t3, e3, t3b], [mj0], [cb]])
+    builds(s, [[t2, e2, t3, e3, t3b], [mj0], [cb]])
     cite(s, ["<b>CP</b> <i>et al.</i> PRB 109, 115428 (2024) | F. Peñaranda <i>et al.</i> PRR 2, 023171 (2020)"])
-    notes(s, "(1:15) The DOS of our device shows the Little–Parks lobes filled with CdGM analogs. In a "
-             "cylindrical approximation the generalized angular momentum J_z is conserved, so the Hamiltonian "
-             "splits into sectors m_J. Particle–hole symmetry maps m_J to −m_J, so an unpaired Majorana needs the "
+    notes(s, "(1:00) The DOS of our device shows the Little–Parks lobes filled with CdGM analogs, which live "
+             "in every m_J sector. Particle–hole symmetry maps m_J to −m_J, so an unpaired Majorana needs the "
              "self-conjugate sector m_J = 0, which exists only for odd fluxoid. The bottom panel shows only that "
              "sector: it exists in lobe 1 and not in lobes 0 and 2. And the MZM has to share zero energy with the "
              "CdGM analogs of all other sectors: the topological phase is generically gapless.")
@@ -1078,6 +1110,7 @@ def main(out):
     slide_quasimajo(deck)
     slide_false_positive(deck)
     slide_fullshell(deck)
+    slide_lp_sectors(deck)
     slide_cdgm(deck)
     slide_cdgm_exp(deck)
     slide_mj(deck)
