@@ -976,6 +976,8 @@ end
 # at r_E where Δ(r_E) = E; (:fullshell) full shell, winding pairing around a
 # semiconductor core, Andreev reflection at the core–shell interface.
 const VTX = (W = 2.6, H = 2.6)
+# |Δ| from 0 (white) to the bulk gap (the SC blue of every sketch): vortex heatmap and its key
+const cmap_pairing = [colorant"#FFFFFF", c_super]
 function circle_pts(r, θs; c = (0, 0))
     return [Point2f(c[1] + r * cos(θ), c[2] + r * sin(θ)) for θ in θs]
 end
@@ -1050,8 +1052,8 @@ function fig_cartoon(which::Symbol)
         rE = 0.38
         xs = range(-1, 1, 301)
         D = [hypot(x, y) <= 1 ? tanh(hypot(x, y) / 0.38) : NaN for x in xs, y in xs]
-        heatmap!(ax, xs, xs, D; colormap = [colorant"#FFFFFF", c_super, colorant"#8EA3EE"],
-            colorrange = (0, 1), nan_color = :transparent, rasterize = 4)
+        heatmap!(ax, xs, xs, D; colormap = cmap_pairing, colorrange = (0, 1), nan_color = :transparent,
+            rasterize = 4)
         lines!(ax, circle_pts(1.0, range(0, 2π, 200)); color = c_ink2, linewidth = 1.2)
         lines!(ax, circle_pts(rE, range(0, 2π, 200)); color = c_wall, linewidth = 1.2, linestyle = :dash)
         andreev_cycle!(ax, rE; dx = 0.22)
@@ -1071,16 +1073,125 @@ function fig_cartoon(which::Symbol)
     return fig
 end
 
+# Colour key of the vortex sketches: |Δ| from 0 to the bulk gap Δ
+function fig_pairing_key()
+    W, H = 2.3, 0.34
+    fig = newfig(W, H)
+    ax = pax(fig, 0.62, 0.09, 1.30, 0.16)
+    heatmap!(ax, range(0, 1, 128), [0, 1], reshape(collect(range(0, 1, 128)), :, 1); colormap = cmap_pairing,
+        colorrange = (0, 1))
+    hidedecorations!(ax)
+    ax.spinewidth = 1
+    cv = canvas(fig)
+    text!(cv, 0.02, H / 2; text = L"|\Delta|", fontsize = fs_label, align = (:left, :center))
+    text!(cv, 0.56, H / 2; text = L"0", fontsize = fs_label, align = (:right, :center))
+    text!(cv, 1.98, H / 2; text = L"\Delta", fontsize = fs_label, align = (:left, :center))
+    return fig
+end
+
+# Side view of the full-shell wire as an Andreev cavity, after the thesis figure (PT_Thesis/
+# PT3_CdGM/src/plotters/andreev_wire.jl, Fig. andreev_wire a) in the colours and glyphs of
+# the slide-8 cartoons. A chord tilted by k_z: the hole retraces the electron, so the
+# Andreev loop stays put (the band edge, the CdGM analog), while an electron normally
+# reflected at the interface keeps v_z and runs on along the wire. Schematic.
+const AWS = (W = 5.9, Rc = 1.0, Rs = 1.35, zl = (0.0, 8.8), yl = (-1.72, 1.72), Δz = 1.4, b = 0.24, δ = 0.09)
+unit2(v) = v / hypot(v[1], v[2])
+function aw_lens!(ax, p1, p2, δ)
+    u = unit2(p2 - p1); n = Point2f(-u[2], u[1])
+    c1, c2 = p1 + δ * u, p2 - δ * u
+    ea, eb, ha, hb = c1 + δ * n, c2 + δ * n, c2 - δ * n, c1 - δ * n
+    arrows2d!(ax, [ea[1]], [ea[2]], [eb[1]], [eb[2]]; argmode = :endpoint, color = c_skin,
+        shaftwidth = 3, tipwidth = 11, tiplength = 11)
+    arrows2d!(ax, [ha[1]], [ha[2]], [hb[1]], [hb[2]]; argmode = :endpoint, color = c_wfR,
+        shaftwidth = 3, tipwidth = 11, tiplength = 11)
+    for (c, θs) in ((c2, range(-π / 2, π / 2, length = 40)), (c1, range(π / 2, 3π / 2, length = 40)))
+        lines!(ax, [c + δ * (cos(θ) * u + sin(θ) * n) for θ in θs]; color = c_wall, linewidth = 2.2)
+    end
+    scatter!(ax, [p1, p2]; color = c_wall, markersize = 7, strokewidth = 0)
+    return u, n
+end
+# Cooper pair along the chord direction u, as cooper_pair! (arrow ahead: handed to the shell;
+# behind: taken from it)
+function aw_pair!(ax, p0, u, n; arrow = :ahead, len = 0.32, ea = 0.11, sep = 0.08, kb = 2.2)
+    pts = [p0 + ea * cos(t) * u + kb * sep * sin(t) * n for t in range(0, 2π, length = 120)]
+    tail, tip = arrow === :ahead ? (p0 + ea * u, p0 + len * u) : (p0 - ea * u - len * u, p0 - ea * u)
+    arrows2d!(ax, [tail[1]], [tail[2]], [tip[1]], [tip[2]]; argmode = :endpoint, color = :white,
+        shaftwidth = 5, tipwidth = 14, tiplength = 13)
+    poly!(ax, pts; color = :white, strokecolor = :white, strokewidth = 4)
+    poly!(ax, pts; color = :white, strokecolor = c_pair, strokewidth = 1.6)
+    arrows2d!(ax, [tail[1]], [tail[2]], [tip[1]], [tip[2]]; argmode = :endpoint, color = c_pair,
+        shaftwidth = 2, tipwidth = 9, tiplength = 9)
+    scatter!(ax, [p0 + sep * n, p0 - sep * n]; color = c_pair, markersize = 8)
+end
+function fig_wire_axial()
+    (; Rc, Rs, zl, yl, Δz, b, δ) = AWS
+    H = AWS.W * (yl[2] - yl[1]) / (zl[2] - zl[1])
+    fig = newfig(AWS.W, H)
+    ax = pax(fig, 0.0, 0.0, AWS.W, H; aspect = DataAspect(), backgroundcolor = :transparent)
+    hidedecorations!(ax); hidespines!(ax)
+    limits!(ax, zl..., yl...)
+    band(y0, y1) = Rect2f(zl[1], y0, zl[2] - zl[1], y1 - y0)
+    poly!(ax, band(-Rs, Rs); color = c_super, strokewidth = 0)
+    poly!(ax, band(-Rc, Rc); color = c_semi, strokewidth = 0)
+    hlines!(ax, [-Rs, Rs]; color = c_ink2, linewidth = 1.2)
+    hlines!(ax, [-Rc, Rc]; color = c_wall, linewidth = 1.6, linestyle = :dash)
+    hc = sqrt(Rc^2 - b^2)
+    # two Andreev loops, retraced, with the pair handed to / taken from the shell at each end
+    for (k, z0) in enumerate((0.6, 1.5))
+        p1, p2 = Point2f(z0, -hc), Point2f(z0 + Δz, hc)
+        u, n = aw_lens!(ax, p1, p2, δ)
+        aw_pair!(ax, p2 + 0.2 * u, u, n)
+        aw_pair!(ax, p1 - 0.2 * u, u, n; arrow = :behind)
+        if k == 2
+            m = (p1 + p2) / 2
+            text!(ax, m + 0.22 * u + (δ + 0.1) * n; text = L"e", color = c_skin, fontsize = fs_label,
+                align = (:right, :bottom))
+            text!(ax, m - 0.22 * u - (δ + 0.1) * n; text = L"h", color = c_wfR, fontsize = fs_label,
+                align = (:left, :top))
+            text!(ax, p2[1] + 0.5, (Rc + Rs) / 2; text = L"2e", color = c_pair, fontsize = fs_label - 1,
+                align = (:left, :center))
+        end
+    end
+    # a normally reflected electron: bounces keep v_z, no pair, and it runs on along z
+    pts = [Point2f(3.75, -hc)]
+    while last(pts)[1] < zl[2]
+        push!(pts, Point2f(last(pts)[1] + Δz, -last(pts)[2]))
+    end
+    p, q = pts[end - 1], pts[end]
+    pts[end] = p + (zl[2] - 0.08 - p[1]) / (q[1] - p[1]) * (q - p)
+    for (i, (a, c)) in enumerate(zip(pts[1:end-1], pts[2:end]))
+        u = unit2(c - a)
+        cc = i < length(pts) - 1 ? c - 0.06 * u : c
+        arrows2d!(ax, [a[1]], [a[2]], [cc[1]], [cc[2]]; argmode = :endpoint, color = c_skin,
+            shaftwidth = 3, tipwidth = 11, tiplength = 11)
+        if i <= 2
+            n = Point2f(-u[2], u[1])
+            text!(ax, a + 0.7 * (c - a) + 0.16 * n; text = L"e", color = c_skin, fontsize = fs_label,
+                align = (n[1] < 0 ? :right : :left, :center))
+        end
+    end
+    scatter!(ax, pts[1:end-1]; color = c_ink2, markersize = 7, strokewidth = 0)
+    text!(ax, 0.1, Rs + 0.05; text = "Andreev: loop stays put", fontsize = fs_tick, align = (:left, :bottom))
+    text!(ax, 4.3, Rs + 0.05; text = "normal: propagates", fontsize = fs_tick, align = (:left, :bottom))
+    za, ya = zl[2] - 1.15, -Rs - 0.19
+    arrows2d!(ax, [za], [ya], [za + 0.6], [ya]; argmode = :endpoint, color = c_ink, shaftwidth = 1.5,
+        tipwidth = 8, tiplength = 8)
+    text!(ax, za + 0.7, ya; text = L"z", fontsize = fs_label, align = (:left, :center))
+    return fig
+end
+
 # Hollow-core bands and end LDOS (illustrative, slides/data/cdgm_bands.jld2): one row
 # per flux, Φ = 0 (n = 0) and Φ = Φ0 (n = 1); layers :n0, :n1
 const BND = (W = 5.9, H = 5.0, xb = 0.85, wb = 3.35, xl = 4.35, wl = 1.2, h = 1.70, y1 = 0.38, y2 = 2.55)
 const ml_palette = [colorant"#23427F", colorant"#6699CC", colorant"#C8102E", colorant"#E07A00",
     colorant"#007749", colorant"#54416B"]
+# :n0 / :n1 are the two layers of one canvas; :single is the n = 1 row alone
 function fig_bands(layer::Symbol)
-    fig = newfig(BND.W, BND.H)
+    H = layer == :single ? BND.y1 + BND.h + 0.74 : BND.H
+    fig = newfig(BND.W, H)
     key, lab = layer == :n0 ? ("Phi0", L"\Phi = 0\ (n = 0)") : ("Phi075", L"\Phi = 0.75\,\Phi_0\ (n = 1)")
     d = JLD2.load("slides/data/cdgm_bands.jld2")[key]
-    y = layer == :n0 ? BND.y1 : BND.y2
+    y = layer == :n1 ? BND.y2 : BND.y1
     Δ = d["Δ0"]; emax = 2.2
     axb = pax(fig, BND.xb, y, BND.wb, BND.h)
     axl = pax(fig, BND.xl, y, BND.wl, BND.h)
@@ -1100,14 +1211,14 @@ function fig_bands(layer::Symbol)
     axb.ylabel = L"E/\Delta_0"; axb.ylabelpadding = 2
     axb.xticks = ([-0.03, 0, 0.03], ["−0.03", "0", "0.03"])
     hideydecorations!(axl); hidexdecorations!(axl)
-    if layer == :n1
+    if layer != :n0
         axb.xlabel = L"k_z\ \mathrm{(nm^{-1})}"; axb.xlabelpadding = 0
     else
         hidexdecorations!(axb; ticks = false)
     end
     cv = canvas(fig)
-    text!(cv, BND.xb, BND.H - y + 0.04; text = lab, fontsize = fs_label, align = (:left, :bottom))
-    text!(cv, BND.xl + BND.wl / 2, BND.H - y + 0.04; text = "end LDOS", fontsize = fs_tick,
+    text!(cv, BND.xb, H - y + 0.04; text = lab, fontsize = fs_label, align = (:left, :bottom))
+    text!(cv, BND.xl + BND.wl / 2, H - y + 0.04; text = "end LDOS", fontsize = fs_tick,
         align = (:center, :bottom))
     return fig
 end
@@ -1241,6 +1352,9 @@ const FIGS = Dict{String, Function}(
     "s08_cartoon_fullshell" => () -> fig_cartoon(:fullshell),
     "s08_bands_n0" => () -> fig_bands(:n0),
     "s08_bands_n1" => () -> fig_bands(:n1),
+    "s08_bands" => () -> fig_bands(:single),
+    "s08_wire_axial" => fig_wire_axial,
+    "s08_pairing_key" => fig_pairing_key,
     "s09_exp" => () -> fig_exp_theory(:exp),
     "s09_theory" => () -> fig_exp_theory(:theory),
     "s09_cbar" => fig_exp_theory_cbar,

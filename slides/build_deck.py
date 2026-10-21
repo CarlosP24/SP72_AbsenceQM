@@ -645,6 +645,7 @@ def slide_cdgm(deck):
          {"size": 14}),
     ], size=14)
     ev = eq(s, "eq_cdgm_vortex", 3.68, 2.95, scale=0.82)
+    fig(s, "s08_pairing_key", 3.62, 3.64, descr="Colour key: pairing amplitude |Delta| from 0 to Delta")
     f = fig(s, "s08_cartoon_fullshell", 0.92, 4.05, descr="Full-shell wire cartoon")
     tf = textbox(s, 3.62, 4.17, 2.85, 1.5, [
         ("<b>Full-shell wire</b>", {"size": 16}),
@@ -653,22 +654,26 @@ def slide_cdgm(deck):
     ], size=14)
     ef = eq(s, "eq_cdgm_fs", 3.68, 5.70, scale=0.82)
     tf2 = textbox(s, 4.55, 5.66, 1.95, 0.4, ["→ resolvable"], size=14)
-    b0 = fig(s, "s08_bands_n0", 6.52, 1.25, descr="Hollow-core bands and end LDOS, flux 0")
-    b1 = fig(s, "s08_bands_n1", 6.52, 1.25, descr="Hollow-core bands and end LDOS, flux 0.75")
-    cap = textbox(s, 6.6, 6.28, 5.8, 0.5, ["Hollow-core model (illustrative): each subband's gap edge, a Van Hove "
+    # side view of the wire as an Andreev cavity (thesis Fig. 3.1a), then the n = 1 bands
+    w = fig(s, "s08_wire_axial", 6.62, 1.28, w=5.7,
+            descr="Side view of the full-shell wire: Andreev loops stay put, normal reflection propagates")
+    b1 = fig(s, "s08_bands", 6.52, 3.52, descr="Hollow-core bands and end LDOS, flux 0.75")
+    cap = textbox(s, 6.6, 6.36, 5.8, 0.5, ["Hollow-core model (illustrative): each subband's gap edge, a Van Hove "
                                            "singularity, gives one peak"], size=12, color=GREY)
-    builds(s, [[f, tf, ef, tf2], [b0], [b1, cap]])
+    builds(s, [[f, tf, ef, tf2], [w], [b1, cap]])
     cite(s, ["C. Caroli, P. G. de Gennes, J. Matricon, Phys. Lett. 9, 307 (1964)",
              "P. San-Jose, <b>CP</b> <i>et al.</i> PRB 107, 155423 (2023)"])
     notes(s, "(1:15) Why is the full shell special? A phase winding around a normal region is a vortex. In an "
              "Abrikosov vortex, the pairing vanishes in the core and Andreev reflection off that wall confines "
              "the Caroli–de Gennes–Matricon states, with tiny spacings Δ²/2E_F, about 10⁻³ of the gap in a "
-             "conventional superconductor. The full shell is a synthetic "
-             "vortex whose core is the semiconductor: Andreev reflection at the core–shell interface confines 1D "
-             "subbands, one per generalized angular momentum m_J. Each subband has a gap edge, a Van Hove "
-             "singularity, so they show up as sharp peaks with spacings comparable to the gap: the CdGM "
-             "analogs, resolvable in tunneling. (Right: illustrative hollow-core calculation. At Φ = 0 all gap edges coincide; inside "
-             "lobe 1 they spread into a ladder.)")
+             "conventional superconductor (the blue is the pairing amplitude |Δ|). [click] The full shell is a synthetic "
+             "vortex whose core is the semiconductor: Andreev reflection at the core–shell interface confines the "
+             "electrons and holes of the core. [click] Seen from the side: the chord is tilted by k_z. In an Andreev "
+             "reflection the hole retraces the electron, so the loop stays put along the wire: a standing state, the "
+             "gap edge of a subband. A normally reflected electron instead keeps its velocity and propagates. [click] "
+             "So we get 1D subbands, one per generalized angular momentum m_J, each with a gap edge, a Van Hove "
+             "singularity, that shows up as a sharp peak with spacings comparable to the gap: the CdGM analogs, "
+             "resolvable in tunneling. (Right: illustrative hollow-core calculation inside lobe 1.)")
 
 
 def slide_cdgm_exp(deck):
