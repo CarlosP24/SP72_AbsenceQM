@@ -572,11 +572,11 @@ def slide_quasimajo(deck):
              "segment. The outer one is abruptly confined at the end and oscillates with the Fermi momentum; the "
              "inner one sits at the smooth interface and has no oscillations. They barely hybridize (Kells, Meidan, "
              "Brouwer 2012). [click] So for χ = 200 nm the pair sits at zero energy from about 0.7 V_Z^c on: a "
-             "zero-energy peak well before the bulk transition at V_Z^c, in the trivial phase. [click] Make the end "
-             "four times sharper, χ = 50 nm. In units of χ the potential is the same, but the Majorana components do "
-             "not shrink with it: they spread over the whole segment, overlap and split. The pair only reaches zero "
-             "energy at V_Z^c, together with the true MZM. [click] So quasi-MZMs pin to zero energy only for smooth "
-             "enough ends, χ ≫ ħαμ_bulk/(V_Z Δ0). "
+             "zero-energy peak well before the bulk transition at V_Z^c, in the trivial phase. [click] Now the same "
+             "wire with a four times sharper end, χ = 50 nm, on the same scale. The potential heals much faster and "
+             "the topological segment is only about 90 nm long, but the Majorana components do not shrink with it: "
+             "they overlap and split. The pair only reaches zero energy at V_Z^c, together with the true MZM. "
+             "[click] So quasi-MZMs pin to zero energy only for smooth enough ends, χ ≫ ħαμ_bulk/(V_Z Δ0). "
              "(The χ = 50 nm row is an illustrative calculation for the talk, same model and routines as the paper; "
              "its DOS colour range is twice that of the χ = 200 nm one.)")
 

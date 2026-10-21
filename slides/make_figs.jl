@@ -231,14 +231,19 @@ const y_lbl = 2.20
 
 # bare = true: electrostatics only (insulating end, neutral "Hybrid wire", band bottom, μ, χ),
 # without local phases, field label or wavefunctions (slide 4 builds it up in two steps)
-# wf = (ΨL, ΨR, χ) replaces the published wavefunctions, corner the field label and
-# labR = (z, y) the position of the |Ψ_R|² label
+# wf = (ΨL, ΨR, χ) replaces the published wavefunctions and corner the field label. With
+# zref (nm) z is drawn in absolute units, the plot unit being zref instead of the wire's χ:
+# what scales with χ (phases, healing of the potential, wavefunctions) shrinks by χ/zref,
+# while the insulating end keeps its schematic width. labels = false drops the phase and
+# |Ψ|² labels, for a strip stacked under a labelled one.
 function realspace!(ax, shell::Symbol, case::Symbol; zl = (-1.0, 6.0), fs = fs_tick,
         χbar = (case == :majo && shell == :partial), zlabel = false, minimal = false, bare = false,
-        wf = nothing, corner = nothing, labR = nothing)
+        wf = nothing, corner = nothing, zref = nothing, labels = true)
     zmin, zmax = zl
+    χw = isnothing(wf) ? (shell == :partial ? 200 : 1000) : wf[3]
+    sc = isnothing(zref) ? 1.0 : χw / zref        # the wire's χ units → plot units
     lab!(x, txt; color = c_ink, font = :regular) =
-        !minimal && text!(ax, x, y_lbl; text = txt, color, font, fontsize = fs, align = (:center, :center))
+        !minimal && labels && text!(ax, x, y_lbl; text = txt, color, font, fontsize = fs, align = (:center, :center))
     vspan!(ax, zmin, 0; color = c_ins)
     if shell == :partial
         name, χ, μz = "base_partial", 200, μz_partial
@@ -247,7 +252,7 @@ function realspace!(ax, shell::Symbol, case::Symbol; zl = (-1.0, 6.0), fs = fs_t
             vspan!(ax, 0, zmax; color = c_topo_tint)
             lab!(zmax / 2, "Topological")
         else
-            z1 = PH.zP_topo_end
+            z1 = PH.zP_topo_end * sc
             vspan!(ax, 0, z1; color = c_topo_tint)
             vspan!(ax, z1, zmax; color = c_triv)
             lab!(z1 / 2, "Topological"); lab!((z1 + zmax) / 2, "Trivial")
@@ -258,20 +263,20 @@ function realspace!(ax, shell::Symbol, case::Symbol; zl = (-1.0, 6.0), fs = fs_t
         μz = case == :majo ? μz_full1 : μz_full2
         if bare
         elseif case == :majo
-            μz, z1 = μz_full1, PH.zF1_skin_end
+            μz, z1 = μz_full1, PH.zF1_skin_end * sc
             vspan!(ax, 0, z1; color = c_skin_tint)
             vspan!(ax, z1, zmax; color = c_topo_tint)
             lab!(z1 / 2, "Trivial skin"; color = c_skin, font = :bold)
             lab!((z1 + zmax) / 2, "Topological")
         else
-            μz, z1, z2 = μz_full2, PH.zF_skin_end, PH.zF_topo_end
+            μz, z1, z2 = μz_full2, PH.zF_skin_end * sc, PH.zF_topo_end * sc
             vspan!(ax, 0, z1; color = c_skin_tint)
             vspan!(ax, z1, z2; color = c_topo_tint)
             vspan!(ax, z2, zmax; color = c_triv)
             lab!(z1 / 2, "Trivial skin"; color = c_skin, font = :bold)
             lab!((z1 + z2) / 2, "Topological"); lab!((z2 + zmax) / 2, "Trivial")
         end
-        bare || vlines!(ax, [0, PH.zF1_skin_end * (case == :majo) + PH.zF_skin_end * (case != :majo)];
+        bare || vlines!(ax, [0, sc * (PH.zF1_skin_end * (case == :majo) + PH.zF_skin_end * (case != :majo))];
             color = c_skin, linewidth = lw_spine)
         plab = case == :majo ? L"\Phi = \Phi^{(1)}" : L"\Phi = \Phi^{(2)}"
     end
@@ -282,8 +287,10 @@ function realspace!(ax, shell::Symbol, case::Symbol; zl = (-1.0, 6.0), fs = fs_t
     isnothing(corner) || (plab = corner)
     minimal || bare || text!(ax, zmax - 0.08, yE0 + hE + 0.08; text = plab, fontsize = fs + 2, align = (:right, :bottom))
 
-    Ec = band_bottom(μz)
+    Ec0 = band_bottom(μz)
+    Ec = z -> z >= 0 ? Ec0(z / sc) : Ec0(z)       # the insulating end does not scale with χ
     zs = range(zmin, zmax, length = 800)
+    sc == 1 || (zs = sort(vcat(zs, 0.0)))         # sample the kink at the wire's end
     # "Ins." under the top of the barrier bump, clear of its steep flanks
     zpk = argmax(Ec, range(zmin, 0, length = 200))
     minimal || text!(ax, zpk, 0.05; text = "Ins.", rotation = π/2, fontsize = fs - 1,
@@ -296,7 +303,7 @@ function realspace!(ax, shell::Symbol, case::Symbol; zl = (-1.0, 6.0), fs = fs_t
         text = L"e\phi_g(z)", fontsize = fs + 1, align = (:left, :bottom))
 
     if χbar && !minimal                           # decay length of the barrier, above the curve
-        yχ, x1 = 2.17, 1.0
+        yχ, x1 = 2.17, sc
         lines!(ax, [0, x1], [yχ, yχ]; color = :black, linewidth = 2.5)
         for x in (0, x1)
             lines!(ax, [x, x], [yχ - 0.08, yχ + 0.08]; color = :black, linewidth = 2.5)
@@ -311,26 +318,27 @@ function realspace!(ax, shell::Symbol, case::Symbol; zl = (-1.0, 6.0), fs = fs_t
         ΨL, ΨR, χ = wf
     end
     bare && (ΨL = ΨR = fill(NaN, length(ΨL)))      # no wavefunctions in the bare strip
-    z = (0:length(ΨL)-1) .* 5 ./ χ
+    z = (0:length(ΨL)-1) .* 5 ./ (isnothing(zref) ? χ : zref)
     keep = z .<= zmax
     case == :qmajo && lines!(ax, z[keep], wf_scale .* ΨR[keep] ./ maximum(ΨR); color = c_wfR, linewidth = lw_wf)
     lines!(ax, z[keep], wf_scale .* ΨL[keep] ./ maximum(ΨL); color = c_wfL, linewidth = lw_wf)
     zL, zR = z[argmax(ΨL)], z[argmax(ΨR)]
     labL = L"|\Psi_\mathrm{L}|^2"
-    if minimal || bare
+    if minimal || bare || !labels
     elseif shell == :partial
         text!(ax, zL + 0.45, 0.98; text = labL, color = c_wfL, fontsize = fs + 2, align = (:left, :center))
-        posR = isnothing(labR) ? (zR + 0.6, 0.78wf_scale) : labR
-        case == :qmajo && text!(ax, posR...; text = L"|\Psi_\mathrm{R}|^2", color = c_wfR, fontsize = fs + 2, align = (:left, :center))
+        case == :qmajo && text!(ax, zR + 0.6, 0.78wf_scale; text = L"|\Psi_\mathrm{R}|^2", color = c_wfR, fontsize = fs + 2, align = (:left, :center))
     else
         text!(ax, zL - 0.25, 0.75wf_scale; text = labL, color = c_wfL, fontsize = fs + 2, align = (:right, :center))
         case == :qmajo && text!(ax, zR - 1.1, 0.80wf_scale; text = L"|\Psi_\mathrm{R}|^2", color = c_wfR, fontsize = fs + 2, align = (:right, :center))
     end
     xlims!(ax, zl...)
     ylims!(ax, -0.05, 2.45)
-    ax.xticks = zticks(zmax)
+    nt = 0:2:floor(Int, zmax)
+    ax.xticks = isnothing(zref) ? zticks(zmax) : (collect(nt), [string(round(Int, n * zref)) for n in nt])
     hideydecorations!(ax)
-    zlabel && inline_xlabel!(ax, L"z", 2 * floor(Int, zmax / 2) - 1)   # between the last two ticks
+    zlabel && inline_xlabel!(ax, isnothing(zref) ? L"z" : L"z\ (\mathrm{nm})",
+        2 * floor(Int, zmax / 2) - 1)                                    # between the last two ticks
     return ax
 end
 
@@ -463,17 +471,18 @@ end
 # Slide 5, one row per end: the quasi-MZM pair at V_Z^(2) and the DOS vs V_Z where μ(z)
 # varies, for the paper's smooth end (χ = 200 nm, published data/wfs and data/DOS, paper
 # Fig. 1c) and a sharper one (χ = 50 nm, illustrative: slides/calc_qmzm_wfs.jl and
-# slides/calc_qmzm_dos.jl), where the pair overlaps and splits
+# slides/calc_qmzm_dos.jl), where the pair overlaps and splits. Both strips share the
+# χ = 200 nm strip's axis in nm (−200 to 1200 nm); only the top one carries the labels
 function fig_rs_chi(which::Symbol)
     fig = newfig(RSP.W, RSP.H; transparent = false)
     ax = pax(fig, RSP.x, RSP.y, RSP.w, RSP.h)
     if which == :smooth
-        realspace!(ax, :partial, :qmajo; zlabel = true, corner = L"\chi = 200\ \mathrm{nm}")
+        realspace!(ax, :partial, :qmajo; zlabel = true, corner = L"\chi = 200\ \mathrm{nm}", zref = 200)
     else
         d = JLD2.load("slides/data/wfs_partial_chis.jld2")
         i = findfirst(==(50), d["χs"])
         realspace!(ax, :partial, :qmajo; zlabel = true, corner = L"\chi = 50\ \mathrm{nm}",
-            wf = (d["ΨL"][i], d["ΨR"][i], 50), labR = (4.55, 1.03))
+            wf = (d["ΨL"][i], d["ΨR"][i], 50), zref = 200, labels = false)
     end
     return fig
 end
