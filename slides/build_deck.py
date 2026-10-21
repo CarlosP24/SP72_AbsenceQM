@@ -650,7 +650,7 @@ def slide_cdgm(deck):
     tf = textbox(s, 3.62, 4.17, 2.85, 1.5, [
         ("<b>Full-shell wire</b>", {"size": 16}),
         ("The winding shell confines Andreev subbands in the core: <b>CdGM analogs</b>, one per "
-         "<i>m</i><sub>J</sub>", {"size": 14}),
+         "angular momentum <i>m</i><sub>J</sub>", {"size": 14}),
     ], size=14)
     ef = eq(s, "eq_cdgm_fs", 3.68, 5.70, scale=0.82)
     tf2 = textbox(s, 4.55, 5.66, 1.95, 0.4, ["→ resolvable"], size=14)
