@@ -727,7 +727,7 @@ end
 ## ===========================================================================
 # DOS vs Φ, lobes 0–2 (paper Fig. 1g data): all m_J (:total) and the m_J = 0 sector,
 # which exists only in odd lobes (:mj0); χ = 1 µm, DOS where μ(z) varies
-const LOB = (W = 6.3, H = 4.85, x = 0.85, w = 5.15, h = 1.60, y1 = 0.40, y2 = 2.50)
+const LOB = (W = 6.3, H = 4.85, x = 0.85, w = 4.70, h = 1.60, y1 = 0.40, y2 = 2.50, cb = 5.67)
 mJ_rich(rest) = rich(rich("m"; font = :italic), subscript("J"; font = :italic), rest)
 function fig_dos_lobes(layer::Symbol; crange_mj0 = (0, 0.8))
     fig = newfig(LOB.W, LOB.H)
@@ -738,7 +738,7 @@ function fig_dos_lobes(layer::Symbol; crange_mj0 = (0, 0.8))
     y = layer == :total ? LOB.y1 : LOB.y2
     ax = pax(fig, LOB.x, y, LOB.w, LOB.h)
     if layer == :total
-        heat!(ax, Φ, ω, mirror_M(sum(values(res.DOS))); crange = (0, 4))
+        heat!(ax, Φ, ω, mirror_M(sum(values(res.DOS))); crange = (0, 4))     # as its colour bar
         txt = rich("All ", mJ_rich(" sectors"))
     else
         M = mirror_M(res.DOS[0])
@@ -748,7 +748,7 @@ function fig_dos_lobes(layer::Symbol; crange_mj0 = (0, 0.8))
         ax.backgroundcolor = c_triv
         for xx in (0.25, 2.0)
             text!(ax, xx, 0.0; text = rich("no ", mJ_rich(" = 0\nsector")), color = c_ink2,
-                fontsize = fs_tick, align = (:center, :center), justification = :center)
+                fontsize = fs_tick - 1, align = (:center, :center), justification = :center)
         end
         txt = mJ_rich(" = 0 only")
         ax.xlabel = L"\Phi/\Phi_0"; ax.xlabelpadding = 0
@@ -769,6 +769,10 @@ function fig_dos_lobes(layer::Symbol; crange_mj0 = (0, 0.8))
         ax.yticklabelspace = Float64(Makie.text_bb("−1", Makie.to_font(slide_fonts.regular), fs_tick).widths[1])
     end
     ax.ylabel = L"\omega/\Delta_0"; ax.ylabelpadding = 2
+    # colour bar of this panel, in its layer
+    crange = layer == :total ? (0, 4) : crange_mj0
+    cb = colorbar_axis!(fig, LOB.cb, y, 0.12, LOB.h; label = "DOS (arb. u.)")
+    cb.yticks = ([0, 1], ["0", string(crange[2])])
     # fluxoid number of each Little–Parks lobe, on top
     layer == :total && top_marks!(fig, ax, [0.25, 1.0, 2.0], ["n = 0", "n = 1", "n = 2"]; fs = fs_tick)
     return fig
