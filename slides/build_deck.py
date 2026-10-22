@@ -548,37 +548,32 @@ def slide_smooth_partial(deck):
 
 def slide_quasimajo(deck):
     s = deck.new("Quasi-Majoranas: trivial zero modes")
-    # One row per end: real-space pair at V_Z^(2) and DOS vs V_Z. The chi = 200 nm strip comes
-    # from slide 4 with the Morph (same name and box, only its corner label changes); the
-    # chi = 50 nm row is illustrative (slides/calc_qmzm_wfs.jl, slides/calc_qmzm_dos.jl)
-    y1, y2, xr = 1.50, 3.55, 7.42
+    # One row per end on a common axis in nm: signed amplitudes of the pair at V_Z^(2), the
+    # coupling density under them (its area is the splitting) and the DOS vs V_Z. The chi = 200 nm
+    # strip comes from slide 4 with the Morph; the chi = 50 nm row and the amplitudes are
+    # illustrative (slides/calc_qmzm_amp.jl, calc_qmzm_dos.jl)
+    y1, y2, xr = 1.50, 3.80, 7.42
     dy = 0.40 - 0.06                          # DOS axis top level with the strip's
     add_svg(s, FIGS / "s05_rs_smooth.svg", FIGS / "s05_rs_smooth.png", 0.92, y1,
-            name="!!s04_rs_partial_qmajo", descr="Quasi-MZM pair at V_Z^(2) for a smooth end, chi = 200 nm")
+            name="!!s04_rs_partial_qmajo", descr="Quasi-MZM pair at V_Z^(2), smooth end chi = 200 nm: signed amplitudes")
+    rs2 = fig(s, "s05_rs_sharp", 0.92, y2, descr="Quasi-MZM pair at V_Z^(2), sharper end chi = 50 nm: signed amplitudes")
+    c1 = fig(s, "s05_cpl_smooth", 0.92, y1 + 1.80,
+             descr="Coupling density of the two Majoranas, chi = 200 nm: alternating, area about zero")
+    c2 = fig(s, "s05_cpl_sharp", 0.92, y2 + 1.80,
+             descr="Coupling density, chi = 50 nm: a lump at the wire's end, finite area (the splitting)")
     dos1 = fig(s, "s05_dos_smooth", xr, y1 - dy,
                descr="DOS where mu(z) varies versus Zeeman field, chi = 200 nm: quasi-MZM at zero before V_Z^c")
-    rs2 = fig(s, "s05_rs_sharp", 0.92, y2, descr="Quasi-MZM pair at V_Z^(2) for a sharper end, chi = 50 nm")
     dos2 = fig(s, "s05_dos_sharp", xr, y2 - dy,
                descr="DOS where mu(z) varies versus Zeeman field, chi = 50 nm: split pair reaches zero only at V_Z^c")
-    yc = y2 + 1.80 + 0.50                     # criterion: text and equation centred on one line
+    yc = 6.42                                 # criterion: text and equation centred on one line
     t = textbox(s, 0.92, yc - 0.25, 3.75, 0.5, ["Pinned to zero energy only if"], size=18,
                 anchor=MSO_ANCHOR.MIDDLE)
     e1 = eq(s, "eq_chi", 0.92 + 0.04 + 3.57 + 0.15, yc)
     e1.top -= e1.height // 2
-    builds(s, [[dos1], [rs2, dos2], [t, e1]])
+    builds(s, [[rs2], [c1, c2], [dos1, dos2], [t, e1]])
     cite(s, [PAPER_SHORT,
              "G. Kells <i>et al.</i> PRB 86, 100503(R) (2012) | F. Peñaranda <i>et al.</i> PRB 98, 235406 (2018)"])
-    notes(s, "(1:30) These are quasi-Majoranas: one Majorana component at each boundary of the topological "
-             "segment. The outer one is abruptly confined at the end and oscillates with the Fermi momentum; the "
-             "inner one sits at the smooth interface and has no oscillations. They barely hybridize (Kells, Meidan, "
-             "Brouwer 2012). [click] So for χ = 200 nm the pair sits at zero energy from about 0.7 V_Z^c on: a "
-             "zero-energy peak well before the bulk transition at V_Z^c, in the trivial phase. [click] Now the same "
-             "wire with a four times sharper end, χ = 50 nm, on the same scale. The potential heals much faster and "
-             "the topological segment is only about 90 nm long, but the Majorana components do not shrink with it: "
-             "they overlap and split. The pair only reaches zero energy at V_Z^c, together with the true MZM. "
-             "[click] So quasi-MZMs pin to zero energy only for smooth enough ends, χ ≫ ħαμ_bulk/(V_Z Δ0). "
-             "(The χ = 50 nm row is an illustrative calculation for the talk, same model and routines as the paper; "
-             "its DOS colour range is twice that of the χ = 200 nm one.)")
+    notes(s, "(1:45) Below V_Z^c only an island at the end of the wire is topological, and each of its two edges holds a Majorana. Ψ_L sits at the hard end and oscillates with the Fermi wavelength, about 120 nm here; Ψ_R sits at the soft edge and is a smooth bump. Two Majoranas make one fermion, and its energy is their coupling. [click] Now the same wire with an end four times sharper: the island is only about 90 nm long. [click] The coupling is this curve, Ψ_L times HΨ_R along the wire, and its area is the splitting. For χ = 200 nm, Ψ_R only meets the fast tail of Ψ_L: the plus and minus lobes cancel, the area is zero and the pair sits at zero energy. For χ = 50 nm, Ψ_R already reaches the end, where the first big lobe of Ψ_L has nothing to cancel it: a finite area, so the pair splits. [click] In the spectrum: with the smooth end a zero-energy peak from about 0.7 V_Z^c, well inside the trivial phase; with the sharp one the pair stays split and only reaches zero at V_Z^c, with the real transition. [click] So a smooth end fakes a Majorana: χ must be large compared with the Majorana length, about 200 nm here. (χ = 50 nm and the amplitudes are an illustrative calculation, same model and routine as the paper; the strips show the largest spinor component of each Majorana; DOS colour range of the lower map twice that of the upper one.)")
 
 
 def slide_false_positive(deck):

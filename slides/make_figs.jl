@@ -238,9 +238,9 @@ const y_lbl = 2.20
 # |Ψ|² labels, for a strip stacked under a labelled one.
 function realspace!(ax, shell::Symbol, case::Symbol; zl = (-1.0, 6.0), fs = fs_tick,
         χbar = (case == :majo && shell == :partial), zlabel = false, minimal = false, bare = false,
-        wf = nothing, corner = nothing, zref = nothing, labels = true)
+        wf = nothing, corner = nothing, zref = nothing, labels = true, densities = true, chi = nothing)
     zmin, zmax = zl
-    χw = isnothing(wf) ? (shell == :partial ? 200 : 1000) : wf[3]
+    χw = !isnothing(chi) ? chi : isnothing(wf) ? (shell == :partial ? 200 : 1000) : wf[3]
     sc = isnothing(zref) ? 1.0 : χw / zref        # the wire's χ units → plot units
     lab!(x, txt; color = c_ink, font = :regular) =
         !minimal && labels && text!(ax, x, y_lbl; text = txt, color, font, fontsize = fs, align = (:center, :center))
@@ -317,14 +317,14 @@ function realspace!(ax, shell::Symbol, case::Symbol; zl = (-1.0, 6.0), fs = fs_t
     else
         ΨL, ΨR, χ = wf
     end
-    bare && (ΨL = ΨR = fill(NaN, length(ΨL)))      # no wavefunctions in the bare strip
+    (bare || !densities) && (ΨL = ΨR = fill(NaN, length(ΨL)))   # no density curves
     z = (0:length(ΨL)-1) .* 5 ./ (isnothing(zref) ? χ : zref)
     keep = z .<= zmax
     case == :qmajo && lines!(ax, z[keep], wf_scale .* ΨR[keep] ./ maximum(ΨR); color = c_wfR, linewidth = lw_wf)
     lines!(ax, z[keep], wf_scale .* ΨL[keep] ./ maximum(ΨL); color = c_wfL, linewidth = lw_wf)
     zL, zR = z[argmax(ΨL)], z[argmax(ΨR)]
     labL = L"|\Psi_\mathrm{L}|^2"
-    if minimal || bare || !labels
+    if minimal || bare || !labels || !densities
     elseif shell == :partial
         text!(ax, zL + 0.45, 0.98; text = labL, color = c_wfL, fontsize = fs + 2, align = (:left, :center))
         case == :qmajo && text!(ax, zR + 0.6, 0.78wf_scale; text = L"|\Psi_\mathrm{R}|^2", color = c_wfR, fontsize = fs + 2, align = (:left, :center))
@@ -469,21 +469,55 @@ function fig_cut(shell; zl = (-1.0, 6.0))
 end
 
 # Slide 5, one row per end: the quasi-MZM pair at V_Z^(2) and the DOS vs V_Z where μ(z)
-# varies, for the paper's smooth end (χ = 200 nm, published data/wfs and data/DOS, paper
-# Fig. 1c) and a sharper one (χ = 50 nm, illustrative: slides/calc_qmzm_wfs.jl and
-# slides/calc_qmzm_dos.jl), where the pair overlaps and splits. Both strips share the
-# χ = 200 nm strip's axis in nm (−200 to 1200 nm); only the top one carries the labels
+# varies, for the paper's smooth end (χ = 200 nm) and a sharper one (χ = 50 nm, illustrative),
+# on the χ = 200 nm strip's axis in nm. The strips show the signed amplitudes of the two
+# Majoranas (largest spinor component of each, slides/calc_qmzm_amp.jl; χ = 200 nm is the
+# published pair, same routine), so that the Fermi wavelength of Ψ_L shows against the smooth
+# Ψ_R. Under each strip, the coupling density Re[Ψ_L(z)·(HΨ_R)(z)] on a common scale: its area
+# is the splitting. Only the top strip carries the labels.
+const AMP_Y0, AMP_A = 0.55, 0.5                  # baseline and half-height of the amplitudes
+function amp_data(which)
+    r = JLD2.load("slides/data/wfs_partial_amp.jld2", "res")[which == :smooth ? "200" : "50"]
+    big(Ψ) = Ψ[argmax(vec(sum(abs2, Ψ, dims = 2))), :]
+    ψL, ψR = big(r.ΨL), big(r.ΨR)
+    sgn(ψ) = sign(ψ[argmax(abs.(ψ))])                         # largest lobe up
+    return r.z, sgn(ψL) .* ψL ./ maximum(abs, ψL), sgn(ψR) .* ψR ./ maximum(abs, ψR), r
+end
 function fig_rs_chi(which::Symbol)
     fig = newfig(RSP.W, RSP.H; transparent = false)
     ax = pax(fig, RSP.x, RSP.y, RSP.w, RSP.h)
+    χ = which == :smooth ? 200 : 50
+    realspace!(ax, :partial, :qmajo; zlabel = true, corner = L"\chi = %$(χ)\ \mathrm{nm}", zref = 200,
+        labels = which == :smooth, densities = false, chi = χ)
+    z, ψL, ψR, _ = amp_data(which)
+    keep = z .<= 1200
+    zp = z[keep] ./ 200                                      # plot units of 200 nm
+    hlines!(ax, AMP_Y0; color = (c_ink2, 0.5), linewidth = 1)
+    lines!(ax, zp, AMP_Y0 .+ AMP_A .* ψR[keep]; color = c_wfR, linewidth = lw_wf)
+    lines!(ax, zp, AMP_Y0 .+ AMP_A .* ψL[keep]; color = c_wfL, linewidth = lw_wf)
     if which == :smooth
-        realspace!(ax, :partial, :qmajo; zlabel = true, corner = L"\chi = 200\ \mathrm{nm}", zref = 200)
-    else
-        d = JLD2.load("slides/data/wfs_partial_chis.jld2")
-        i = findfirst(==(50), d["χs"])
-        realspace!(ax, :partial, :qmajo; zlabel = true, corner = L"\chi = 50\ \mathrm{nm}",
-            wf = (d["ΨL"][i], d["ΨR"][i], 50), zref = 200, labels = false)
+        text!(ax, 0.95, 1.12; text = L"\Psi_\mathrm{L}", color = c_wfL, fontsize = fs_tick + 4, align = (:left, :center))
+        text!(ax, 3.05, 1.12; text = L"\Psi_\mathrm{R}", color = c_wfR, fontsize = fs_tick + 4, align = (:left, :center))
     end
+    return fig
+end
+# Coupling density under each strip (common scale; area = splitting)
+const CPL = (W = 6.3, H = 0.42, h = 0.30)
+function fig_coupling(which::Symbol)
+    fig = newfig(CPL.W, CPL.H; transparent = false)
+    ax = pax(fig, RSP.x, 0.06, RSP.w, CPL.h)
+    cmax = let r = amp_data(:sharp)[4]; maximum(abs, r.creal) end
+    z, _, _, r = amp_data(which)
+    c = sign(sum(r.creal)) .* r.creal ./ cmax
+    keep = z .<= 1200
+    band!(ax, z[keep] ./ 200, zero(c[keep]), c[keep]; color = c_purple)
+    hlines!(ax, 0; color = c_ink2, linewidth = 1)
+    xlims!(ax, -1, 6); ylims!(ax, -0.15, 1.1)
+    hidedecorations!(ax)
+    ax.backgroundcolor = :white
+    text!(ax, -0.96, 0.45; text = "coupling", fontsize = fs_tick - 2, align = (:left, :center))
+    text!(ax, 5.95, 0.5; text = which == :smooth ? "area ≈ 0: zero energy" : "area ≠ 0: split",
+        fontsize = fs_tick, font = :semibold, color = which == :smooth ? c_ink : c_purple, align = (:right, :center))
     return fig
 end
 
@@ -1499,6 +1533,8 @@ const FIGS = Dict{String, Function}(
     "s05_dos_partial" => fig_dos_partial,
     "s05_rs_smooth" => () -> fig_rs_chi(:smooth),
     "s05_rs_sharp" => () -> fig_rs_chi(:sharp),
+    "s05_cpl_smooth" => () -> fig_coupling(:smooth),
+    "s05_cpl_sharp" => () -> fig_coupling(:sharp),
     "s05_dos_smooth" => () -> fig_dos_row(:smooth),
     "s05_dos_sharp" => () -> fig_dos_row(:sharp),
     "s06_ldos_chi_partial_majo" => () -> fig_ldos_chi_partial(:majo),
