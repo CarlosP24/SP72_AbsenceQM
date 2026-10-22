@@ -407,7 +407,7 @@ end
 
 # End LDOS vs V_Z (ω/Δ0), partial shell: :sharp (slides/data, χ = 1 nm, illustrative) or
 # :smooth (data/LDOSvB/base_partial, χ = 200 nm, published data)
-const LDV = (W = 5.0, H = 2.45, x = 0.85, y = 0.08, w = 4.0, h = 1.65)
+const LDV = (W = 5.0, H = 2.45, x = 0.85, y = 0.08, w = 3.45, h = 1.65, cb = 4.42)
 const ldos_vB_crange = (0.0, 0.012)
 
 function ldos_vB_data(which)
@@ -434,11 +434,13 @@ function fig_ldos_vB(which::Symbol)
     ax.ylabel = L"\omega/\Delta_0"
     ax.ylabelpadding = 2
     ax.xlabel = L"V_\mathrm{Z}/V_\mathrm{Z}^\mathrm{c}"
-    title = which == :sharp ? "End LDOS · sharp end" : "End LDOS · smooth end, χ = 200 nm"
+    title = which == :sharp ? "End LDOS · sharp end" : "End LDOS · smooth end"
     text!(ax, 0.98, 0.04; space = :relative, text = title, color = :white, fontsize = fs_tick,
-        font = :medium, align = (:right, :bottom))
+        font = :medium, align = (:right, :bottom), justification = :right)
     mbar!(ax, 1.0, 1.98, 0.22; cap = 0.07)
     text!(ax, 1.49, 0.30; text = "MZM", color = :white, fontsize = fs_tick, font = :semibold, align = (:center, :bottom))
+    cb = colorbar_axis!(fig, LDV.cb, LDV.y, 0.12, LDV.h)
+    cb.yticks = ([0, 1], ["0", "1"])                         # normalised to the top of the colour range
     if which == :smooth
         mbar!(ax, 0.62, 1.0, -0.22; cap = 0.07)
         text!(ax, 0.81, -0.30; text = "Q-MZM", color = :white, fontsize = fs_tick, font = :semibold, align = (:center, :top))
@@ -551,7 +553,7 @@ end
 # The slide-5 rows: same DOS where μ(z) varies, zoomed to the subgap states. Each map has its
 # own colour range: at χ = 50 nm the NDOS sites sample a 4× shorter region and the subgap
 # peaks are twice as high, so its range is doubled to keep the same contrast
-const DSR = (W = 5.0, H = 2.14, x = 0.85, y = 0.40, w = 4.0, h = 1.30)
+const DSR = (W = 5.0, H = 2.14, x = 0.85, y = 0.40, w = 3.45, h = 1.30, cb = 4.42)
 function fig_dos_row(which::Symbol)
     fig = newfig(DSR.W, DSR.H)
     ax = pax(fig, DSR.x, DSR.y, DSR.w, DSR.h)
@@ -571,13 +573,15 @@ function fig_dos_row(which::Symbol)
     ax.ylabel = L"\omega/\Delta_0"
     ax.ylabelpadding = 2
     inline_xlabel!(ax, L"V_\mathrm{Z}/V_\mathrm{Z}^\mathrm{c}", 1.5)
-    text!(ax, 0.99, 0.04; space = :relative, text = "DOS where μ(z) varies", color = :white,
-        fontsize = fs_tick - 2, font = :medium, align = (:right, :bottom))
+    text!(ax, 0.985, 0.04; space = :relative, text = "DOS where\nμ(z) varies", color = :white,
+        fontsize = fs_tick - 2, font = :medium, align = (:right, :bottom), justification = :right)
+    cb = colorbar_axis!(fig, DSR.cb, DSR.y, 0.12, DSR.h; label = "DOS (arb. u.)", fs = fs_tick - 2)
+    cb.yticks = ([0, 1], ["0", "1"])                         # normalised to the top of its colour range
     text!(ax, 1.5, 0.08; text = "MZM", color = :white, fontsize = fs_tick, font = :semibold, align = (:center, :bottom))
     # in the dark gap left of where the pair reaches zero energy
     which == :smooth ?
         text!(ax, 0.69, 0; text = "Q-MZM", color = :white, fontsize = fs_tick, font = :semibold, align = (:right, :center)) :
-        text!(ax, 0.72, 0; text = "split Q-MZMs", color = :white, fontsize = fs_tick, font = :semibold, align = (:right, :center))
+        text!(ax, 0.72, 0; text = "split Q-MZMs", color = :white, fontsize = fs_tick - 2, font = :semibold, align = (:right, :center))
     top_marks!(fig, ax, [B2 / VZc], [L"V_\mathrm{Z}^{(2)}"])
     return fig
 end
@@ -983,7 +987,7 @@ function fig_pd_mualpha()
 end
 
 # Slide 12: m_J = 0 DOS in lobe 1 (paper Fig. 1h)
-const DMJ = (W = 5.1, H = 3.75, x = 0.95, y = 0.42, w = 3.95, h = 2.55)
+const DMJ = (W = 5.1, H = 3.75, x = 0.95, y = 0.42, w = 3.4, h = 2.55, cb = 4.52)
 function fig_dos_mj0()
     fig = newfig(DMJ.W, DMJ.H)
     ax = pax(fig, DMJ.x, DMJ.y, DMJ.w, DMJ.h)
@@ -1004,6 +1008,8 @@ function fig_dos_mj0()
     text!(ax, (Φc + 0.98) / 2, -0.026; text = "Q-MZM", color = :white, fontsize = fs_tick, font = :semibold, align = (:center, :top))
     ax.xticks = ([0.501, Φc, 1, 1.499], ["0.5", L"\Phi^\mathrm{c}", "1", "1.5"])
     top_marks!(fig, ax, [Φ1, Φ2], [L"\Phi^{(1)}", L"\Phi^{(2)}"])
+    cb = colorbar_axis!(fig, DMJ.cb, DMJ.y, 0.12, DMJ.h; label = "DOS (arb. u.)")
+    cb.yticks = ([0, 1], ["0.1", "1"])                      # crange (0.05, 0.5) normalised to its top
     return fig
 end
 
