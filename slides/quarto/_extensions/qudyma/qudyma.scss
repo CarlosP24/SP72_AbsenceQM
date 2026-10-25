@@ -1,0 +1,814 @@
+/*-- scss:defaults --*/
+
+// QUDYMA talk theme (Carlos Payá, ICMM-CSIC), for a 1600 × 900 canvas.
+// CSIC red is the brand accent. The physics roles (topological, trivial skin, the two
+// Majorana components) use the colours of the paper and poster figures, so text,
+// widgets and figures share one palette. Every colour is also exposed as a CSS custom
+// property (--qd-*) for scripts and widgets.
+
+$qd-ink: #15181E;
+$qd-ink-2: #3B4150;
+$qd-muted: #6E7586;
+$qd-faint: #A9AEBB;
+$qd-line: #E2E5EB;
+$qd-surface: #F4F5F8;
+$qd-red: #C8102E;
+$qd-red-tint: #FBE8EB;
+$qd-topo-tint: #EE9DA9;
+$qd-green: #007749;
+$qd-green-tint: #E2F0E9;
+$qd-skin-tint: #B3D6C8;
+$qd-navy: #23427F;
+$qd-navy-tint: #E8EDF6;
+$qd-orange: #E07A00;
+$qd-orange-tint: #FDF0E0;
+$qd-ins: #BDBDBD;
+$qd-triv: #F4F4F4;
+$qd-crit: #DE9151;
+
+$font-family-sans-serif: "Montserrat", "Helvetica Neue", Helvetica, Arial, sans-serif;
+$font-family-monospace: "JetBrains Mono", "SF Mono", SFMono-Regular, Menlo, Consolas, monospace;
+$presentation-font-size-root: 28px;
+$presentation-line-height: 1.38;
+$font-weight-base: 400;
+
+$body-bg: #FFFFFF;
+$body-color: $qd-ink;
+$text-muted: $qd-muted;
+$primary: $qd-red;
+$link-color: $qd-navy;
+$selection-bg: $qd-red-tint;
+$selection-color: $qd-ink;
+
+$presentation-heading-font: $font-family-sans-serif;
+$presentation-heading-color: $qd-ink;
+$presentation-heading-font-weight: 600;
+$presentation-heading-line-height: 1.12;
+$presentation-heading-letter-spacing: -0.015em;
+$presentation-h1-font-size: 2.1em;
+$presentation-h2-font-size: 1.45em;
+$presentation-h3-font-size: 1.0em;
+$presentation-h4-font-size: 0.85em;
+$presentation-block-margin: 14px;
+$presentation-title-slide-text-align: left;
+$presentation-slide-text-align: left;
+$presentation-list-bullet-color: $qd-red;
+
+$code-block-bg: $qd-surface;
+$code-block-border-color: $qd-line;
+$code-block-font-size: 0.6em;
+$border-radius: 8px;
+
+/*-- scss:rules --*/
+
+:root {
+  --qd-ink: #{$qd-ink};
+  --qd-ink-2: #{$qd-ink-2};
+  --qd-muted: #{$qd-muted};
+  --qd-faint: #{$qd-faint};
+  --qd-line: #{$qd-line};
+  --qd-surface: #{$qd-surface};
+  --qd-red: #{$qd-red};
+  --qd-red-tint: #{$qd-red-tint};
+  --qd-topo-tint: #{$qd-topo-tint};
+  --qd-green: #{$qd-green};
+  --qd-green-tint: #{$qd-green-tint};
+  --qd-skin-tint: #{$qd-skin-tint};
+  --qd-navy: #{$qd-navy};
+  --qd-navy-tint: #{$qd-navy-tint};
+  --qd-orange: #{$qd-orange};
+  --qd-orange-tint: #{$qd-orange-tint};
+  --qd-ins: #{$qd-ins};
+  --qd-triv: #{$qd-triv};
+  --qd-crit: #{$qd-crit};
+  --qd-pad-x: 80px;
+  --qd-pad-top: 50px;
+}
+
+// ---------------------------------------------------------------------------
+// Slide frame
+// ---------------------------------------------------------------------------
+// Only real slides get the frame; the vertical stacks pandoc builds from # parts do not
+.reveal .slides section.slide {
+  box-sizing: border-box;
+  height: 900px;
+  padding: var(--qd-pad-top) var(--qd-pad-x) 0 var(--qd-pad-x);
+}
+
+.reveal .slides > section.stack {
+  padding: 0;
+}
+
+// Print view (?print-pdf) zeroes the padding of every section: keep the frame
+html.reveal-print .reveal .slides section.slide:not(.part) {
+  padding: var(--qd-pad-top) var(--qd-pad-x) 0 var(--qd-pad-x) !important;
+}
+
+.reveal .slides section {
+  font-feature-settings: "lnum" 1, "tnum" 0;
+}
+
+.reveal p {
+  margin: 0 0 0.55em 0;
+}
+
+.reveal strong, .reveal b {
+  font-weight: 600;
+}
+
+.reveal em {
+  font-style: italic;
+}
+
+.reveal a {
+  text-decoration: none;
+  border-bottom: 1px solid rgba($qd-navy, 0.3);
+}
+
+// Kicker: a small red label above the title. The plugin fills data-kicker from the
+// current part (# heading); a slide can also set it: ## Title {data-kicker="..."}
+.reveal .slides section.slide[data-kicker]::before {
+  content: attr(data-kicker);
+  display: block;
+  font-size: 15px;
+  font-weight: 600;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: $qd-red;
+  line-height: 1;
+  margin: 0 0 12px 0;
+}
+
+// Slide title: an assertion, with a hairline and a short red accent (the old red rule)
+.reveal .slides section.slide > h2 {
+  position: relative;
+  font-size: 44px;
+  line-height: 1.13;
+  margin: 0 0 28px 0;
+  padding-bottom: 16px;
+  border-bottom: 1px solid $qd-line;
+  text-wrap: balance;
+}
+
+.reveal .slides section.slide > h2::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  bottom: -2px;
+  width: 64px;
+  height: 3px;
+  border-radius: 2px;
+  background: $qd-red;
+}
+
+.reveal .slides section.slide.no-rule > h2 {
+  border-bottom: none;
+  padding-bottom: 0;
+}
+
+.reveal .slides section.slide.no-rule > h2::after {
+  display: none;
+}
+
+.reveal h3 {
+  font-size: 30px;
+  font-weight: 600;
+  margin: 0 0 10px 0;
+  letter-spacing: -0.005em;
+}
+
+.reveal h4 {
+  font-size: 24px;
+  font-weight: 600;
+  margin: 0 0 6px 0;
+  color: $qd-ink-2;
+}
+
+.reveal .lead {
+  font-size: 27px;
+  color: $qd-ink-2;
+  line-height: 1.4;
+}
+
+// ---------------------------------------------------------------------------
+// Lists
+// ---------------------------------------------------------------------------
+.reveal .slides section ul {
+  display: block;
+  list-style: none;
+  margin: 0 0 0.4em 0;
+  padding-left: 1.05em;
+}
+
+.reveal .slides section ul > li {
+  position: relative;
+  margin: 0.36em 0;
+}
+
+.reveal .slides section ul > li::before {
+  content: "";
+  position: absolute;
+  left: -0.95em;
+  top: 0.56em;
+  width: 0.3em;
+  height: 0.3em;
+  border-radius: 1.5px;
+  background: $qd-red;
+}
+
+.reveal .slides section ul ul > li::before {
+  background: $qd-faint;
+}
+
+.reveal .slides section ol {
+  display: block;
+  margin: 0 0 0.4em 1.2em;
+}
+
+.reveal .slides section ol > li::marker {
+  color: $qd-red;
+  font-weight: 600;
+}
+
+// ---------------------------------------------------------------------------
+// Columns and layout helpers
+// ---------------------------------------------------------------------------
+.reveal .columns {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+}
+
+.reveal .columns > .column {
+  display: block;
+}
+
+.reveal .columns.v-center {
+  align-items: center;
+}
+
+.reveal .columns > .column > * {
+  margin-left: 0 !important;
+  margin-right: 0 !important;
+}
+
+// Overlay children on one cell (layers of one figure). Pandoc may put consecutive images
+// in one paragraph, so the paragraph is a stack too.
+.reveal .stack,
+.reveal .stack > p {
+  display: grid;
+  margin: 0;
+}
+
+.reveal .stack > *,
+.reveal .stack > p > * {
+  grid-area: 1 / 1;
+}
+
+.reveal .center-x {
+  text-align: center;
+}
+
+.reveal .nowrap {
+  white-space: nowrap;
+}
+
+.reveal .mt-0 { margin-top: 0 !important; }
+.reveal .mt-1 { margin-top: 12px !important; }
+.reveal .mt-2 { margin-top: 24px !important; }
+.reveal .mt-3 { margin-top: 40px !important; }
+.reveal .mb-0 { margin-bottom: 0 !important; }
+
+// ---------------------------------------------------------------------------
+// Text styles
+// ---------------------------------------------------------------------------
+.reveal .muted { color: $qd-muted; }
+.reveal .ink2 { color: $qd-ink-2; }
+.reveal .small { font-size: 0.8em; }
+.reveal .smaller { font-size: 0.7em; }
+.reveal .tiny { font-size: 0.6em; }
+.reveal .red { color: $qd-red; }
+.reveal .green { color: $qd-green; }
+.reveal .navy { color: $qd-navy; }
+.reveal .orange { color: $qd-orange; }
+.reveal .semibold { font-weight: 600; }
+
+.reveal .hl-red { background: linear-gradient(transparent 58%, rgba($qd-red, 0.16) 58%); }
+.reveal .hl-green { background: linear-gradient(transparent 58%, rgba($qd-green, 0.18) 58%); }
+
+// ---------------------------------------------------------------------------
+// Components
+// ---------------------------------------------------------------------------
+
+// Take-away box
+.reveal .key {
+  position: relative;
+  margin: 22px 0 0 0;
+  padding: 16px 26px 16px 24px;
+  border-left: 4px solid $qd-red;
+  border-radius: 0 12px 12px 0;
+  background: $qd-red-tint;
+  color: $qd-ink;
+  font-size: 0.93em;
+  font-weight: 500;
+  line-height: 1.38;
+
+  p { margin: 0; }
+  p + p { margin-top: 0.4em; }
+}
+
+.reveal .key.green { border-left-color: $qd-green; background: $qd-green-tint; }
+.reveal .key.navy { border-left-color: $qd-navy; background: $qd-navy-tint; }
+.reveal .key.orange { border-left-color: $qd-orange; background: $qd-orange-tint; }
+.reveal .key.plain { border-left-color: $qd-ink-2; background: $qd-surface; }
+
+// Card: a quiet panel
+.reveal .card {
+  padding: 18px 22px;
+  border-radius: 14px;
+  background: $qd-surface;
+  border: 1px solid $qd-line;
+}
+
+// Chip: inline label (symmetry classes, phases, tags)
+.reveal .chip {
+  display: inline-block;
+  padding: 0.1em 0.62em 0.12em;
+  border-radius: 999px;
+  border: 1px solid $qd-line;
+  background: $qd-surface;
+  color: $qd-ink-2;
+  font-size: 0.7em;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  line-height: 1.3;
+  vertical-align: 0.1em;
+  white-space: nowrap;
+}
+
+.reveal .chip.red { background: $qd-red; border-color: $qd-red; color: #fff; }
+.reveal .chip.green { background: $qd-green; border-color: $qd-green; color: #fff; }
+.reveal .chip.navy { background: $qd-navy; border-color: $qd-navy; color: #fff; }
+.reveal .chip.orange { background: $qd-orange; border-color: $qd-orange; color: #fff; }
+.reveal .chip.ink { background: $qd-ink-2; border-color: $qd-ink-2; color: #fff; }
+.reveal .chip.red-soft { background: $qd-red-tint; border-color: transparent; color: $qd-red; }
+.reveal .chip.green-soft { background: $qd-green-tint; border-color: transparent; color: $qd-green; }
+.reveal .chip.navy-soft { background: $qd-navy-tint; border-color: transparent; color: $qd-navy; }
+
+// Display equation with a little room
+.reveal .eq {
+  margin: 10px 0 18px 0;
+  font-size: 1.0em;
+}
+
+.reveal .eq.big { font-size: 1.15em; }
+
+// Figure caption
+.reveal .figcap {
+  font-size: 18px;
+  color: $qd-muted;
+  line-height: 1.35;
+  margin-top: 6px;
+}
+
+// References: grey, above the footer; the speaker's own name in bold
+.reveal .refs {
+  position: absolute;
+  left: var(--qd-pad-x);
+  right: 150px;
+  bottom: 46px;
+  font-size: 15px;
+  line-height: 1.42;
+  color: $qd-muted;
+
+  p { margin: 0; }
+  b, strong { color: $qd-ink-2; font-weight: 600; }
+  em { font-style: italic; }
+}
+
+// Images
+.reveal .slides section img {
+  max-width: 100%;
+  margin: 0;
+}
+
+.reveal .slides section img.framed {
+  border-radius: 10px;
+  border: 1px solid $qd-line;
+}
+
+// ---------------------------------------------------------------------------
+// Fragments
+// ---------------------------------------------------------------------------
+.reveal .slides section .fragment.fade-up {
+  opacity: 0;
+  transform: translate(0, 14px);
+  visibility: hidden;
+  transition: all 0.45s cubic-bezier(0.2, 0.7, 0.2, 1);
+}
+
+.reveal .slides section .fragment.fade-up.visible {
+  opacity: 1;
+  transform: none;
+  visibility: inherit;
+}
+
+.reveal .slides section .fragment.dim-out.visible {
+  opacity: 0.32;
+}
+
+// ---------------------------------------------------------------------------
+// Part dividers: # Title {.part data-num="01" data-sub="..."}
+// Number, title and subtitle flow in a column; an image (![](art){.part-art}) sits on the right.
+// ---------------------------------------------------------------------------
+.reveal .slides section.part {
+  padding: 220px var(--qd-pad-x) 0 var(--qd-pad-x);
+  background: $qd-surface;
+}
+
+html.reveal-print .reveal .slides section.part {
+  padding: 220px var(--qd-pad-x) 0 var(--qd-pad-x) !important;
+}
+
+.reveal .slides section.part[data-num]::before {
+  content: attr(data-num);
+  display: block;
+  margin: 0 0 26px 0;
+  font-size: 120px;
+  font-weight: 700;
+  line-height: 1;
+  letter-spacing: -0.04em;
+  color: $qd-red;
+}
+
+.reveal .slides section.part > h1 {
+  max-width: 1440px;
+  margin: 0 0 24px 0;
+  font-size: 60px;
+  font-weight: 600;
+  line-height: 1.08;
+  letter-spacing: -0.02em;
+  color: $qd-ink;
+  text-wrap: balance;
+}
+
+.reveal .slides section.part[data-sub]::after {
+  content: attr(data-sub);
+  display: block;
+  max-width: 1100px;
+  font-size: 30px;
+  font-weight: 400;
+  line-height: 1.4;
+  color: $qd-ink-2;
+}
+
+.reveal .slides section.part:has(img.part-art) > h1,
+.reveal .slides section.part:has(img.part-art)[data-sub]::after {
+  max-width: 760px;
+}
+
+.reveal .slides section.part img.part-art {
+  position: absolute;
+  right: var(--qd-pad-x);
+  top: 50%;
+  transform: translateY(-50%);
+  width: 600px;
+  margin: 0;
+  box-sizing: border-box;
+  padding: 22px;
+  border-radius: 18px;
+  background: #fff;
+  box-shadow: 0 14px 40px rgba(21, 24, 30, 0.08);
+}
+
+// ---------------------------------------------------------------------------
+// Title slide (template partial title-slide.html)
+// ---------------------------------------------------------------------------
+.reveal .slides section#title-slide {
+  top: 0 !important;
+  box-sizing: border-box;
+  height: 900px;
+  padding: 0;
+  text-align: left;
+}
+
+.reveal .qd-title {
+  position: absolute;
+  inset: 0;
+}
+
+.reveal .qd-title-main {
+  position: absolute;
+  left: 96px;
+  top: 112px;
+  width: 860px;
+}
+
+.reveal .qd-event {
+  font-size: 16px;
+  font-weight: 600;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: $qd-red;
+  margin: 0 0 26px 0;
+  line-height: 1.5;
+}
+
+.reveal .slides section#title-slide h1.title {
+  font-size: 58px;
+  font-weight: 650;
+  line-height: 1.1;
+  letter-spacing: -0.022em;
+  margin: 0 0 22px 0;
+  text-wrap: balance;
+}
+
+.reveal .slides section#title-slide .subtitle {
+  font-size: 28px;
+  color: $qd-ink-2;
+  margin: 0 0 30px 0;
+}
+
+.reveal .qd-authors {
+  font-size: 27px;
+  color: $qd-ink-2;
+  margin: 34px 0 6px 0;
+  line-height: 1.4;
+}
+
+.reveal .qd-authors .qd-author:first-child {
+  color: $qd-ink;
+  font-weight: 600;
+}
+
+.reveal .qd-authors sup {
+  font-size: 0.6em;
+  color: $qd-muted;
+}
+
+.reveal .qd-affil {
+  font-size: 21px;
+  color: $qd-muted;
+  margin: 0 0 4px 0;
+}
+
+.reveal .qd-date {
+  font-size: 21px;
+  color: $qd-muted;
+  margin: 0;
+}
+
+.reveal .qd-paper {
+  display: inline-block;
+  margin-top: 30px;
+  padding: 10px 18px 10px 16px;
+  border: none;
+  border-left: 4px solid $qd-red;
+  border-radius: 0 10px 10px 0;
+  background: $qd-surface;
+  color: $qd-ink-2 !important;
+  font-size: 20px;
+  font-weight: 500;
+}
+
+.reveal .qd-paper em { font-style: italic; }
+
+// Hero panel: a list of images, each {src, caption, class}; class "wide" spans the panel
+.reveal .qd-title-hero {
+  position: absolute;
+  right: 0;
+  top: 0;
+  bottom: 0;
+  width: 600px;
+  padding: 0 40px;
+  box-sizing: border-box;
+  background: linear-gradient(180deg, $qd-surface 0%, #EDEFF4 100%);
+  display: flex;
+  flex-wrap: wrap;
+  align-content: center;
+  justify-content: space-between;
+  row-gap: 34px;
+}
+
+.reveal .qd-hero-item {
+  margin: 0;
+  width: 248px;
+
+  img { display: block; width: 100%; max-width: none; border-radius: 8px; }
+
+  figcaption {
+    margin-top: 10px;
+    font-size: 17px;
+    font-weight: 600;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: $qd-muted;
+    text-align: center;
+  }
+}
+
+.reveal .qd-hero-item.wide {
+  width: 100%;
+
+  img { border-radius: 0; }
+}
+
+.reveal .qd-logos {
+  position: absolute;
+  left: 96px;
+  bottom: 64px;
+  display: flex;
+  align-items: center;
+  gap: 44px;
+
+  img { height: 46px; width: auto; }
+}
+
+.reveal .qd-eqnote {
+  position: absolute;
+  left: 96px;
+  bottom: 30px;
+  font-size: 14px;
+  color: $qd-faint;
+}
+
+// ---------------------------------------------------------------------------
+// Chrome: footer, slide number, progress bar
+// ---------------------------------------------------------------------------
+// (div.* selectors: Quarto's footer.css loads after the theme)
+.reveal div.footer {
+  left: 30px;
+  right: auto;
+  width: auto;
+  bottom: 13px;
+  text-align: left;
+  font-size: 13px;
+  letter-spacing: 0.02em;
+  color: $qd-faint;
+}
+
+.reveal div.slide-number {
+  right: 26px;
+  bottom: 12px;
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  color: $qd-faint;
+  background: transparent;
+
+  a { border: none; color: inherit; }
+}
+
+.reveal .progress {
+  height: 3px;
+  background: rgba($qd-ink, 0.05);
+  color: $qd-red;
+}
+
+body.qd-hide-chrome .reveal .footer,
+body.qd-hide-chrome .reveal .slide-number {
+  opacity: 0;
+}
+
+// ---------------------------------------------------------------------------
+// Math (KaTeX)
+// ---------------------------------------------------------------------------
+.reveal .katex {
+  font-size: 1.06em;
+}
+
+.reveal .katex-display {
+  margin: 0.4em 0;
+}
+
+.reveal .eq .katex-display {
+  margin: 0;
+  text-align: left;
+}
+
+.reveal .eq.center-x .katex-display {
+  text-align: center;
+}
+
+// ---------------------------------------------------------------------------
+// Tables
+// ---------------------------------------------------------------------------
+.reveal table {
+  border-collapse: collapse;
+  font-size: 22px;
+}
+
+.reveal table th {
+  font-weight: 600;
+  color: $qd-ink-2;
+  border-bottom: 1.5px solid $qd-ink-2;
+  padding: 8px 18px 8px 0;
+  text-align: left;
+}
+
+.reveal table td {
+  border-bottom: 1px solid $qd-line;
+  padding: 8px 18px 8px 0;
+}
+
+// ---------------------------------------------------------------------------
+// Code
+// ---------------------------------------------------------------------------
+.reveal :not(pre) > code {
+  font-size: 0.82em;
+  color: $qd-navy;
+  background: $qd-surface;
+  padding: 1px 6px;
+  border-radius: 5px;
+}
+
+.reveal div.sourceCode {
+  border-radius: 12px;
+  border: 1px solid $qd-line;
+}
+
+.reveal pre code {
+  font-size: 19px;
+  line-height: 1.5;
+  padding: 14px 18px;
+}
+
+// ---------------------------------------------------------------------------
+// People and pictures
+// ---------------------------------------------------------------------------
+// ::: {.avatars}  [![](face.png)Name<br>[role]{.muted}]{.avatar}  :::
+.reveal .avatars,
+.reveal .avatars > p {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 26px;
+  margin: 10px 0 30px 0;
+}
+
+.reveal .avatars > p {
+  margin: 0;
+}
+
+.reveal .avatar {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 160px;
+  text-align: center;
+  font-size: 20px;
+  font-weight: 500;
+  line-height: 1.25;
+
+  img {
+    width: 132px;
+    height: 132px;
+    margin-bottom: 10px !important;
+    border-radius: 50%;
+    border: 1px solid $qd-line;
+    object-fit: cover;
+  }
+
+  .muted { font-size: 17px; font-weight: 400; }
+}
+
+.reveal .avatars.big .avatar {
+  width: 200px;
+  font-size: 22px;
+
+  img { width: 170px; height: 170px; }
+}
+
+// Photo with an inset (e.g. a map): ![](photo){.photo} ![](map){.map}
+.reveal .photo-map {
+  position: relative;
+
+  p { margin: 0; }
+  img.photo { display: block; width: 100%; border-radius: 14px; }
+
+  img.map {
+    position: absolute;
+    top: 16px;
+    right: 16px;
+    width: 30%;
+    border-radius: 10px;
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.22);
+  }
+}
+
+// Summary rows: a thumbnail and a sentence
+.reveal .conc {
+  display: flex;
+  align-items: center;
+  gap: 26px;
+  margin: 0 0 22px 0;
+  font-size: 24px;
+  line-height: 1.35;
+
+  p { margin: 0; }
+  img { width: 230px; flex: none; border-radius: 8px; }
+}
+
+.reveal img.center-img {
+  display: block;
+  margin: 0 auto !important;
+}

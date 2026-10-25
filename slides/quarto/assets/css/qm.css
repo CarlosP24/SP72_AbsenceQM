@@ -1,0 +1,297 @@
+/* Interactive figures of the talk (assets/js/qm.js and widgets). Colours come from the
+   theme's --qd-* custom properties. */
+
+.reveal .qm-widget {
+  position: relative;
+  margin: 0;
+}
+
+.reveal .qm-box {
+  position: absolute;
+}
+
+.reveal .qm-svg {
+  position: absolute;
+  left: 0;
+  top: 0;
+  overflow: visible;
+}
+
+.reveal .qm-canvas {
+  position: absolute;
+  image-rendering: auto;
+}
+
+.reveal .qm-labels {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
+.reveal .qm-label {
+  position: absolute;
+  white-space: nowrap;
+  font-size: 22px;
+  line-height: 1;
+  color: var(--qd-ink);
+}
+
+.reveal .qm-label .katex {
+  font-size: 1em;
+}
+
+.reveal .qm-label.small {
+  font-size: 18px;
+}
+
+.reveal .qm-label.big {
+  font-size: 26px;
+}
+
+.reveal .qm-label.text {
+  font-size: 18px;
+  font-weight: 500;
+}
+
+.reveal .qm-label.tag {
+  font-size: 17px;
+  font-weight: 600;
+  color: #fff;
+  padding: 4px 11px 5px;
+  border-radius: 999px;
+}
+
+/* Axes */
+.reveal .qm-axis text,
+.reveal .qm-tick {
+  font-family: "Montserrat", sans-serif;
+  font-size: 17px;
+  fill: var(--qd-ink-2);
+  font-feature-settings: "tnum" 1, "lnum" 1;
+}
+
+.reveal .qm-axis path,
+.reveal .qm-axis line {
+  stroke: var(--qd-ink);
+  stroke-width: 1.3px;
+}
+
+.reveal .qm-frame {
+  fill: none;
+  stroke: var(--qd-ink);
+  stroke-width: 1.3px;
+}
+
+.reveal .qm-cblabel {
+  font-family: "Montserrat", sans-serif;
+  font-size: 16px;
+  fill: var(--qd-ink-2);
+}
+
+.reveal .qm-svg text.qm-text {
+  font-family: "Montserrat", sans-serif;
+  font-size: 18px;
+  fill: var(--qd-ink);
+}
+
+/* Controls */
+.reveal .qm-slider {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  font-size: 20px;
+  color: var(--qd-ink-2);
+}
+
+.reveal .qm-slider-label {
+  white-space: nowrap;
+}
+
+.reveal .qm-slider-value {
+  min-width: 70px;
+  font-size: 18px;
+  font-weight: 600;
+  color: var(--qd-ink);
+  font-feature-settings: "tnum" 1;
+}
+
+.reveal .qm-slider input[type="range"] {
+  -webkit-appearance: none;
+  appearance: none;
+  flex: 1;
+  height: 4px;
+  border-radius: 2px;
+  background: var(--qd-line);
+  outline: none;
+  margin: 0;
+}
+
+.reveal .qm-slider input[type="range"]::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: var(--qd-red);
+  border: 2px solid #fff;
+  box-shadow: 0 0 0 1px var(--qd-red);
+  cursor: pointer;
+}
+
+.reveal .qm-slider input[type="range"]::-moz-range-thumb {
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background: var(--qd-red);
+  border: 2px solid #fff;
+  cursor: pointer;
+}
+
+.reveal .qm-buttons {
+  display: flex;
+  gap: 8px;
+}
+
+.reveal .qm-buttons button {
+  font-family: "Montserrat", sans-serif;
+  font-size: 17px;
+  font-weight: 600;
+  color: var(--qd-ink-2);
+  background: #fff;
+  border: 1px solid var(--qd-line);
+  border-radius: 999px;
+  padding: 5px 14px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.reveal .qm-buttons button .katex {
+  font-size: 1.05em;
+}
+
+.reveal .qm-buttons button.on {
+  color: #fff;
+  background: var(--qd-ink-2);
+  border-color: var(--qd-ink-2);
+}
+
+.reveal .qm-play {
+  font-family: "Montserrat", sans-serif;
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--qd-ink-2);
+  background: var(--qd-surface);
+  border: 1px solid var(--qd-line);
+  border-radius: 999px;
+  padding: 4px 12px;
+  cursor: pointer;
+}
+
+/* Fades used by the widgets */
+.reveal .qm-fade {
+  transition: opacity 0.5s ease;
+}
+
+/* Z2 badge of the band widget */
+.reveal .qm-badge {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.reveal .qm-q {
+  font-size: 30px;
+  font-weight: 700;
+  color: var(--qd-ink-2);
+  letter-spacing: -0.01em;
+}
+
+.reveal .qm-q.red {
+  color: var(--qd-red);
+}
+
+.reveal .qm-q-sub {
+  font-size: 17px;
+  font-weight: 500;
+  color: var(--qd-muted);
+  line-height: 1.3;
+}
+
+/* Little–Parks ring */
+.reveal .qm-nlabel {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 30px;
+  color: var(--qd-ink);
+}
+
+.reveal .qm-ringcap {
+  text-align: center;
+  font-size: 22px;
+  color: var(--qd-ink-2);
+}
+
+/* LDOS grid: row and column labels */
+.reveal .qm-rowlabel {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  font-size: 20px;
+  font-weight: 600;
+  color: var(--qd-ink);
+  text-align: center;
+}
+
+.reveal .qm-rowlabel img {
+  width: 104px;
+}
+
+.reveal .qm-coltitle {
+  font-size: 22px;
+  font-weight: 600;
+  text-align: center;
+  color: var(--qd-ink);
+}
+
+/* Sector legend */
+.reveal .qm-legend {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 18px;
+  font-weight: 500;
+  color: var(--qd-ink-2);
+}
+
+.reveal .qm-legend .sw {
+  display: inline-block;
+  width: 26px;
+  height: 14px;
+  border-radius: 3px;
+}
+
+.reveal .qm-legend .sw + span {
+  margin-right: 22px;
+}
+
+/* Band-filling verdicts */
+.reveal .qm-verdict {
+  font-size: 19px;
+  line-height: 1.3;
+  color: var(--qd-ink-2);
+}
+
+.reveal .qm-verdict b.red { color: var(--qd-red); }
+.reveal .qm-verdict b.green { color: var(--qd-green); }
+
+.reveal .qm-clip {
+  position: absolute;
+  overflow: hidden;
+}
+
+/* Static images handed to widgets (embedded in standalone builds) */
+.reveal .qm-widget > p:has(> img.qm-asset) {
+  display: none;
+}

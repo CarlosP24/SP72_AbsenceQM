@@ -1,0 +1,36 @@
+<section id="$idprefix$title-slide"$for(title-slide-attributes/pairs)$ $it.key$="$it.value$"$endfor$ class="quarto-title-block">
+<div class="qd-title">
+  <div class="qd-title-main">
+$if(event)$
+    <p class="qd-event">$event$</p>
+$endif$
+    <h1 class="title">$title$</h1>
+$if(subtitle)$
+    <p class="subtitle">$subtitle$</p>
+$endif$
+    <p class="qd-authors">$for(by-author)$<span class="qd-author">$by-author.name.literal$$if(by-author.attributes.equal-contributor)$<sup>*</sup>$endif$</span>$sep$, $endfor$</p>
+$if(affiliation)$
+    <p class="qd-affil">$affiliation$</p>
+$endif$
+$if(date)$
+    <p class="qd-date">$if(venue)$$venue$ · $endif$$date$</p>
+$endif$
+$if(paper)$
+    <a class="qd-paper" href="$paper-url$">$paper$</a>
+$endif$
+  </div>
+$if(hero)$
+  <div class="qd-title-hero">
+$for(hero)$
+    <figure class="qd-hero-item $it.class$"><img src="$it.src$" alt="">$if(it.caption)$<figcaption>$it.caption$</figcaption>$endif$</figure>
+$endfor$
+  </div>
+$endif$
+$if(logos)$
+  <div class="qd-logos">$for(logos)$<img src="$it$" alt="">$endfor$</div>
+$endif$
+$if(title-note)$
+  <p class="qd-eqnote">$title-note$</p>
+$endif$
+</div>
+</section>

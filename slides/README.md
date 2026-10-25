@@ -15,6 +15,7 @@ deck, built from the published data of this repository.
 | `calc_qmzm_wfs.jl`, `calc_qmzm_dos.jl` | Illustrative intro calculations (slide 5): quasi-MZM pair and DOS vs V_Z of the partial-shell wire for sharper ends than the published χ = 200 nm (χ = 20–100 nm and 50 nm), same routines as `src/calculations` |
 | `calc_cdgm_bands.jl` | Illustrative intro calculation: hollow-core bands and end LDOS (CdGM analogs), reusing the thesis builder in `PT_Thesis/PT3_CdGM` |
 | `figs/`, `equations/` | Outputs (`.svg` placed in the deck, `.pdf` vector copies, `.png` fallbacks) |
+| `quarto/` | Web version of the deck (Quarto + reveal.js) with interactive figures, and the reusable template; see `quarto/README.md` |
 | `data/` | Results of the illustrative calculations |
 
 No result of the paper is recomputed: every result figure reads `data/` (and, as the

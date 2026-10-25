@@ -1,0 +1,70 @@
+/* Layout details of this talk (the theme lives in _extensions/qudyma) */
+
+.reveal .symtable table {
+  margin-top: 18px;
+  font-size: 21px;
+}
+
+.reveal .symtable td:first-child {
+  white-space: nowrap;
+}
+
+.reveal .cartoons {
+  display: flex;
+  gap: 18px;
+  margin-bottom: 16px;
+}
+
+.reveal .cartoons p {
+  margin: 0;
+}
+
+.reveal .cartoons img {
+  width: 270px;
+}
+
+.reveal .expth-row {
+  display: flex;
+  align-items: flex-start;
+}
+
+.reveal .expth-row > .stack img {
+  width: 760px;
+}
+
+.reveal .expth-row > p img {
+  width: 76px;
+}
+
+.reveal .thanks .avatars {
+  margin-top: 40px;
+}
+
+.reveal .qr {
+  text-align: center;
+  margin-top: 30px;
+}
+
+.reveal .qr img {
+  width: 230px;
+  margin-bottom: 18px !important;
+}
+
+.reveal .funding {
+  position: absolute;
+  left: var(--qd-pad-x);
+  right: var(--qd-pad-x);
+  bottom: 50px;
+  display: flex;
+  align-items: center;
+  gap: 28px;
+}
+
+.reveal .funding p {
+  margin: 0;
+}
+
+.reveal .funding img {
+  height: 64px;
+  width: auto;
+}
