@@ -24,54 +24,23 @@ format:
     include-after-body: assets/includes/after-body.html
 ---
 
-## PhD at ICMM-CSIC, Madrid: full-shell hybrid nanowires {.no-kicker}
+## {#hook .hook .no-kicker}
 
-:::: {.columns .about}
-::: {.column width="48%"}
-::: {.photo-map}
-![](assets/private/icmm_building.jpeg){.photo}
+::: {.hook-body}
+[A zero-bias peak is the main signature of a Majorana.<br>It is also the easiest one to fake.]{.hook-lead}
 
-::: {.map-box}
-![](assets/private/map_spain.png)
-
-[Madrid]{.map-pin style="left:45.6%;top:43.9%"}
+[Can a smooth end still fake it<br>in a [full-shell]{.nowrap} nanowire?]{.hook-q}
 :::
-:::
-
-[Instituto de Ciencia de Materiales de Madrid (ICMM), CSIC]{.figcap}
-
-**Carlos Payá** · PhD candidate · defence [March 2027]{.red .semibold}
-
-[Thesis: full-shell hybrid nanowires. Caroli–de Gennes–Matricon analogs, Majoranas and Josephson junctions]{.small .ink2}
-:::
-::: {.column width="42%"}
-#### PhD supervisors
-::: {.avatars}
-[![](assets/private/avatar_elsa.png)Elsa Prada]{.avatar}
-[![](assets/private/avatar_ramon.png)Ramón Aguado]{.avatar}
-:::
-
-#### This work
-::: {.avatars}
-[![](assets/private/avatar_cesar.png)César Robles<br>[MSc student]{.muted}]{.avatar}
-[![](assets/private/avatar_pablo.png)Pablo San-Jose<br>[ICMM]{.muted}]{.avatar}
-[![](assets/private/avatar_elsa.png)Elsa Prada<br>[ICMM]{.muted}]{.avatar}
-:::
-
-![](assets/private/logo_quantica.png){.quantica}
-:::
-::::
 
 ::: {.notes}
-(title, 0:20) Thank the organizers. Today: why tunneling spectroscopy in full-shell
-nanowires cannot be fooled by quasi-Majoranas, the most common impostor of a Majorana zero
-mode.
+(title, 0:20) Thank the organizers.
 
-(0:30) PhD candidate at ICMM-CSIC in Madrid, supervised by Elsa Prada and Ramón Aguado;
-defence in March 2027. My thesis is on full-shell hybrid nanowires: the Caroli–de
-Gennes–Matricon analogs they host, their Majoranas and their Josephson junctions. This
-work was done with César Robles, Pablo San-Jose (who develops Quantica.jl, the code behind
-every figure today) and Elsa Prada.
+(0:30) A zero-bias peak at the end of a nanowire is what everybody looks for: the
+main signature of a Majorana zero mode. It is also the easiest signature to fake. The most
+common impostor is the quasi-Majorana, a trivial pair pinned to zero by a smooth end. The
+question today: can a smooth end still fake that peak in a full-shell nanowire? By the end of the
+talk the answer will be no, and the reason is that the same length that creates the
+impostor also hides it.
 :::
 
 # [Quasi-Majorana]{.nowrap} false positives {.part data-num="01" data-kicker="01 · Partial-shell nanowires" data-sub="Majorana zero modes, and the trivial zero modes that impersonate them"}
@@ -672,7 +641,7 @@ Smooth ends create quasi-MZMs that the probe cannot tell from MZMs
 
 #### Full shells
 
-Trivial sectors fill first: $\mu(z)$ crosses a trivial skin $\approx 3.5\chi$ wide
+Trivial sectors fill first: $\mu(z)$ crosses a trivial skin
 :::
 
 ::: {.ccard .fragment .fade-up}
@@ -686,8 +655,8 @@ The same $\chi$ that pins the impostor buries it behind the skin
 
 ::: {.fragment}
 ::: {.key .mt-3}
-A zero-bias peak at the end of a full-shell wire is not a quasi-Majorana. No peak? The skin
-may hide a true MZM: sharp barriers give the most informative measurements.
+- A zero-bias peak at the end of a full-shell wire is not a quasi-Majorana
+- No peak? The skin may hide a true MZM: sharp barriers give the most informative measurements
 :::
 :::
 
@@ -699,28 +668,69 @@ skin, about 3.5χ wide, before reaching the topological phase. [click] The skin 
 same χ that pins the impostor, so it hides it. [click] If you see a zero-bias peak at the end
 of a full shell, it is not a quasi-Majorana — although flux-tunable Andreev states and other
 mechanisms still have to be excluded. If you don't see one, the skin may be hiding a true
-MZM: sharp barriers are the way to go. Thank you.
+MZM: sharp barriers are the way to go.
 :::
 
 ## Thank you {.no-kicker .thanks}
 
 :::: {.columns}
-::: {.column width="56%"}
-::: {.avatars .big}
-[![](assets/private/avatar_cesar.png)César Robles]{.avatar}
-[![](assets/private/avatar_pablo.png)Pablo San-Jose]{.avatar}
-[![](assets/private/avatar_elsa.png)Elsa Prada]{.avatar}
-:::
-
-[carlosp24.github.io · carlos.paya@csic.es]{.lead .navy}
-
-[Code and data available on [GitHub](https://github.com/CarlosP24/SP72_AbsenceQM)]{.small .muted}
-:::
 ::: {.column width="38%"}
+::: {.photo-map}
+![](assets/private/icmm_building.jpeg){.photo}
+
+::: {.map-box}
+![](assets/private/map_spain.png)
+
+[Madrid]{.map-pin style="left:45.6%;top:43.9%"}
+:::
+:::
+
+[Instituto de Ciencia de Materiales de Madrid (ICMM), CSIC]{.figcap}
+
+[**Carlos Payá**<br>PhD candidate · defence [March 2027]{.red .semibold}]{.whoami}
+
+[Thesis: full-shell hybrid nanowires. Caroli–de Gennes–Matricon analogs, Majoranas and Josephson junctions]{.thesis}
+
+[carlosp24.github.io · carlos.paya@csic.es]{.contact}
+:::
+::: {.column width="58%"}
+::: {.people}
+::: {.group}
+[&nbsp;]{.group-h}
+
+::: {.avatars}
+[![](assets/private/avatar_cesar.png)César Robles<br>[MSc student]{.muted}]{.avatar}
+[![](assets/private/avatar_pablo.png)Pablo San-Jose<br>[ICMM]{.muted}]{.avatar}
+:::
+
+![](assets/private/logo_quantica.png){.quantica}
+:::
+
+::: {.group .joined}
+[Supervisor]{.group-h}
+
+::: {.avatars}
+[![](assets/private/avatar_elsa.png)Elsa Prada<br>[ICMM]{.muted}]{.avatar}
+:::
+:::
+
+::: {.group}
+[Co-supervisor]{.group-h}
+
+::: {.avatars}
+[![](assets/private/avatar_ramon.png)Ramón Aguado<br>[ICMM]{.muted}]{.avatar}
+:::
+:::
+:::
+
 ::: {.qr}
 ![](assets/img/qr_paper.svg)
 
-[*Phys. Rev. Lett.* **137**, 096606 (2026)]{.semibold}<br>[doi.org/10.1103/w9tp-3bbq]{.small .muted}
+::: {.qr-text}
+[*Phys. Rev. Lett.* **137**, 096606 (2026)]{.semibold}<br>[doi.org/10.1103/w9tp-3bbq]{.muted}
+
+[Code and data on [GitHub](https://github.com/CarlosP24/SP72_AbsenceQM)]{.muted}
+:::
 :::
 :::
 ::::
@@ -734,9 +744,52 @@ MZM: sharp barriers are the way to go. Thank you.
 :::
 
 ::: {.notes}
-Questions. Backup slides: why the transition is inverted in flux, models and parameters,
-skin widths, origin of the skin for m_r = 0 vs 1, conductance and temperature, and the
-Quantica.jl code of the partial-shell wire.
+(0:20) Thank you. This work was done with César Robles, then an MSc student, Pablo
+San-Jose, who develops Quantica.jl, the code behind every figure today, and Elsa Prada. I
+am a PhD candidate at ICMM-CSIC in Madrid, supervised by Elsa Prada and Ramón Aguado, and I
+defend in March 2027; the thesis is on full-shell hybrid nanowires: their
+Caroli–de Gennes–Matricon analogs, Majoranas and Josephson junctions. The QR code takes you
+to the paper; code and data are on GitHub. [next] Back to the conclusions for questions.
+:::
+
+## Conclusions {#conclusions-qa .no-kicker}
+
+::: {.ccards}
+::: {.ccard}
+![](assets/figs/s16_thumb_partial.svg)
+
+#### Partial shells
+
+Smooth ends create quasi-MZMs that the probe cannot tell from MZMs
+:::
+
+::: {.ccard}
+![](assets/figs/s16_thumb_skin.svg)
+
+#### Full shells
+
+Trivial sectors fill first: $\mu(z)$ crosses a trivial skin
+:::
+
+::: {.ccard}
+![](assets/figs/s16_thumb_full.svg)
+
+#### No false positives
+
+The same $\chi$ that pins the impostor buries it behind the skin
+:::
+:::
+
+::: {.key .mt-3}
+- A zero-bias peak at the end of a full-shell wire is not a quasi-Majorana
+- No peak? The skin may hide a true MZM: sharp barriers give the most informative measurements
+:::
+
+::: {.notes}
+Leave on screen during questions. Backup slides: disorder and temperature, why the
+transition is inverted in flux, models and parameters, skin widths, origin of the skin for
+m_r = 0 vs 1, conductance with all sectors, and the Quantica.jl code of the partial-shell
+wire.
 :::
 
 # Backup {.part data-num="+" data-kicker="Backup" data-sub="Disorder · inversion in flux · parameters · skin widths · conductance"}

@@ -57,44 +57,166 @@
   margin-left: -76px;
 }
 
-/* Thank-you slide: both columns centred in the band between the title and the funding logos */
+/* Opening hook: a statement and the question of the talk, centred on an untitled slide */
+.reveal .hook > h2 {
+  display: none;
+}
+
+.reveal .hook-body {
+  position: absolute;
+  left: var(--qd-pad-x);
+  right: var(--qd-pad-x);
+  top: 50%;
+  transform: translateY(-50%);
+}
+
+.reveal .hook-body p {
+  margin: 0;
+}
+
+.reveal .hook-lead {
+  display: block;
+  font-size: 46px;
+  font-weight: 500;
+  line-height: 1.3;
+  color: var(--qd-ink-2);
+}
+
+/* the question carries the accent bar of the slide titles */
+.reveal .hook-q {
+  display: block;
+  position: relative;
+  margin-top: 64px;
+  padding-top: 34px;
+  font-size: 66px;
+  font-weight: 650;
+  line-height: 1.12;
+  letter-spacing: -0.02em;
+  color: var(--qd-ink);
+  text-wrap: balance;
+}
+
+.reveal .hook-q::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 96px;
+  height: 5px;
+  border-radius: 3px;
+  background: var(--qd-red);
+}
+
+/* Thank-you slide: who I am (left), the people and the paper (right), logos along the
+   bottom; both columns centred in the band between the title and the logos */
 .reveal .thanks > .columns {
   align-items: center;
-  height: 640px;
+  height: 590px;
+}
+
+.reveal .thanks > .columns > .column:last-child {
+  padding-left: 40px;
+}
+
+.reveal .thanks .figcap {
+  margin-top: 8px;
+}
+
+.reveal .thanks .whoami {
+  display: block;
+  margin-top: 14px;
+  font-size: 24px;
+  line-height: 1.35;
+}
+
+.reveal .thanks .thesis {
+  display: block;
+  margin-top: 4px;
+  font-size: 19px;
+  line-height: 1.35;
+  color: var(--qd-ink-2);
+}
+
+.reveal .thanks .contact {
+  display: block;
+  margin-top: 12px;
+  font-size: 22px;
+  color: var(--qd-navy);
+}
+
+.reveal .thanks .people {
+  display: flex;
+  align-items: flex-start;
+  gap: 40px;
+}
+
+/* group labels are spans, not headings: a heading would turn the div into a nested
+   section, and reveal would take the slide for a vertical stack */
+.reveal .thanks .group-h {
+  display: block;
+  margin: 0 0 6px 0;
+  font-size: 24px;
+  font-weight: 600;
+  color: var(--qd-ink-2);
+  text-align: center;
+}
+
+/* a label wider than its avatar stays centred over it */
+.reveal .thanks .avatars {
+  justify-content: center;
+}
+
+.reveal .thanks .group > p:first-child {
+  margin: 0;
+}
+
+.reveal .thanks .people .group + .group {
+  padding-left: 40px;
+  border-left: 1px solid var(--qd-line);
+}
+
+/* a group that continues the row before it: same spacing as between avatars, no divider */
+.reveal .thanks .people .group.joined {
+  margin-left: -15px;
+  padding-left: 0;
+  border-left: none;
 }
 
 .reveal .thanks .avatars {
-  margin: 0 0 44px 0;
+  margin: 8px 0 0 0;
   gap: 34px;
 }
 
-.reveal .thanks .avatars.big .avatar {
-  width: 236px;
-  font-size: 27px;
-
-  img { width: 210px; height: 210px; }
-}
-
-.reveal .thanks .lead {
-  font-size: 34px;
-  margin-bottom: 16px;
-}
-
-.reveal .thanks .small {
-  font-size: 26px;
+.reveal .quantica {
+  height: 40px;
+  width: auto;
+  margin: 10px 0 0 196px !important;
 }
 
 .reveal .qr {
-  text-align: center;
-  padding: 36px 28px 30px;
+  display: flex;
+  align-items: center;
+  gap: 34px;
+  margin-top: 34px;
+  padding: 22px 30px;
   border-radius: 18px;
   background: var(--qd-surface);
   border: 1px solid var(--qd-line);
+  font-size: 22px;
+  line-height: 1.4;
+}
+
+.reveal .qr p {
+  margin: 0;
+}
+
+.reveal .qr .qr-text p + p {
+  margin-top: 12px;
 }
 
 .reveal .qr img {
-  width: 290px;
-  margin-bottom: 20px !important;
+  display: block;
+  width: 170px;
 }
 
 .reveal .funding {
@@ -131,21 +253,6 @@
   width: auto;
   max-width: none;   /* reveal's 95% cap squeezed the strip (868 × 212) */
   max-height: none;
-}
-
-/* About slide */
-.reveal .about > .column:last-child {
-  padding-left: 30px;
-}
-
-.reveal .about .avatars {
-  gap: 34px;
-}
-
-.reveal .quantica {
-  height: 40px;
-  width: auto;
-  margin: -14px 0 0 196px !important;
 }
 
 /* Conclusions: three cards, thumbnail on top, coloured by topic */

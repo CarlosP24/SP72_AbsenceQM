@@ -647,6 +647,15 @@ html.reveal-print .reveal .slides section.part {
   img { width: 100%; height: 100%; max-height: none; object-fit: cover; border-radius: 0; }
 }
 
+// Print view: one page per slide, so the overhang would spill onto extra pages
+html.reveal-print .reveal .qd-title-hero:has(.qd-hero-item.full) {
+  top: 0;
+  bottom: 0;
+  right: 0;
+  width: 600px;
+  .qd-hero-item.full { top: 0; }
+}
+
 .reveal .qd-logos {
   position: absolute;
   left: 96px;
