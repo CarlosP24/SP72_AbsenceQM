@@ -1,6 +1,7 @@
 // One length scale, two effects. Top: energy of the quasi-MZM pair vs χ in both geometries
 // (split end-LDOS peak for small χ in the partial shell; lowest pole of the closed wire where
-// the pair is a localised state, data/E_QMZM). Bottom: the χ windows where the pair is
+// the pair is a localised state, data/E_QMZM; full shell: lowest peak of the m_J = 0 DOS at
+// Φ^(2), dotted while it is still the gap edge, data/DOS_vchi). Bottom: the χ windows where the pair is
 // visible at the probe (end LDOS above 1 % of its maximum, paper Fig. 2 data) and where it
 // is pinned to zero (E < 10⁻² Δ0). They overlap in partial shells (false positives) and are
 // a decade apart in full shells, where the trivial skin (≈ 3.5χ) grows with the same χ.
@@ -21,9 +22,13 @@ QM.register('window', (el) => {
   // pole energies until they leave the plot (beyond, the closed wire is numerically at zero)
   const untilFloor = (arr) => { const k = arr.findIndex(([, e]) => !(e > 1e-7)); return k < 0 ? arr : arr.slice(0, k + 1); };
   const EP = splitP.concat(untilFloor(L.E.partial.χ.map((x, i) => [x, L.E.partial.E[i]]).filter(([x]) => x >= 75)));
-  const EF = untilFloor(L.E.full.χ.map((x, i) => [x, L.E.full.E[i]]).filter(([x]) => x >= 200));
+  const D = L.Edos;
+  const EF = D ? D.χ.map((x, i) => [x, D.E[i]]).filter(([x], i) => D.pair[i])
+    : untilFloor(L.E.full.χ.map((x, i) => [x, L.E.full.E[i]]).filter(([x]) => x >= 200));
+  const kEdge = D ? D.pair.indexOf(true) : -1;
+  const EFedge = D ? D.χ.slice(0, kEdge + 1).map((x, i) => [x, D.E[i]]) : [];
   const firstBelow = (arr) => { const d = arr.find(([, e]) => e < Ethr); return d ? d[0] : null; };
-  const pinP = firstBelow(EP), pinF = EF.length ? EF[0][0] : null;
+  const pinP = firstBelow(EP), pinF = D ? firstBelow(EF) : (EF.length ? EF[0][0] : null);
   const visF = P.χvanish_QMZM;
 
   // ---------------------------------------------------------------- energies (top)
@@ -32,14 +37,16 @@ QM.register('window', (el) => {
   const Y = d3.scaleLog([1e-6, 1], [T.ih, 0]);
   T.g.append('line').attr('x2', T.iw).attr('y1', Y(Ethr)).attr('y2', Y(Ethr))
     .attr('stroke', C.muted).attr('stroke-dasharray', '6 5').attr('stroke-width', 1.6);
-  T.label(T.iw - 8, Y(Ethr) - 8, 'pinned:&nbsp; E &lt; 10<sup>−2</sup>Δ<sub>0</sub>', { ax: 1, ay: 1, math: false, cls: 'text' }).style.color = C.muted;
+  T.label(T.iw - 8, Y(Ethr) - 8, 'pinned:&nbsp; E &lt; 10<sup>−2</sup>Δ<sub>0</sub> ≈ k<sub>B</sub> · 27 mK', { ax: 1, ay: 1, math: false, cls: 'text' }).style.color = C.muted;
   const clip = 'wc' + Math.random().toString(36).slice(2);
   T.svg.append('defs').append('clipPath').attr('id', clip).append('rect').attr('width', T.iw).attr('height', T.ih);
   const lf = d3.line().x((d) => X(d[0])).y((d) => Y(Math.max(d[1], 1e-7)));
   const cP = T.g.append('path').attr('clip-path', `url(#${clip})`).attr('d', lf(EP)).attr('fill', 'none')
     .attr('stroke', C.navy).attr('stroke-width', 3.2).attr('class', 'qm-fade');
-  const cF = T.g.append('path').attr('clip-path', `url(#${clip})`).attr('d', lf(EF)).attr('fill', 'none')
-    .attr('stroke', C.green).attr('stroke-width', 3.2).attr('class', 'qm-fade');
+  const cF = T.g.append('g').attr('clip-path', `url(#${clip})`).attr('class', 'qm-fade');
+  cF.append('path').attr('d', lf(EF)).attr('fill', 'none').attr('stroke', C.green).attr('stroke-width', 3.2);
+  cF.append('path').attr('d', lf(EFedge)).attr('fill', 'none').attr('stroke', C.green).attr('stroke-width', 2.4)
+    .attr('stroke-dasharray', '2 5').attr('stroke-linecap', 'round');
   QM.axis(T, 'left', Y, { ticks: [1e-6, 1e-4, 1e-2, 1], fmt: () => '' });
   [[-6, 1e-6], [-4, 1e-4], [-2, 1e-2]].forEach(([e, v]) => T.label(-12, Y(v), `10^{${e}}`, { ax: 1, cls: 'small' }));
   T.label(-12, Y(1), '1', { ax: 1, math: false, cls: 'text' });
@@ -52,6 +59,9 @@ QM.register('window', (el) => {
   lP.style.color = C.navy; lP.classList.add('qm-fade');
   const lF = T.label(X(700), Y(1.5e-3), 'full shell<br>(hidden, inside)', { math: false, cls: 'text', ax: 0 });
   Object.assign(lF.style, { color: C.green, lineHeight: 1.2 }); lF.classList.add('qm-fade');
+  const lE = T.label(X(1.6), Y(1.5e-2), 'gap edge: no pair yet', { math: false, cls: 'text', ax: 0, ay: 1 });
+  Object.assign(lE.style, { color: C.green, fontSize: '18px', opacity: 0 }); lE.classList.add('qm-fade');
+  if (!EFedge.length) lE.style.display = 'none';
 
   // ---------------------------------------------------------------- windows (bottom)
   const B = QM.panel(el, { x: 0, y: 290, w: 1400, h: 250, m: { l: 250, r: 40, t: 10, b: 60 } });
@@ -103,7 +113,7 @@ QM.register('window', (el) => {
   return {
     go(step) {
       vis([cP.node(), lP, rowG[0].node(), rowLab[0], ...pa], true);
-      vis([cF.node(), lF, rowG[1].node(), rowLab[1], ...fa], step >= 1);
+      vis([cF.node(), lF, lE, rowG[1].node(), rowLab[1], ...fa], step >= 1);
       vis([gapG.node(), gl], step >= 2);
     },
   };

@@ -26,9 +26,17 @@
     }
   };
 
+  // Colour of each case where a slide links them across panels: true MZM, quasi-MZM
+  Object.defineProperty(QM, 'caseColor', { get: () => ({ Majo: QM.c.navy, QMajo: QM.c.red }) });
+
   QM.clamp = (x, a, b) => Math.max(a, Math.min(b, x));
   QM.lerp = (a, b, t) => a + (b - a) * t;
   QM.ease = (t) => (t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2);
+  // First z ≥ 0 past which the band bottom ys(z) stays below level (to clear labels off it)
+  QM.zClear = (zs, ys, level) => {
+    for (let i = zs.length - 1; i >= 0; i--) if (zs[i] >= 0 && ys[i] >= level) return zs[i];
+    return 0;
+  };
 
   // Linear interpolation of y(x) on a sorted grid
   QM.interp = (xs, ys, x) => {
@@ -251,7 +259,7 @@
   QM.buttons = (parent, { x, y, items, onpick, active = 0 }) => {
     const box = QM.box(parent, x, y, 10, 10);
     box.classList.add('qm-buttons');
-    box.style.width = 'auto'; box.style.height = 'auto';
+    box.style.width = 'max-content'; box.style.height = 'auto';   // no wrapping when centred near an edge
     const bs = items.map((it, i) => {
       const b = document.createElement('button');
       b.type = 'button';
@@ -265,14 +273,14 @@
     return { el: box, set };
   };
 
-  // Tween a parameter over time: f(t) with t in [0, 1]; returns a stop function
-  QM.tween = (ms, f, done) => {
+  // Tween a parameter over time: f(t) with t in [0, 1] (eased); returns a stop function
+  QM.tween = (ms, f, done, ease = QM.ease) => {
     let stopped = false;
     const t0 = performance.now();
     const tick = (now) => {
       if (stopped) return;
       const t = Math.min(1, (now - t0) / ms);
-      f(QM.ease(t));
+      f(ease(t));
       if (t < 1) requestAnimationFrame(tick); else if (done) done();
     };
     requestAnimationFrame(tick);
@@ -292,7 +300,8 @@
       const make = QM.reg[el.dataset.widget];
       if (!make) { console.warn('qm: no widget', el.dataset.widget); return; }
       const opts = { ...el.dataset };
-      const inst = make(el, opts) || {};
+      let inst;
+      try { inst = make(el, opts) || {}; } catch (err) { console.error('qm:', el.dataset.widget, err); return; }
       inst.el = el;
       inst.slide = el.closest('section.slide');
       inst.step = -1;

@@ -295,3 +295,7 @@
 .reveal .qm-widget > p:has(> img.qm-asset) {
   display: none;
 }
+
+.reveal .qm-q.orange {
+  color: var(--qd-orange);
+}

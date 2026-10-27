@@ -62,6 +62,7 @@ Available calculation suffixes include:
 - `_dos`: density of states
 - `_doschi`: density of states versus confinement length
 - `_ldos`: local density of states
+- `_ldosvPhi`: end local density of states versus flux and energy at fixed χ (`base_fs_zoom_chi=<χ>`)
 - `_wfs`: low-energy wavefunctions
 
 Examples:

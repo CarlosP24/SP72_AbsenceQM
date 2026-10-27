@@ -43,7 +43,7 @@ QM.register('olbands', (el) => {
   const gapG = p.g.append('g');
   const gapLine = gapG.append('line').attr('x1', x(0)).attr('x2', x(0)).attr('stroke-width', 2.4);
   const tipUp = gapG.append('path'), tipDn = gapG.append('path');
-  const gapLab = p.label(x(0) + 12, y(0), '', { ax: 0, ay: 0.5, math: false, cls: 'text' });
+
 
   // --- phase diagram inset (V_Z/V_Z^c, μ/μ_bulk)
   const q = QM.panel(el, { x: 548, y: 0, w: 260, h: 250, m: { l: 58, r: 10, t: 10, b: 58 } });
@@ -86,12 +86,13 @@ QM.register('olbands', (el) => {
     gapLine.attr('y1', y(g0) + 8).attr('y2', y(-g0) - 8).attr('stroke', col);
     tipUp.attr('d', `M${x(0)},${y(g0)} l-6,10 h12 z`).attr('fill', col);
     tipDn.attr('d', `M${x(0)},${y(-g0)} l-6,-10 h12 z`).attr('fill', col);
-    gapLab.textContent = closing ? 'gap closes at k = 0' : '';
-    gapLab.style.color = QM.c.orange;
+
     dot.attr('cx', X(Math.min(v, 2))).attr('cy', Y(1)).attr('fill', top ? QM.c.red : QM.c.ink_2);
-    badge.innerHTML = top
-      ? '<span class="qm-q red">Q = −1</span><span class="qm-q-sub">topological · MZMs at the ends</span>'
-      : '<span class="qm-q">Q = +1</span><span class="qm-q-sub">trivial</span>';
+    badge.innerHTML = closing
+      ? '<span class="qm-q orange">gap closes</span><span class="qm-q-sub">at k<sub>z</sub> = 0, V<sub>Z</sub> = V<sub>Z</sub><sup>c</sup></span>'
+      : top
+        ? '<span class="qm-q red">Q = −1</span><span class="qm-q-sub">topological · MZMs at the ends</span>'
+        : '<span class="qm-q">Q = +1</span><span class="qm-q-sub">trivial</span>';
     sl.set(v);
   }
 

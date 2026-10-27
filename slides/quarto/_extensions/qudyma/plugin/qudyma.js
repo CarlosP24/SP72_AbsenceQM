@@ -4,6 +4,8 @@
 //    data-kicker, or its data-num and title.
 //  - Chrome: footer and slide number are hidden on the title slide, on part dividers and
 //    on slides with the class .no-chrome.
+//  - Logo: the document logo (YAML `logo:`) is placed in the top-right corner of every
+//    content slide, in line with the kicker, instead of Quarto's corner of the window.
 //  - Math: any KaTeX span left unrendered is rendered here. Standalone (embed-resources)
 //    builds need it: there Quarto loads KaTeX dynamically, which is not embedded, while the
 //    template also loads it statically (katex-static.html).
@@ -28,6 +30,20 @@ window.RevealQudyma = function () {
       slide.classList.contains('no-chrome');
     document.body.classList.toggle('qd-hide-chrome', hide);
   }
+  function placeLogo(deck) {
+    const logo = document.querySelector('.reveal .slide-logo');
+    if (!logo) return;
+    logo.style.display = 'none';
+    for (const s of deck.getSlides()) {
+      if (s.id === 'title-slide' || s.classList.contains('part') || s.classList.contains('no-chrome') ||
+        s.classList.contains('no-logo')) continue;
+      const img = document.createElement('img');
+      img.src = logo.src;
+      img.alt = '';
+      img.className = 'qd-slide-logo';
+      s.appendChild(img);
+    }
+  }
   function renderMath(deck) {
     if (!window.katex) return;
     let n = 0;
@@ -46,7 +62,7 @@ window.RevealQudyma = function () {
     init: function (deck) {
       const math = () => renderMath(deck);
       if (document.readyState === 'complete') math(); else window.addEventListener('load', math);
-      deck.on('ready', (e) => { setKickers(deck); chrome(e.currentSlide); });
+      deck.on('ready', (e) => { setKickers(deck); placeLogo(deck); chrome(e.currentSlide); });
       deck.on('slidechanged', (e) => chrome(e.currentSlide));
     },
   };

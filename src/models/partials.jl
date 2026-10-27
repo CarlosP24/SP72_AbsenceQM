@@ -36,7 +36,15 @@ base_partial_szoom_lowT = Params_System(base_partial_szoom;
     )
 )
 
+# Spin and momentum of the two halves of the quasi-MZM pair at V_Z^(2) (talk check, key _pairspin)
+base_partial_szoom_pair = Params_System(base_partial_szoom;
+    calc_params = Calc_Params(base_partial_szoom.calc_params;
+        χs = [50, 100, 200, 300, 400],
+    )
+)
+
 partials = Dict(
+    "base_partial_szoom_pair" => base_partial_szoom_pair,
     "base_partial" => base_partial,
     "base_partial_szoom" => base_partial_szoom,
     "base_partial_szoom_weak" => base_partial_szoom_weak,

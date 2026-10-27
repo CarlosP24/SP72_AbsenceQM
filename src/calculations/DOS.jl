@@ -81,6 +81,47 @@ function calc_DOS_chi(name::String)
     )
 end
 
+# m_J = 0 DOS of the smooth end vs (χ, ω) at the quasi-MZM flux Φs[2] (same sampling as
+# calc_DOS). ωrng may carry a broadening ∝ |ω| (log grid), so that a bound state shows up as a
+# sharp peak at any energy scale. Tasks are (χ, chunk of ωrng): g is built once per task.
+# pref: smooth region of length pref·χ before the bulk. The default log(100) cuts the full-shell
+# profile at 4.6χ, inside the Φ^(2) topological segment (3.5χ–7χ): use pref ≥ 10 for the pair.
+function calc_DOS_vchi(name::String; nchunks = 6, pref = log(100))
+    system = systems[name]
+    @unpack χrng, ωrng, Φs, NDOS, outdir = system.calc_params
+    path = "$(outdir)/DOS_vchi/$(name).jld2"
+    mkpath(dirname(path))
+
+    params_wire = system.params_wire
+    ωs = collect(ωrng)
+    chunks = [ωs[k:nchunks:end] for k in 1:nchunks]
+
+    parts = pfunction(
+        (χ, k) -> try
+            g, L = greens_softwire(params_wire, χ; pref)
+            a0 = params_wire.a0
+            N = round(Int, L / a0)
+            step = max(1, round(Int, N / NDOS))
+            ρ = ldos(g[region = r -> r[1] in Set(x * a0 for x in 0:step:N)]; kernel = I)
+            [ρ(ω; ω, Φ = Φs[2], Z = 0) |> sum for ω in chunks[k]]
+        catch e
+            @warn "Error calculating DOS at (χ=$χ, chunk=$k): $e"
+            fill(NaN, length(chunks[k]))
+        end,
+        [χrng, 1:nchunks];
+    )
+    DOS = zeros(length(χrng), length(ωs))
+    for i in eachindex(χrng), k in 1:nchunks
+        DOS[i, k:nchunks:end] .= parts[i, k]
+    end
+
+    return Results(
+        system = system,
+        DOS = Dict("QMajo" => DOS),
+        path = path,
+    )
+end
+
 function calc_DOS_B(name::String)
     system = systems[name]
     @unpack Brng, ωrng, NDOS, χ, outdir = system.calc_params

@@ -3,7 +3,9 @@
 // geometries: data-shell="partial" (V_Z, μ) or "full" (Φ in lobe 1, μ on the schematic
 // axis of the poster, 0 → μ^ts compressed, μ^ts → μ_bulk stretched).
 // Steps: 0 electrostatics only, 1 MZM case (V_Z^(1) / Φ^(1)), 2 quasi-MZM case.
-// Hovering over the wire marks the point μ(z) on the path.
+// Entering step 1 walks into the wire: a gauge between μ and the band bottom (its length is
+// the local μ(z)) moves along z, the wire takes its local phase behind it, and the path grows
+// up the phase diagram with it. Hovering over the wire marks the point μ(z) on the path.
 QM.register('path', (el, opts) => {
   const P = QMD.params;
   const full = opts.shell === 'full';
@@ -19,7 +21,7 @@ QM.register('path', (el, opts) => {
       Y: (m) => m, presets: [null, P.VZ1 / P.VZc, P.VZ2 / P.VZc], crit: 1,
       critTex: 'V_\\mathrm{Z}^\\mathrm{c}', xTex: 'V_\\mathrm{Z}/V_\\mathrm{Z}^\\mathrm{c}',
       xticks: [0, 1, 2], muz: () => QMD.muz.partial, Ec: () => QMD.muz.Ec_partial, zmax: 6,
-      wf: QMD.wfs.partial, pTex: ['V_\\mathrm{Z}^{(1)}', 'V_\\mathrm{Z}^{(2)}'],
+      wf: QMD.wfs.partial, pTex: ['V_\\mathrm{Z}^{(1)}', 'V_\\mathrm{Z}^{(2)}'], walkMs: 2300,
     };
   } else {
     // schematic μ axis (slides/make_figs.jl μaxis)
@@ -33,7 +35,7 @@ QM.register('path', (el, opts) => {
       critTex: '\\Phi^\\mathrm{c}', xTex: '\\Phi/\\Phi_0', xticks: [0.5, 1, 1.5],
       muz: (x) => (Math.abs(x - P['Φ1']) < Math.abs(x - P['Φ2']) ? QMD.muz.full1 : QMD.muz.full2),
       Ec: (x) => (Math.abs(x - P['Φ1']) < Math.abs(x - P['Φ2']) ? QMD.muz.Ec_full1 : QMD.muz.Ec_full2),
-      zmax: 9, wf: QMD.wfs.full, pTex: ['\\Phi^{(1)}', '\\Phi^{(2)}'],
+      zmax: 9, wf: QMD.wfs.full, pTex: ['\\Phi^{(1)}', '\\Phi^{(2)}'], walkMs: 2300,
     };
   }
 
@@ -92,9 +94,11 @@ QM.register('path', (el, opts) => {
   const gWf = S.g.append('g').attr('class', 'qm-fade').style('opacity', 0);
   const wfL = gWf.append('path').attr('fill', 'none').attr('stroke', C.navy).attr('stroke-width', 3.2);
   const wfR = gWf.append('path').attr('fill', 'none').attr('stroke', C.orange).attr('stroke-width', 3.2);
-  const labL = S.label(0, 0, '|\\Psi_\\mathrm{L}|^2', { ax: 0, color: C.navy });
-  const labR = S.label(0, 0, '|\\Psi_\\mathrm{R}|^2', { ax: 0, color: C.orange });
+  const labL = S.label(0, 0, '|\\Psi_\\mathrm{L}|^2', { ax: 0, cls: 'big', color: C.navy });
+  const labR = S.label(0, 0, '|\\Psi_\\mathrm{R}|^2', { ax: 0, cls: 'big', color: C.orange });
   labL.classList.add('qm-fade'); labR.classList.add('qm-fade');
+  const yLabL = 1.1;
+  const zClearL = full ? 0 : QM.zClear(QMD.muz.z, cfg.Ec(), (yLabL - 0.3) / yMu);
   // axis: 0, 2χ, 4χ, ...
   const zt = d3.range(0, cfg.zmax + 0.01, 2);
   QM.axis(S, 'bottom', zx, { ticks: zt, fmt: (v) => (v === 0 ? '0' : '') });
@@ -192,21 +196,25 @@ QM.register('path', (el, opts) => {
   let state = { x: null, wf: null };
   const zs = d3.range(0, cfg.zmax + 1e-9, cfg.zmax / 900);
 
-  function drawStrip(x) {
+  function drawStrip(x, zr = Infinity) {
     gReg.selectAll('*').remove();
     regLabels.forEach((l) => l.remove()); regLabels.length = 0;
     gReg.append('rect').attr('x', zx(-1)).attr('width', zx(0) - zx(-1)).attr('height', S.ih).attr('fill', C.ins);
+    const zend = Math.max(0, Math.min(zr, cfg.zmax));
+    if (x === null || zend < cfg.zmax) {
+      gReg.append('rect').attr('x', zx(zend)).attr('width', zx(cfg.zmax) - zx(zend)).attr('height', S.ih).attr('fill', '#fff');
+    }
     if (x === null) {
-      gReg.append('rect').attr('x', zx(0)).attr('width', zx(cfg.zmax) - zx(0)).attr('height', S.ih).attr('fill', '#fff');
       const l = S.label((zx(0) + zx(cfg.zmax)) / 2, sy(1.95), 'Hybrid wire', { math: false, cls: 'text' });
       regLabels.push(l);
-    } else {
+    } else if (zend > 0) {
       const muz = cfg.muz(x);
-      const ph = zs.map((z) => phase(x, QM.interp(zpos, muz, z)));
+      const zz = zs.filter((z) => z <= zend);
+      const ph = zz.map((z) => phase(x, QM.interp(zpos, muz, z)));
       let s0 = 0;
-      for (let i = 1; i <= zs.length; i++) {
-        if (i === zs.length || ph[i] !== ph[s0]) {
-          const za = zs[s0], zb = i === zs.length ? cfg.zmax : zs[i];
+      for (let i = 1; i <= zz.length; i++) {
+        if (i === zz.length || ph[i] !== ph[s0]) {
+          const za = zz[s0], zb = i === zz.length ? zend : zz[i];
           const k = ph[s0];
           gReg.append('rect').attr('x', zx(za)).attr('width', zx(zb) - zx(za) + 0.6).attr('height', S.ih).attr('fill', fill[k]);
           if (zx(zb) - zx(za) > 70) {
@@ -215,7 +223,7 @@ QM.register('path', (el, opts) => {
             if (k === 'skin') { l.style.color = C.green; l.style.fontWeight = 700; }
             regLabels.push(l);
           }
-          if (k === 'skin') gReg.append('line').attr('x1', zx(zb)).attr('x2', zx(zb)).attr('y2', S.ih).attr('stroke', C.green).attr('stroke-width', 1.4);
+          if (k === 'skin' && i < zz.length) gReg.append('line').attr('x1', zx(zb)).attr('x2', zx(zb)).attr('y2', S.ih).attr('stroke', C.green).attr('stroke-width', 1.4);
           s0 = i;
         }
       }
@@ -226,37 +234,47 @@ QM.register('path', (el, opts) => {
     gEc.attr('d', d3.line().x((d) => zx(d[0])).y((d) => sy(Math.min(yMu * d[1], 2.08)))(pts));
   }
 
-  function drawPath(x) {
+  const yOf = (m) => (m <= 0 ? Yd(Math.max(m, cfg.ydom[0])) : yy(m));
+  function drawPath(x, muTip = Infinity) {
     gPath.selectAll('*').remove();
     if (x === null) { pLab.style.opacity = 0; chiLabs.forEach((l) => { l.style.opacity = 0; }); return; }
     const iv = ivAt(x);
+    const top = Math.min(muTip, 1);
     // phase boundaries in μ along the path
     const cuts = [cfg.ydom[0], 0];
     for (const [a, b] of iv) { if (a > 0 && a < 1) cuts.push(a); if (b > 0 && b < 1) cuts.push(b); }
     cuts.push(1);
     cuts.sort((a, b) => a - b);
-    const yOf = (m) => (m <= 0 ? Yd(m) : yy(m));
     for (let i = 0; i < cuts.length - 1; i++) {
-      const m0 = cuts[i], m1 = cuts[i + 1];
+      const m0 = cuts[i];
+      if (m0 >= top) break;
+      const m1 = Math.min(cuts[i + 1], top);
       const k = phase(x, (m0 + m1) / 2);
       gPath.append('line').attr('x1', X(x)).attr('x2', X(x)).attr('y1', yOf(m0)).attr('y2', yOf(m1))
         .attr('stroke', ink[k]).attr('stroke-width', k === 'skin' ? 9 : 5.5);
     }
-    const kTop = phase(x, 0.999);
-    gPath.append('path').attr('d', `M${X(x)},${yy(1) - 13} l-10,17 h20 z`).attr('fill', ink[kTop])
-      .attr('stroke', '#fff').attr('stroke-width', 1.5);
-    // z = χ, 2χ, 3χ marks
+    if (top >= 0.999) {
+      const kTop = phase(x, 0.999);
+      gPath.append('path').attr('d', `M${X(x)},${yy(1) - 13} l-10,17 h20 z`).attr('fill', ink[kTop])
+        .attr('stroke', '#fff').attr('stroke-width', 1.5);
+    } else if (top > cfg.ydom[0]) {
+      gPath.append('circle').attr('cx', X(x)).attr('cy', yOf(top)).attr('r', 8).attr('fill', ink[phase(x, top)])
+        .attr('stroke', '#fff').attr('stroke-width', 2.5);
+    }
+    // z = χ, 2χ, 3χ marks, once the path has reached them
     const muz = cfg.muz(x);
     [1, 2, 3].forEach((n) => {
       const m = QM.interp(zpos, muz, n);
+      if (m > top) return;
       gPath.append('line').attr('x1', X(x) - 9).attr('x2', X(x) + 9).attr('y1', yy(m)).attr('y2', yy(m))
         .attr('stroke', C.ink).attr('stroke-width', 2.2);
     });
     chiLabs.forEach((l, i) => {
       const n = [1, 3][i];
+      const m = QM.interp(zpos, muz, n);
       l.style.left = D.m.l + X(x) - 14 + 'px';
-      l.style.top = D.m.t + yy(QM.interp(zpos, muz, n)) + 'px';
-      l.style.opacity = 1;
+      l.style.top = D.m.t + yy(m) + 'px';
+      l.style.opacity = m <= top ? 1 : 0;
     });
     pLab.style.left = D.m.l + X(x) + 12 + 'px';
     pLab.style.opacity = 1;
@@ -272,12 +290,18 @@ QM.register('path', (el, opts) => {
     gWf.style('opacity', 1);
     const iL = d.L.indexOf(Math.max(...d.L));
     const iR = d.R.indexOf(Math.max(...d.R));
-    const placeL = full ? zx(d.z[iL]) - 110 : zx(d.z[iL]) + 26;
-    labL.style.left = S.m.l + placeL + 'px'; labL.style.top = S.m.t + sy(0.97) + 'px';
+    // partial shell: Ψ_L peaks right under the band bottom, so its label goes above the
+    // curve, from the first z where the curve has dropped clear of it
+    const [placeL, yL] = full ? [zx(d.z[iL]) - 132, 0.97] : [Math.max(zx(zClearL), zx(d.z[iL]) + 26), yLabL];
+    labL.style.left = S.m.l + placeL + 'px'; labL.style.top = S.m.t + sy(yL) + 'px';
     labL.style.opacity = 1;
     if (which === 'QMajo') {
-      const placeR = full ? zx(d.z[iR]) - 120 : zx(d.z[iR]) + 30;
-      labR.style.left = S.m.l + placeR + 'px'; labR.style.top = S.m.t + sy(0.82) + 'px';
+      // partial shell: right of the peak, from where the falling flank has dropped clear of it
+      const yR = 0.82;
+      let jR = iR;
+      while (!full && jR < d.R.length - 1 && wfh * d.R[jR] > yR - 0.22) jR++;
+      const placeR = full ? zx(d.z[iR]) - 146 : zx(d.z[jR]) + 10;
+      labR.style.left = S.m.l + placeR + 'px'; labR.style.top = S.m.t + sy(yR) + 'px';
       labR.style.opacity = 1;
     } else labR.style.opacity = 0;
   }
@@ -286,7 +310,39 @@ QM.register('path', (el, opts) => {
     drawStrip(x); drawPath(x); drawWf(wf);
     if (cfg.skinLabel) cfg.skinLabel.style.opacity = x === null ? 0 : 1;
     if (cfg.muLabel) cfg.muLabel.style.opacity = x === null ? 0 : 1;
+    gauge.style('opacity', 0); gaugeLab.style.opacity = 0;
     state = { x, wf };
+  }
+
+  // Gauge: the local chemical potential μ(z) is the gap between μ and the band bottom
+  const gauge = S.g.append('g').style('opacity', 0).style('pointer-events', 'none');
+  const gaugeLine = gauge.append('line').attr('stroke-width', 5).attr('stroke-linecap', 'round');
+  const gaugeEnds = gauge.append('path').attr('stroke-width', 2.5).attr('fill', 'none');
+  const gaugeLab = S.label(0, 0, '\\mu(z)', { ax: 0 });
+  gaugeLab.style.opacity = 0;
+  function placeGauge(x, z, m) {
+    const ya = sy(yMu), yb = sy(yMu * (1 - m));
+    const col = ink[phase(x, m)];
+    gaugeLine.attr('x1', zx(z)).attr('x2', zx(z)).attr('y1', ya).attr('y2', yb).attr('stroke', col);
+    gaugeEnds.attr('d', `M${zx(z) - 9},${ya} h18 M${zx(z) - 9},${yb} h18`).attr('stroke', col);
+    gauge.style('opacity', 1);
+    Object.assign(gaugeLab.style, { left: S.m.l + zx(z) + 12 + 'px', top: S.m.t + (ya + yb) / 2 + 'px', opacity: 1, color: col });
+  }
+  function walk(x, done) {
+    const zall = QMD.muz.z, Ec = cfg.Ec(x);
+    let iPk = 0;                                   // start on top of the barrier, where μ(z) is lowest
+    for (let i = 0; i < zall.length && zall[i] < 0; i++) if (Ec[i] > Ec[iPk]) iPk = i;
+    const z0 = zall[iPk];
+    const muAt = (z) => 1 - QM.interp(zall, Ec, z);
+    drawWf(null);
+    if (cfg.skinLabel) cfg.skinLabel.style.opacity = 0;
+    if (cfg.muLabel) cfg.muLabel.style.opacity = 1;
+    state = { x, wf: null };
+    return QM.tween(cfg.walkMs, (t) => {
+      const z = QM.lerp(z0, cfg.zmax, t);
+      const m = muAt(z);
+      drawStrip(x, z); drawPath(x, m); placeGauge(x, z, m);
+    }, () => { render(x, 'Majo'); if (done) done(); }, (t) => t);
   }
 
   // hover: z on the wire ↔ μ(z) on the path
@@ -308,6 +364,7 @@ QM.register('path', (el, opts) => {
       const target = cfg.presets[k];
       const wf = k === 1 ? 'Majo' : k === 2 ? 'QMajo' : null;
       QM.tex(pLab, k === 0 ? '' : cfg.pTex[k - 1]);
+      if (animate && k === 1 && state.x === null) { stop = walk(target); return; }
       if (!animate || state.x === null || target === null) { render(target, wf); return; }
       const from = state.x;
       render(from, null);

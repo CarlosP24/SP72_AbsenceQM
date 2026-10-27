@@ -185,6 +185,30 @@ EXPORTS["qmzm_chi"] = function ()
                "densities normalised to their maxima; E: data/E_QMZM/base_partial_szoom.jld2 (QMajo), in Δ0.")
 end
 
+# Quasi-MZM pair vs χ, signed (slides/quarto/julia/calc_qmzm_amp_sweep.jl, illustrative): the
+# largest spinor component of each Majorana (largest lobe up, normalised to its largest |value|),
+# the amplitude envelopes √ρ (same normalisation), |Ψ(k)|² (each normalised to its maximum, as
+# log10, k ≤ 0.1/nm), and the spatial overlap Σ√(ρ_L ρ_R)
+EXPORTS["qmzm_amp"] = function ()
+    d = JLD2.load("slides/data/wfs_partial_ampsweep.jld2")
+    res = d["res"]
+    z = collect(res[1].z)
+    kk = res[1].ks .<= 0.1
+    up(ψ) = ψ .* sign(ψ[argmax(abs.(ψ))])
+    lg(v) = log10.(max.(v ./ maximum(v), 1e-14))
+    frames = map(res) do r
+        L, R = up(r.ψL) ./ maximum(abs, r.ψL), up(r.ψR) ./ maximum(abs, r.ψR)
+        # envelopes on the same scale, never below the component they bound
+        eL = max.(sqrt.(r.ρL) ./ maximum(sqrt.(r.ρL)), abs.(L))
+        eR = max.(sqrt.(r.ρR) ./ maximum(sqrt.(r.ρR)), abs.(R))
+        (; χ = r.χ, L, R, eL, eR, kL = lg(r.kL[kk]), kR = lg(r.kR[kk]), overlap = r.overlap)
+    end
+    write_js("qmzm_amp", (; z, k = collect(res[1].ks[kk]), frames);
+        note = "Illustrative (slides/quarto/julia/calc_qmzm_amp_sweep.jl, V_Z = 1.8 meV): signed largest " *
+               "spinor component of Ψ_L, Ψ_R; envelopes √ρ normalised to their maxima; log10 |Ψ(k)|²; " *
+               "overlap Σ√(ρ_L ρ_R) of the normalised densities.")
+end
+
 # End LDOS vs (V_Z/V_Z^c, ω/Δ0), partial shell, for χ = 1, 50, 100, 200 nm
 EXPORTS["ldos_vB"] = function ()
     maps = Dict{String, Any}()
@@ -229,10 +253,31 @@ EXPORTS["ldos_chi"] = function ()
         ok = (e.zc .< 8) .& (e.E .> 0)               # localised states; drops the χ = 214 nm misfit
         E[shell] = (; χ = χr[ok], E = e.E[ok] ./ Δ0, zc = e.zc[ok], wL = e.wL[ok])
     end
-    write_js("ldos_chi", (; χ, ω, maps, peak, E);
+    Edos = lowest_dos_peak(DOS_VCHI)
+    write_js("ldos_chi", (; χ, ω, maps, peak, E, Edos);
         note = "Paper Fig. 2 (data/LDOS/*_szoom.jld2), m_J = 0 end LDOS, colour range 0.1 (partial), " *
                "0.01 (full). peak: max end LDOS in |ω| ≤ 0.2Δ0 vs χ, normalised. E: lowest pole of the " *
-               "closed wire (data/E_QMZM, poster), in Δ0, localised states only.")
+               "closed wire (data/E_QMZM, poster), in Δ0, localised states only. Edos: full shell, lowest " *
+               "peak of the m_J = 0 DOS at Φ^(2) vs χ ($(DOS_VCHI), talk), in Δ0; pair = below the gap edge.")
+end
+
+# Full-shell quasi-MZM pair vs χ from the m_J = 0 DOS at Φ^(2) (src calc_DOS_vchi, smooth region
+# 10χ): the lowest peak of each row. Rows whose lowest peak is still the gap edge (at least
+# `edge` times the χ → 0 value, i.e. within the ω grid step) are marked pair = false.
+const DOS_VCHI = get(ENV, "DOS_VCHI", "data/DOS_vchi/base_fs_szoom_vchiL.jld2")   # override to preview
+function lowest_dos_peak(path; edge = 0.97)
+    res = JLD2.load(path, "res")
+    cp = res.system.calc_params
+    χs = collect(cp.χrng)
+    ω = -real.(collect(cp.ωrng)) ./ Δ0
+    o = sortperm(ω)
+    ω, D = ω[o], res.DOS["QMajo"][:, o]
+    E = map(eachrow(D)) do row
+        pk = [j for j in 2:length(ω)-1 if row[j] > row[j-1] && row[j] > row[j+1] && row[j] > 0.02 * maximum(row)]
+        isempty(pk) ? NaN : ω[first(pk)]
+    end
+    pair = E .< edge * E[1]
+    return (; χ = χs, E, pair)
 end
 
 # Paper Fig. 3: the same with short-range disorder (data/LDOS/*_szoom_weak.jld2)
@@ -263,11 +308,34 @@ EXPORTS["dos_sectors"] = function ()
         total = q8(total[:, sel], 0, 4), others = q8(others[:, sel], 0, 4), mj0 = q8(mj0[:, sel], 0, 0.8));
         note = "data/DOS/base_fs_Zs.jld2 (Z = −42…42, χ = 1 µm): all sectors, m_J ≠ 0 and m_J = 0 " *
                "(odd lobe only), colour ranges 4, 4 and 0.8 as slides/make_figs.jl.")
-    r = loadres("data/DOS/base_fs_zoom.jld2")
-    cz = r.system.calc_params
-    write_js("dos_mj0_zoom", (; Φ = collect(cz.Φrng_DOS), ω = mirror_ω(real.(collect(cz.ωrng))) ./ Δ0,
-        map = q8(mirror_M(r.DOS[0]), 0.05, 0.5));
-        note = "data/DOS/base_fs_zoom.jld2: m_J = 0 DOS in lobe 1 near zero energy (paper Fig. 1h).")
+end
+
+# Full shell, lobe 1, on the grid of paper Fig. 1h, for a progression of χ: end LDOS (z = 0) and
+# m_J = 0 DOS where μ(z) varies (illustrative: keys base_fs_zoom_chi=<χ>_ldosvPhi and _dos of
+# src/main.jl, run on the clusters; the χ = 1000 nm DOS is Fig. 1h itself, base_fs_zoom). One
+# colour range per quantity for every χ: the LDOS as the full-shell row of Fig. 2, the DOS as
+# Fig. 1h.
+const DOS_ZOOM_RANGE = (0.05, 0.5)
+EXPORTS["fs_maps"] = function ()
+    χs = [5, 20, 200, 500, 1000]
+    Φ = ω = nothing
+    ldos = Dict{String, Any}()
+    dos = Dict{String, Any}()
+    for χ in χs
+        r = loadres("data/LDOSvPhi/base_fs_zoom_chi=$(χ).jld2")
+        cp = r.system.calc_params
+        Φ = collect(cp.Φrng_DOS)
+        ω = mirror_ω(real.(collect(cp.ωrng))) ./ Δ0
+        ldos[string(χ)] = q8(mirror_M(r.LDOS), ldos_crange("base_fs")...)
+        d = loadres(χ == 1000 ? "data/DOS/base_fs_zoom.jld2" : "data/DOS/base_fs_zoom_chi=$(χ).jld2")
+        cd = d.system.calc_params
+        @assert collect(cd.Φrng_DOS) ≈ Φ && mirror_ω(real.(collect(cd.ωrng))) ./ Δ0 ≈ ω
+        dos[string(χ)] = q8(mirror_M(d.DOS[0]), DOS_ZOOM_RANGE...)
+    end
+    write_js("fs_maps", (; Φ, ω, chis = χs, ldos, dos);
+        note = "data/LDOSvPhi and data/DOS/base_fs_zoom_chi=<χ>.jld2 (illustrative) and data/DOS/base_fs_zoom.jld2 " *
+               "(Fig. 1h, χ = 1000 nm): end LDOS and m_J = 0 DOS of base_fs in lobe 1 for χ = $(χs) nm, " *
+               "colour ranges $(ldos_crange("base_fs")) and $(DOS_ZOOM_RANGE).")
 end
 
 # Gate potential inside the grounded shell, eφ_g(r, z)/μ_bulk (End Matter A, Eq. A1): the

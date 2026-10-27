@@ -95,3 +95,29 @@ function calc_LDOS_vB(name::String)
     )
 end
 
+function calc_LDOS_vPhi(name::String)
+    system = systems[name]
+    @unpack Φrng_DOS, ωrng, χ, outdir = system.calc_params
+    # Output path
+    path = "$(outdir)/LDOSvPhi/$(name).jld2"
+    mkpath(dirname(path))
+
+    g, _ = greens_softwire(system.params_wire, χ)
+    ρ = ldos(g[region = r -> r[1] == 0]; kernel = I)
+
+    LDOS = pfunction(
+        (Φ, ω) -> try
+            ρ(ω; ω, Φ, Z = 0) |> sum
+        catch e
+            @warn "Error calculating LDOS at (Φ=$Φ, ω=$ω): $e"
+            NaN
+        end,
+        [Φrng_DOS, ωrng];
+    )
+
+    return Results(
+        system = system,
+        LDOS = LDOS,
+        path = path,
+    )
+end

@@ -83,6 +83,33 @@ if endswith(input, "_doschi")
     exit(0)
 end
 
+if endswith(input, "_dosvchi")
+    name = replace(input, "_dosvchi" => "")
+    @info "Calculating m_J = 0 DOS vs χ at Φ^(2) for $(name)"
+    res = calc_DOS_vchi(name)
+    @info "Saving results to $(res.path)"
+    save(res.path, "res", res)
+    exit(0)
+end
+
+if endswith(input, "_dosvchiL")
+    name = replace(input, "_dosvchiL" => "")
+    @info "Calculating m_J = 0 DOS vs χ at Φ^(2) for $(name), smooth region 10χ"
+    res = calc_DOS_vchi(name; nchunks = 10, pref = 10)
+    @info "Saving results to $(res.path)"
+    save(res.path, "res", res, "pref", 10)
+    exit(0)
+end
+
+if endswith(input, "_pairspin")
+    name = replace(input, "_pairspin" => "")
+    @info "Spin and momentum of the quasi-MZM pair halves vs χ for $(name)"
+    res = calc_pair_spin(name)
+    @info "Saving results to $(res.path)"
+    save(res.path, "res", res)
+    exit(0)
+end
+
 if endswith(input, "_ldos")
     name = replace(input, "_ldos" => "")
     @info "Calculating LDOS for $(name)"
@@ -115,6 +142,15 @@ if endswith(input, "_ldosvB")
     name = replace(input, "_ldosvB" => "")
     @info "Calculating LDOS for $(name)"
     res = calc_LDOS_vB(name)
+    @info "Saving results to $(res.path)"
+    save(res.path, "res", res)
+    exit(0)
+end
+
+if endswith(input, "_ldosvPhi")
+    name = replace(input, "_ldosvPhi" => "")
+    @info "Calculating LDOS vs flux for $(name)"
+    res = calc_LDOS_vPhi(name)
     @info "Saving results to $(res.path)"
     save(res.path, "res", res)
     exit(0)

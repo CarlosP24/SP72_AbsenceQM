@@ -1,7 +1,7 @@
 // Symmetry structure of the full-shell Hamiltonian. [H, J_z] = 0 splits H into m_J sectors,
 // drawn as a row H = ⋯ ⊕ H_{−2} ⊕ … ⊕ H_{+2} ⊕ ⋯. Particle–hole symmetry maps m_J → −m_J
-// (arcs), so a sector m_J ≠ 0 has no 𝒫 of its own: class AI (its block is real, T = K).
-// Only the self-conjugate m_J = 0 sector is BDI.
+// (arcs), so a sector m_J ≠ 0 has no 𝒫 of its own (class A, by 𝒫 alone); only the
+// self-conjugate m_J = 0 sector keeps it (class D).
 // Steps: 0 sectors, 1 𝒫 pairs them, 2 symmetry classes.
 QM.register('blocks', (el, opts) => {
   const C = QM.c;
@@ -39,7 +39,7 @@ QM.register('blocks', (el, opts) => {
   // classes below the row
   const tags = [];
   ms.forEach((m, i) => {
-    const t = p.label(cx(i), y0 + bw + 30, m === 0 ? 'BDI' : 'AI', { math: false, cls: 'tag' });
+    const t = p.label(cx(i), y0 + bw + 30, m === 0 ? 'D' : 'A', { math: false, cls: 'tag' });
     t.style.background = m === 0 ? C.red : C.ink_2;
     t.classList.add('qm-fade'); t.style.opacity = 0;
     tags.push(t);

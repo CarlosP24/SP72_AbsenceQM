@@ -27,7 +27,7 @@ $endfor$
   </div>
 $endif$
 $if(logos)$
-  <div class="qd-logos">$for(logos)$<img src="$it$" alt="">$endfor$</div>
+  <div class="qd-logos">$for(logos)$$if(it.src)$<img src="$it.src$" alt=""$if(it.height)$ style="height:$it.height$"$endif$>$else$<img src="$it$" alt="">$endif$$endfor$</div>
 $endif$
 $if(title-note)$
   <p class="qd-eqnote">$title-note$</p>

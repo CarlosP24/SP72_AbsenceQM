@@ -3,17 +3,20 @@
 // 'ldos-vb': end LDOS of the partial shell vs (V_Z/V_Z^c, ω/Δ0) for χ = 1, 50, 100, 200 nm
 //   (χ = 200 nm is the published case; the others are illustrative). data-chis="1,50,100,200"
 //   lists the χ shown; step k shows the k-th one. The zero-bias peak that appears before
-//   V_Z^c is marked as a quasi-MZM.
+//   V_Z^c is marked as a quasi-MZM. data-marks="vz" marks V_Z^(1) and V_Z^(2). Each χ shown is
+//   announced to the slide (event 'qm:chi'), for the cursor of an 'ldos-chi' next to it.
 // 'ldos-chi': paper Fig. 2, end LDOS vs (χ, ω/Δ0) for the true MZM and the quasi-MZM.
 //   data-rows="partial" or "partial,full". Steps (two rows): 0 partial row, 1 full row,
 //   2 verdict tags and χ*, 3 hidden quasi-MZM energy (lowest pole of the closed wire).
-//   data-set="dis": paper Fig. 3 (short-range disorder), rows only.
+//   data-set="dis": paper Fig. 3 (short-range disorder), rows only. data-cursor="1,50,..."
+//   draws a χ cursor at the step-th value, or at the χ shown by an 'ldos-vb' on the slide.
 
 QM.register('ldos-vb', (el, opts) => {
   const L = QMD.ldos_vB, C = QM.c;
   const chis = (opts.chis || '1,50,100,200').split(',').map((s) => s.trim());
+  const marks = opts.marks === 'vz';
   const p = QM.panel(el, { x: 0, y: 0, w: +opts.w || 760, h: +opts.h || 500,
-    m: { l: 84, r: 96, t: chis.length > 1 ? 64 : 24, b: 70 } });
+    m: { l: 84, r: 96, t: (chis.length > 1 ? 64 : 24) + (marks ? 38 : 0), b: 70 } });
   const X = d3.scaleLinear([0, 2], [0, p.iw]);
   const Y = d3.scaleLinear([-1, 1], [p.ih, 0]);
   // the maps span ω ∈ [ω0, ω1]; place each canvas over its own extent
@@ -61,7 +64,17 @@ QM.register('ldos-vb', (el, opts) => {
     return g;
   };
   bar(1.0, 1.98, 0.32);
-  const lMZM = p.label(X(1.49), Y(0.32) - 8, 'MZM', { ay: 1, math: false, cls: 'text' });
+  // the two Zeeman fields of the phase-diagram slide, coloured by case (QM.caseColor) to
+  // match the χ cursors of an 'ldos-chi' next to it
+  if (marks) {
+    const P = QMD.params;
+    [[P.VZ1 / P.VZc, 1], [P.VZ2 / P.VZc, 2]].forEach(([v, n]) => {
+      const col = QM.caseColor[n === 1 ? 'Majo' : 'QMajo'];
+      p.g.append('path').attr('d', `M${X(v)},-2 l-9,-14 h18 z`).attr('fill', col);
+      p.label(X(v), -20, `V_\\mathrm{Z}^{(${n})}`, { ay: 1, cls: 'small', color: col });
+    });
+  }
+  const lMZM = p.label(X(marks ? 1.74 : 1.49), Y(0.32) - 8, 'MZM', { ay: 1, math: false, cls: 'text' });
   lMZM.style.color = '#fff'; lMZM.style.fontWeight = 700;
   const qBar = bars.append('g');
   const lQ = p.label(0, Y(-0.32) + 8, 'quasi-MZM', { ay: 0, math: false, cls: 'text' });
@@ -71,11 +84,14 @@ QM.register('ldos-vb', (el, opts) => {
   if (chis.length > 1) {
     btn = QM.buttons(el, { x: p.m.l, y: 8, items: chis.map((c) => ({ tex: `\\chi = ${c}\\ \\mathrm{nm}` })),
       onpick: (i) => show(i) });
+    Object.assign(btn.el.style, { left: p.m.l + p.iw / 2 + 'px', transform: 'translateX(-50%)' });   // centred on the map
   }
+  const slide = el.closest('section');
   function show(i) {
     const c = chis[i];
     chis.forEach((k) => { canv[k].style.opacity = k === c ? 1 : 0; });
     if (btn) btn.set(i);
+    if (slide) slide.dispatchEvent(new CustomEvent('qm:chi', { detail: { chi: +c } }));
     qBar.selectAll('*').remove();
     const s = zbpStart[c];
     if (s !== null && s < 0.9) {
@@ -169,23 +185,42 @@ QM.register('ldos-chi', (el, opts) => {
         b.style.width = '200px';
       }
     });
-    // hidden quasi-MZM: ±E(χ) of the closed wire, where the state is localised
+    // hidden quasi-MZM: ±E(χ) of the pair, from the m_J = 0 DOS once it leaves the gap edge
+    // (or the closed-wire pole, where the state is localised, without data/DOS_vchi)
     const p = panels.full_QMajo;
-    const E = L.E.full;
-    const pts = E.χ.map((x, i) => [x, E.E[i]]).filter(([x, e]) => x >= 200 && e < 0.2);
+    const D = L.Edos, E = L.E.full;
+    const pts = D ? D.χ.map((x, i) => [x, D.E[i]]).filter(([, e], i) => D.pair[i] && e < 0.2)
+      : E.χ.map((x, i) => [x, E.E[i]]).filter(([x, e]) => x >= 200 && e < 0.2);
     const g = p.g.append('g').attr('class', 'qm-fade');
     const lf = d3.line().x((d) => X(d[0])).y((d) => Y(d[1]));
-    g.append('path').attr('d', lf(pts)).attr('fill', 'none').attr('stroke', '#fff').attr('stroke-width', 2.4).attr('stroke-dasharray', '6 4');
-    g.append('path').attr('d', lf(pts.map(([x, e]) => [x, -e]))).attr('fill', 'none').attr('stroke', '#fff').attr('stroke-width', 2.4).attr('stroke-dasharray', '6 4');
+    // with the DOS the pair starts at ≈ 10⁻² Δ0: ±E are a few px apart on this axis, so one line
+    const sides = D ? [1] : [1, -1];
+    sides.forEach((s) => g.append('path').attr('d', lf(pts.map(([x, e]) => [x, D ? 0 : s * e]))).attr('fill', 'none')
+      .attr('stroke', '#fff').attr('stroke-width', 2.4).attr('stroke-dasharray', '6 4'));
     const hl = p.label(X(95), Y(-0.1), 'hidden quasi-MZM →<br>pinned, deep inside', { ax: 0.5, math: false, cls: 'text' });
     hl.style.color = '#fff'; hl.style.textAlign = 'center'; hl.style.lineHeight = 1.2;
     hl.classList.add('qm-fade');
     hidden = [g.node(), hl];
   }
+  // χ cursor: a marker on top of each map, coloured by case (QM.caseColor)
+  let cursorAt = () => {};
+  if (opts.cursor) {
+    const list = opts.cursor.split(',').map(Number);
+    const gs = Object.entries(panels).map(([k, p]) => {
+      const g = p.g.append('g').style('transition', 'transform 0.6s ease');
+      g.append('path').attr('d', 'M0,-3 l-9,-14 h18 z').attr('fill', QM.caseColor[k.split('_')[1]]);
+      return g;
+    });
+    const place = (chi) => gs.forEach((g) => g.style('transform', `translateX(${Math.max(X(chi), 1.5)}px)`));
+    const slide = el.closest('section');
+    if (slide) slide.addEventListener('qm:chi', (e) => place(e.detail.chi));
+    cursorAt = (step) => place(list[Math.min(step, list.length - 1)]);
+  }
   const vis = (nodes, on) => nodes.forEach((n) => { if (n) (n.style || n).opacity = on ? 1 : 0; });
   Object.values(grp).flat().forEach((n) => n.classList.add('qm-fade'));
   return {
     go(step) {
+      cursorAt(step);
       const two = rows.length > 1;
       if (!two) { vis([tagP], step >= (+opts.tagstep || 1)); return; }
       vis(grp.full, step >= 1);

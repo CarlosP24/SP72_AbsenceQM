@@ -3,8 +3,8 @@
 //  - Partial shell: spinful subbands vs k_z. All belong to the one class-D Hamiltonian, so the
 //    first subband to be filled can already turn topological: no threshold.
 //  - Full shell: angular subbands vs m_L (paper Fig. 4b, schematic: parabolas ½(m_L ∓ 1)²
-//    shifted by the radial energy, ten m_L values). The m_J = 0 pair (class BDI, red) sits
-//    away from the band bottom, so the m_J ≠ 0 sectors (class AI, CdGM analogs) fill first:
+//    shifted by the radial energy, ten m_L values). The m_J = 0 pair (class D, red) sits
+//    away from the band bottom, so the m_J ≠ 0 sectors (class A, CdGM analogs) fill first:
 //    topology needs μ > μ^ts, and the stretch of wire with μ(z) < μ^ts is the trivial skin.
 // Hovering or dragging along the wire strip sets z, hence μ(z).
 // Steps: 0 empty, 1 μ between band bottom and μ^ts, 2 μ above μ^ts.
@@ -126,8 +126,8 @@ QM.register('filling', (el) => {
     const nA = subs.filter((e) => mu > e).length;
     vA.innerHTML = nA ? '<b class="red">class D</b>: the first filled subband can already turn topological' : 'empty: insulating end';
     const anyCdGM = states.some((s) => !s.j0 && s.E < mu), j0 = mu > mts;
-    vB.innerHTML = j0 ? '<b class="red">m<sub>J</sub> = 0 filled</b> (BDI): topology possible above μ<sup>ts</sup>'
-      : anyCdGM ? '<b>class-AI</b> sectors fill first: trivial, <b class="green">skin</b>' : 'empty: insulating end';
+    vB.innerHTML = j0 ? '<b class="red">m<sub>J</sub> = 0 filled</b> (class D): topology possible above μ<sup>ts</sup>'
+      : anyCdGM ? '<b>class-A</b> sectors fill first: trivial, <b class="green">skin</b>' : 'empty: insulating end';
     skin.style('opacity', mu > bottom ? 1 : 0);
     skinLab.style.opacity = mu > bottom ? 1 : 0;
     const z = zt(mu);

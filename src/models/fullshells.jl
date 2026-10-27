@@ -179,3 +179,46 @@ full_shells = Dict(
 ) 
 
 merge!(full_shells, base_τs)
+
+# End LDOS vs (Φ, ω) on the grid of base_fs_zoom (paper Fig. 1h) for a progression of χ (talk)
+base_fs_zoom_χs = Dict(
+    "base_fs_zoom_chi=$(χ)" => Params_System(base_fs_zoom;
+        calc_params = Calc_Params(base_fs_zoom.calc_params;
+            χ = χ,
+        )
+    ) for χ in [5, 20, 200, 500, 1000]
+)
+
+merge!(full_shells, base_fs_zoom_χs)
+
+# Hidden quasi-MZM pair vs χ (talk): m_J = 0 DOS at Φ^(2) on a log ω grid, from the gap edge
+# (≈ 10⁻² Δ0) down to 10⁻⁶ Δ0, broadening 2 % of |ω|
+base_fs_szoom_vchi = Params_System(base_fs_szoom;
+    calc_params = Calc_Params(base_fs_szoom.calc_params;
+        ωrng = [-w + 0.02im * w for w in 0.23 .* 10 .^ range(-6, log10(0.03), length = 450)],
+    )
+)
+
+merge!(full_shells, Dict("base_fs_szoom_vchi" => base_fs_szoom_vchi))
+
+# The same with the whole smooth profile (10χ before the bulk: the Φ^(2) topological segment
+# ends at 7χ) and the grid down to 10⁻⁸ Δ0, 100 points per decade (key _dosvchiL). χ ≤ 1.5 µm:
+# beyond, the pair is below 10⁻⁶ Δ0, and 12χ up to 3.16 µm (38 µm wires) ran out of memory
+base_fs_szoom_vchiL = Params_System(base_fs_szoom;
+    calc_params = Calc_Params(base_fs_szoom.calc_params;
+        χrng = 10 .^ range(0, log10(1500), length = 300),
+        ωrng = [-w + 0.02im * w for w in 0.23 .* 10 .^ range(-8, log10(0.03), length = 750)],
+    )
+)
+
+merge!(full_shells, Dict("base_fs_szoom_vchiL" => base_fs_szoom_vchiL))
+
+# Spin and momentum of the two halves of the hidden quasi-MZM pair at Φ^(2), both at smooth
+# edges of the topological segment (talk check, key _pairspin)
+base_fs_szoom_pair = Params_System(base_fs_szoom;
+    calc_params = Calc_Params(base_fs_szoom.calc_params;
+        χs = [100, 150, 200, 300, 500, 700, 1000],
+    )
+)
+
+merge!(full_shells, Dict("base_fs_szoom_pair" => base_fs_szoom_pair))

@@ -375,11 +375,12 @@ html.reveal-print .reveal .slides section.slide:not(.part) {
 .reveal .refs {
   position: absolute;
   left: var(--qd-pad-x);
-  right: 150px;
+  right: var(--qd-pad-x);
   bottom: 46px;
   font-size: 15px;
   line-height: 1.42;
   color: $qd-muted;
+  text-align: center;
 
   p { margin: 0; }
   b, strong { color: $qd-ink-2; font-weight: 600; }
@@ -500,8 +501,13 @@ html.reveal-print .reveal .slides section.part {
 .reveal .qd-title-main {
   position: absolute;
   left: 96px;
-  top: 112px;
+  top: 0;
+  bottom: 150px;          // the band above the logos; the block is centred in it
   width: 860px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: flex-start;
 }
 
 .reveal .qd-event {
@@ -520,6 +526,11 @@ html.reveal-print .reveal .slides section.part {
   line-height: 1.1;
   letter-spacing: -0.022em;
   margin: 0 0 22px 0;
+  text-wrap: balance;
+}
+
+.reveal .slides section#title-slide .title,
+.reveal .slides section#title-slide .subtitle {
   text-wrap: balance;
 }
 
@@ -613,6 +624,29 @@ html.reveal-print .reveal .slides section.part {
   img { border-radius: 0; }
 }
 
+// A single illustration filling the whole panel. The panel runs 1000px past the slide to the
+// right, top and bottom, so it reaches the window edge at any aspect ratio (no white band
+// beside the scaled slide); the illustration has no background of its own and sits on this
+// gradient (the colours of assets/img/title_art.svg).
+.reveal .qd-title-hero:has(.qd-hero-item.full) {
+  padding: 0;
+  top: -1000px;
+  bottom: -1000px;
+  right: -1000px;
+  width: 1600px;
+  background: linear-gradient(180deg, #0B1433 0, #0B1433 1000px, #16224F calc(100% - 1000px), #16224F 100%);
+}
+
+.reveal .qd-hero-item.full {
+  position: absolute;
+  left: 0;
+  top: 1000px;
+  width: 600px;
+  height: 900px;
+
+  img { width: 100%; height: 100%; max-height: none; object-fit: cover; border-radius: 0; }
+}
+
 .reveal .qd-logos {
   position: absolute;
   left: 96px;
@@ -657,6 +691,22 @@ html.reveal-print .reveal .slides section.part {
   background: transparent;
 
   a { border: none; color: inherit; }
+}
+
+// Document logo (YAML logo:) in the top-right corner of content slides (plugin)
+.reveal .slides section img.qd-slide-logo {
+  position: absolute;
+  top: 36px;
+  right: var(--qd-pad-x);
+  height: 30px;
+  width: auto;
+  margin: 0;
+}
+
+.reveal.has-logo div.slide-number {
+  top: auto;
+  bottom: 12px;
+  right: 26px;
 }
 
 .reveal .progress {
@@ -766,6 +816,7 @@ body.qd-hide-chrome .reveal .slide-number {
     border-radius: 50%;
     border: 1px solid $qd-line;
     object-fit: cover;
+    object-position: 50% 10%;
   }
 
   .muted { font-size: 17px; font-weight: 400; }
@@ -792,6 +843,46 @@ body.qd-hide-chrome .reveal .slide-number {
     width: 30%;
     border-radius: 10px;
     box-shadow: 0 6px 20px rgba(0, 0, 0, 0.22);
+  }
+
+  .map-box {
+    position: absolute;
+    top: 16px;
+    right: 16px;
+    width: 32%;
+    border-radius: 10px;
+    overflow: hidden;
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.22);
+
+    img { display: block; width: 100%; }
+  }
+}
+
+// A labelled pin on a map: [Madrid]{.map-pin style="left:45%;top:44%"}, the dot on the spot
+.reveal .map-pin {
+  position: absolute;
+  transform: translate(-12px, -50%);
+  padding: 3px 10px 3px 26px;
+  border-radius: 7px;
+  background: #fff;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.25);
+  font-size: 17px;
+  font-weight: 700;
+  line-height: 1.2;
+  color: $qd-ink;
+  white-space: nowrap;
+
+  &::before {
+    content: "";
+    position: absolute;
+    left: 5px;
+    top: 50%;
+    width: 14px;
+    height: 14px;
+    border-radius: 50%;
+    background: $qd-red;
+    transform: translateY(-50%);
+    box-shadow: inset -2px -2px 3px rgba(0, 0, 0, 0.25);
   }
 }
 
