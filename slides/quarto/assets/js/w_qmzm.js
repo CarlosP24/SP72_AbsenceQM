@@ -1,7 +1,7 @@
 // Quasi-Majorana pair of the partial shell at V_Z^(2) while the end gets smoother. Left: the
 // signed amplitudes (largest spinor component) over their envelopes: Ψ_L oscillates with the
-// Fermi wavelength at the hard end, Ψ_R is a smooth bump at the soft edge of the island, and
-// the envelopes keep overlapping. Top right: the momentum content of Ψ_R, |Ψ_R(k)|²
+// Fermi wavelength at the hard end, Ψ_R is a smooth bump at the soft edge of the topological
+// section, and the envelopes keep overlapping. Top right: the momentum content of Ψ_R, |Ψ_R(k)|²
 // (normalised to its maximum), and its weight at Ψ_L's wavevector k_F (dot), which falls by
 // eight decades: Ψ_R stops oscillating like Ψ_L. Bottom right: the splitting E(χ) falls
 // exponentially while the spatial overlap Σ√(ρ_L ρ_R) barely changes: the pair is pinned

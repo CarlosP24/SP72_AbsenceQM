@@ -30,7 +30,7 @@ background graphics on). In print mode every interactive figure shows its final 
 | ZBP at the end; false positive | end LDOS vs V_Z for χ = 1, 50, 100, 200 nm with V_Z^(1), V_Z^(2) marked (`ldos-vb`), next to end LDOS vs χ with a cursor at the χ shown (`ldos-chi`) | χ = 200 nm published (`data/LDOSvB`); 1, 50, 100 nm illustrative (`slides/data`) |
 | Smooth end; trivial skin | walk into the wire: a gauge μ(z) moves along z while the path climbs the phase diagram (`path`) | `data/PD_mu_B`, `data/PD_mu_flux` (+ `data_unpublished`, as the poster), `data/wfs` |
 | Quasi-MZM pair | wavefunctions while χ grows, splitting E(χ) (`qmzm`) | illustrative χ sweep (`julia/calc_partial_sweeps.jl`); E from the end LDOS and `data/E_QMZM` |
-| Little–Parks | the pairing Δe^{inφ} as a wave running around the wire, shell gap vs flux (`lp`) | illustrative (`slides/data/lp_lobes.jld2`) |
+| Little–Parks | phase winding n and supercurrent on a ring, kinetic energy of the current (one parabola per n) above the shell gap vs flux (`lp`) | illustrative (`slides/data/lp_lobes.jld2`) |
 | m_J sectors | sectors, particle–hole pairing, classes D and A (`blocks`) | schematic |
 | Two classes at zero energy | DOS split into m_J ≠ 0 and m_J = 0 (`sectors`) | `data/DOS/base_fs_Zs.jld2` (paper Fig. 1g) |
 | Who fills first | band filling, partial vs full, and the wire strip (`filling`) | schematic, as paper Fig. 4(b) |

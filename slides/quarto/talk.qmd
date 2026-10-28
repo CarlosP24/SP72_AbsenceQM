@@ -55,7 +55,7 @@ impostor also hides it.
 
 :::: {.columns}
 ::: {.column width="44%"}
-Rashba nanowire, proximitized, in a Zeeman field:
+![](assets/img/device_partial_cut.png){width="80%"}
 
 ::: {.eq}
 $$
@@ -64,20 +64,18 @@ $$
 :::
 
 ::: {.fragment .qm-step}
-- Gap at $k_z = 0$ closes at $V_\mathrm{Z}^\mathrm{c} = \sqrt{\Delta^2 + \mu^2}$
+- Gap closes at $V_\mathrm{Z}^\mathrm{c} = \sqrt{\Delta^2 + \mu^2}$
 :::
 ::: {.fragment .qm-step}
-- Reopens inverted: $Q = \operatorname{sign}\mathrm{Pf} = -1$, a Majorana zero mode (MZM) at each end
+- Reopens inverted ($Q = -1$): a Majorana (MZM) at each end
 :::
 
 ::: {.fragment}
 ::: {.key}
-**Class D**: the Majoranas rely on particle–hole symmetry alone ($\mathcal{P}^2 = +1$,
-$\mathbb{Z}_2$ index). $\mathcal{P}$ is exact in any BdG Hamiltonian, so it survives disorder,
-and all subbands share it.
+**Class D**: particle–hole symmetry alone, shared by all subbands
 :::
 
-[With an effective time reversal $\mathcal{T}$ ($\mathcal{T}^2 = +1$, $H$ real), exact only in this ideal 1D model, the class is BDI with a $\mathbb{Z}$ index. Disorder, several subbands or a tilted field break $\mathcal{T}$: D, $\mathbb{Z}_2$.]{.symnote}
+[Strictly BDI in this ideal 1D model; disorder makes it D]{.symnote}
 :::
 :::
 ::: {.column width="54%"}
@@ -91,8 +89,9 @@ R. M. Lutchyn *et al.* PRL **105**, 077001 (2010) · Y. Oreg *et al.* PRL **105*
 :::
 
 ::: {.notes}
-(1:20) The Majorana nanowire you have seen this week: a Rashba semiconductor,
-proximitized, under a Zeeman field (paper's partial-shell parameters, constant Δ here).
+(1:20) The Majorana nanowire you have seen this week: a Rashba semiconductor core with a
+superconductor on one side, the partial shell, under a field along the wire, probed at its
+end (paper's partial-shell parameters, constant Δ here).
 [click] As V_Z grows, the gap at k = 0 closes at V_Z^c = √(Δ² + μ²). [click] Beyond it,
 it reopens inverted: the Pfaffian index flips sign and a Majorana sits at each end. The
 inset is the phase diagram, the dot is our wire at μ_bulk. [click] I want to insist on the
@@ -157,12 +156,12 @@ diagram, so walking into the wire traces a vertical path: μ(z) goes from below 
 (insulating) up to μ_bulk. [click] Above V_Z^c, at V_Z^(1), the path goes straight from
 insulating into topological: the whole wire is topological and the MZM sits at its end
 (navy, it oscillates with k_F). [click] Below V_Z^c, at V_Z^(2), the path enters the
-topological wedge and leaves it again at μ(z) ≈ 0.84 μ_bulk: only an island of length
-≈ 1.9χ is topological. The island has two boundaries, and each hosts a Majorana
+topological wedge and leaves it again at μ(z) ≈ 0.84 μ_bulk: only a section of length
+≈ 1.9χ is topological. The topological section has two boundaries, and each hosts a Majorana
 component. (Hover over the wire to see where each point sits in the diagram.)
 :::
 
-## Smooth ends pin the island's two Majoranas to zero
+## Smooth ends pin the topological section's two Majoranas to zero
 
 [$\Psi_\mathrm{L}$ and $\Psi_\mathrm{R}$ still overlap, but a smooth end cannot couple their different oscillations]{.lead}
 
@@ -178,7 +177,7 @@ G. Kells *et al.* PRB **86**, 100503(R) (2012) · A. Vuik *et al.* SciPost Phys.
 ::: {.notes}
 (1:30) Here is that pair for the paper's wire at V_Z^(2), for many χ. Left, the two Majoranas
 themselves, signed, over the shaded region where each lives. Ψ_L, at the hard end, oscillates
-with the Fermi wavelength, about 120 nm. Ψ_R, at the soft edge of the island, is a smooth
+with the Fermi wavelength, about 120 nm. Ψ_R, at the soft edge of the topological section, is a smooth
 bump. At χ = 50 nm they overlap strongly and the pair is split (bottom right, black).
 [click] Now make the end smoother. Watch the shaded regions: they keep overlapping. The
 overlap (dashed) drops by less than a decade, while the splitting falls by four: below
@@ -253,22 +252,25 @@ this?
 ![](assets/img/device_full_cut.png){width="100%"}
 
 ::: {.small}
-- An axial field threads a flux $\Phi = \pi R^2 B$ through the shell
-- The pairing $\Delta\, e^{in\varphi}$ winds $n = \lfloor \Phi/\Phi_0 \rceil$ times, and a supercurrent $I_\mathrm{s} \propto n - \Phi/\Phi_0$ circulates in the shell: **Little–Parks lobes**
-- Topology driven by the flux (orbital effect + radial SOC) at $B \approx 0.1$ T, only in **odd lobes**
-:::
-:::
-::: {.column width="64%"}
-::: {.qm-widget data-widget="lp" style="width:960px;height:440px"}
-:::
+- The flux $\Phi = \pi R^2 B$ makes the phase of $\Delta$ wind $n$ times: the **fluxoid**
 
-[]{.fragment .qm-step}
-[]{.fragment .qm-step}
-[]{.fragment .qm-step}
-[]{.fragment .qm-step}
+::: {.fragment .qm-step}
+- Away from $n\Phi_0$, a supercurrent [$I_\mathrm{s} \propto n - \Phi/\Phi_0$]{.nowrap} flows; the **gap** pays for it
+:::
+::: {.fragment .qm-step}
+- At $\Phi_0/2$, $n$ jumps by one: **Little–Parks lobes**
+:::
+::: {.fragment .qm-step}
+- Topology only in **odd lobes**, at $B \approx 0.1$ T
+:::
+:::
 
 ::: {.fragment .fade-up}
 [Zero-bias peaks were seen in the first lobe (Vaitiekėnas *et al.* 2020), but other mechanisms also produce them]{.small .ink2}
+:::
+:::
+::: {.column width="64%"}
+::: {.qm-widget data-widget="lp" style="width:960px;height:560px"}
 :::
 :::
 ::::
@@ -279,16 +281,17 @@ S. Vaitiekėnas *et al.* Science **367**, eaav3392 (2020) · **C. Payá** *et al
 
 ::: {.notes}
 (1:00) The alternative: full-shell nanowires, where the superconductor wraps the whole core.
-An axial field threads a flux, and the shell's order parameter winds n times around the
-wire, n the fluxoid: the arrows turn n times going once around. [click] Lobe zero: as the
-flux grows with n = 0, the mismatch between flux and winding drives a supercurrent around
-the shell (the spinning arrows), I_s ∝ n − Φ/Φ0. It costs kinetic energy and shrinks the
-shell gap. [click] Lobe one: at half-integer flux one more winding is cheaper, n jumps to
-one, the gap reopens and the current reverses; it vanishes at Φ0 and grows again.
-[click] Lobe two: same story, n = 2. These are the Little–Parks lobes. [click] The topological transition is driven by the flux, through the orbital
-effect and the radial spin–orbit coupling, at fields of 0.1 T, and only in odd lobes.
-Vaitiekėnas and coworkers saw zero-bias peaks in the first lobe in 2020; their origin is
-debated.
+An axial field threads a flux through the shell. The phase of the order parameter must come
+back to itself around the shell, so it winds an integer number of times, n, the fluxoid:
+the arrows turn n times going once around. [click] With n fixed, the flux cannot be matched
+exactly: away from nΦ0 a supercurrent circulates in the shell (the spinning arrows),
+I_s ∝ n − Φ/Φ0. That current costs kinetic energy, the blue parabola on top, and the
+superconductor pays for it with a smaller gap, below. [click] At half a flux quantum the
+next parabola is lower: n jumps by one, the current reverses, vanishes at Φ0 and the gap
+recovers. Lobe after lobe: the Little–Parks lobes. [click] Topology here is driven by the
+flux (orbital effect plus radial spin–orbit coupling), at about 0.1 T, and only in odd
+lobes. Vaitiekėnas and coworkers saw zero-bias peaks in the first lobe in 2020; their
+origin is debated.
 :::
 
 ## The Hamiltonian splits into angular-momentum sectors
@@ -358,7 +361,7 @@ partial shell, where one class-D Hamiltonian holds all the subbands.
 (T·M)² = T²M² = (−1)(−1) = +1, hence AI and not AII. It also keeps m_J, unlike the true T.)
 :::
 
-## The trivial sectors are Andreev states of a synthetic vortex
+## A full shell is a synthetic vortex that confines Andreev subbands
 
 :::: {.columns}
 ::: {.column width="40%"}
@@ -372,7 +375,7 @@ partial shell, where one class-D Hamiltonian holds all the subbands.
 - Abrikosov vortex: Andreev reflection off the pairing wall confines Caroli–de Gennes–Matricon states, $\delta E \sim \Delta^2/E_F$
 
 ::: {.fragment data-fragment-index="1"}
-- Full shell, a synthetic vortex: the winding shell confines Andreev subbands in the core, **one per $m_J$**, with $\delta E \sim \Delta$: resolvable
+- Full shell, a synthetic vortex: the winding shell confines Andreev subbands in the core, labelled by $m_J$, with $\delta E \sim \Delta$: resolvable
 :::
 :::
 :::
@@ -386,7 +389,7 @@ partial shell, where one class-D Hamiltonian holds all the subbands.
 ![](assets/figs/s09_cbar.svg){.expth-cbar}
 :::
 
-[Lobe 0: hard gap. Lobes 1, 2: subgap states that disperse and skew with flux, one per $m_J$ subband]{.figcap}
+[Lobe 0: hard gap. Lobes 1, 2: subgap states that disperse and skew with flux]{.figcap}
 :::
 ::::
 
@@ -395,16 +398,16 @@ C. Caroli, P. G. de Gennes, J. Matricon, Phys. Lett. **9**, 307 (1964) · P. San
 :::
 
 ::: {.notes}
-(1:00) What are those trivial sectors? A phase winding around a normal region is a vortex.
+(1:00) What do these sectors look like physically? A phase winding around a normal region is a vortex.
 In an Abrikosov vortex, Andreev reflection off the pairing wall confines the CdGM states,
 with tiny spacings Δ²/E_F. [click] The full shell is a synthetic vortex whose core is the
-semiconductor: Andreev reflection at the core–shell interface confines subbands, one per
+semiconductor: Andreev reflection at the core–shell interface confines subbands, labelled by
 m_J, with spacings comparable to the gap. And we see them: tunneling spectroscopy on InAs/Al
 full-shell wires from Copenhagen (left) and our model (right). Lobe 0 has a hard gap,
 lobes 1 and 2 are full of discrete subgap states that disperse and skew with flux.
 :::
 
-## Two symmetry classes share zero energy
+## Majoranas coexist with trivial CdGM analogs at zero energy
 
 :::: {.columns}
 ::: {.column width="36%"}
@@ -417,8 +420,15 @@ lobes 1 and 2 are full of discrete subgap states that disperse and skew with flu
 
 ::: {.fragment}
 ::: {.key}
-The Majorana coexists with trivial CdGM analogs at zero energy: the topological phase is
-generically **gapless**
+Generically, the Majorana shares zero energy with trivial CdGM analogs: a **gapless**
+topological phase
+:::
+:::
+
+::: {.fragment}
+::: {.key .green .mt-2}
+But **protected islands** exist in parameter space (low $\mu$), where the MZM keeps a
+topological minigap [(**C. Payá** *et al.* PRB **109**, 115428)]{.nowrap}
 :::
 :::
 :::
@@ -438,7 +448,10 @@ generically **gapless**
 lobe. [click] In red the m_J = 0 sector, class D: it exists only in the odd lobe, and
 that is where the Majorana lives. [click] So the Majorana has to share zero energy with
 trivial CdGM analogs of other sectors: two symmetry classes coexist, and the topological
-phase is gapless.
+phase is generically gapless. [click] Not always, though: in our 2024 PRB we found islands in
+parameter space, at low chemical potential, where the m_J = 0 analog overtakes the other
+occupied sectors on its way to zero energy, so the Majorana keeps a topological minigap.
+(If asked: the most promising geometry for them is a tubular core.)
 :::
 
 ## The trivial sectors fill first: topology needs $\mu > \mu^\mathrm{ts}$

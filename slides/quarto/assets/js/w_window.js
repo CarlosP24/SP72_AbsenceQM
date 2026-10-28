@@ -59,9 +59,6 @@ QM.register('window', (el) => {
   lP.style.color = C.navy; lP.classList.add('qm-fade');
   const lF = T.label(X(700), Y(1.5e-3), 'full shell<br>(hidden, inside)', { math: false, cls: 'text', ax: 0 });
   Object.assign(lF.style, { color: C.green, lineHeight: 1.2 }); lF.classList.add('qm-fade');
-  const lE = T.label(X(1.6), Y(1.5e-2), 'gap edge: no pair yet', { math: false, cls: 'text', ax: 0, ay: 1 });
-  Object.assign(lE.style, { color: C.green, fontSize: '18px', opacity: 0 }); lE.classList.add('qm-fade');
-  if (!EFedge.length) lE.style.display = 'none';
 
   // ---------------------------------------------------------------- windows (bottom)
   const B = QM.panel(el, { x: 0, y: 290, w: 1400, h: 250, m: { l: 250, r: 40, t: 10, b: 60 } });
@@ -113,7 +110,7 @@ QM.register('window', (el) => {
   return {
     go(step) {
       vis([cP.node(), lP, rowG[0].node(), rowLab[0], ...pa], true);
-      vis([cF.node(), lF, lE, rowG[1].node(), rowLab[1], ...fa], step >= 1);
+      vis([cF.node(), lF, rowG[1].node(), rowLab[1], ...fa], step >= 1);
       vis([gapG.node(), gl], step >= 2);
     },
   };

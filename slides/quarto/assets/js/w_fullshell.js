@@ -6,7 +6,9 @@
 //   once around, they turn n times) and the circulating supercurrent I_s ∝ |Δ|² (n − Φ/Φ0) as
 //   two curved arrows spinning around the shell while the slide is on: anticlockwise for
 //   I_s > 0, clockwise for I_s < 0, at a speed ∝ |I_s|; at integer flux they stand still.
-//   Steps: 0 Φ = 0, 1 sweep to Φ = 2.4 Φ0, 2 the odd lobe highlighted.
+//   Above Ω(Φ), the kinetic energy of that current, E_I ∝ (n − Φ/Φ0)², one parabola per n; the
+//   shell sits on the lowest (n jumps at half-integer flux) and the gap dips where E_I peaks.
+//   Steps: 0 Φ = 0, 1 sweep lobe 0, 2 on to Φ = 2.4 Φ0, 3 the odd lobe highlighted.
 // 'sectors': DOS vs (Φ, ω) of the full shell (paper Fig. 1g data) split into the m_J = 0
 //   sector (class D, red) and all the others (CdGM analogs, class A, grey-blue).
 //   Steps: 0 all sectors (paper colour map), 1 the m_J ≠ 0 sectors, 2 the m_J = 0 sector on top.
@@ -25,8 +27,8 @@ QM.register('lp', (el) => {
   const Imax = d3.max(D['Φ'].map((f, i) => (f >= 0 && f <= 2.5 ? Math.abs(Is[i]) : 0)));
 
   // ---------------------------------------------------------------- ring (left)
-  const size = 268, R = 84, c = size / 2;
-  const ring = QM.panel(el, { x: 0, y: 30, w: size, h: size, m: { l: 0, r: 0, t: 0, b: 0 } });
+  const size = 268, R = 84, c = size / 2, ry = 110;
+  const ring = QM.panel(el, { x: 0, y: ry, w: size, h: size, m: { l: 0, r: 0, t: 0, b: 0 } });
   ring.g.append('circle').attr('cx', c).attr('cy', c).attr('r', R).attr('fill', 'none')
     .attr('stroke', '#B8C7F9').attr('stroke-width', 30);
   // phase of Δ e^{inφ} at 12 points of the shell: going once around, the arrows turn n times
@@ -42,9 +44,9 @@ QM.register('lp', (el) => {
   const arcs = [0, 1].map(() => ({ arc: cur.append('path').attr('fill', 'none').attr('stroke', C.navy)
     .attr('stroke-width', 5).attr('stroke-linecap', 'round'), head: cur.append('path').attr('fill', C.navy) }));
   const iLab = ring.label(size - 4, 14, 'I_\\mathrm{s}', { ax: 1, ay: 0, color: C.navy });
-  const nLab = QM.box(el, 0, 30 + c - 18, size, 36);
+  const nLab = QM.box(el, 0, ry + c - 18, size, 36);
   nLab.className = 'qm-box qm-nlabel';
-  const ringCap = QM.box(el, 0, 30 + size + 6, size, 30);
+  const ringCap = QM.box(el, 0, ry + size + 6, size, 30);
   ringCap.className = 'qm-box qm-ringcap';
   QM.tex(ringCap, '\\arg\\Delta = n\\varphi');
   let nNow = null, iNow = 0, theta = 0;
@@ -78,9 +80,33 @@ QM.register('lp', (el) => {
   const play = () => { if (raf === null) { tLast = null; raf = requestAnimationFrame(loop); } };
   const pause = () => { if (raf !== null) cancelAnimationFrame(raf); raf = null; };
 
+  // ---------------------------------------------------------------- E(Φ): one parabola per n
+  const e = QM.panel(el, { x: size + 40, y: 0, w: 640, h: 200, m: { l: 74, r: 14, t: 44, b: 8 } });
+  const X = d3.scaleLinear([0, 2.5], [0, e.iw]);
+  const YE = d3.scaleLinear([0, 0.42], [e.ih, 0]);
+  const fs = d3.range(0, 2.5001, 0.005);
+  const clipId = 'lpclip' + Math.random().toString(36).slice(2);
+  e.svg.append('defs').append('clipPath').attr('id', clipId).append('rect').attr('width', e.iw).attr('height', e.ih);
+  const parab = d3.line().x((d) => X(d[0])).y((d) => YE(d[1]));
+  [0, 1, 2, 3].forEach((n) => e.g.append('path').attr('clip-path', `url(#${clipId})`)
+    .attr('d', parab(fs.map((f) => [f, (n - f) ** 2]))).attr('fill', 'none')
+    .attr('stroke', C.muted).attr('stroke-width', 1.5).attr('stroke-dasharray', '5 5'));
+  const env = fs.map((f) => [f, (Math.round(f) - f) ** 2]);
+  e.g.append('path').attr('d', d3.area().x((d) => X(d[0])).y0(e.ih).y1((d) => YE(d[1]))(env))
+    .attr('fill', C.navy_tint);
+  e.g.append('path').attr('d', parab(env)).attr('fill', 'none').attr('stroke', C.navy).attr('stroke-width', 2.8);
+  [0.5, 1.5].forEach((f) => e.g.append('line').attr('x1', X(f)).attr('x2', X(f)).attr('y2', e.ih)
+    .attr('stroke', C.muted).attr('stroke-dasharray', '5 5').attr('stroke-width', 1.5));
+  QM.axis(e, 'bottom', X, { ticks: [0, 0.5, 1, 1.5, 2, 2.5], labels: false });
+  QM.frame(e);
+  e.label(-24, e.ih / 2, 'E_I', { color: C.navy }).style.transform = 'translate(-50%,-50%) rotate(-90deg)';
+  [[0.25, 'n = 0'], [1, 'n = 1'], [2, 'n = 2']].forEach(([f, t]) => e.label(X(f), -18, t, { math: false, cls: 'text' }));
+  e.label(X(1), YE(0.3), 'E_I \\propto I_\\mathrm{s}^2', { color: C.navy });
+  const eDot = e.g.append('circle').attr('r', 7).attr('fill', C.red).attr('stroke', '#fff').attr('stroke-width', 2);
+  const eLine = e.g.append('line').attr('y2', e.ih).attr('stroke', C.red).attr('stroke-width', 2.2);
+
   // ---------------------------------------------------------------- Ω(Φ)
-  const p = QM.panel(el, { x: size + 40, y: 0, w: 640, h: 380, m: { l: 74, r: 14, t: 44, b: 64 } });
-  const X = d3.scaleLinear([0, 2.5], [0, p.iw]);
+  const p = QM.panel(el, { x: size + 40, y: 200, w: 640, h: 300, m: { l: 74, r: 14, t: 12, b: 64 } });
   const Y = d3.scaleLinear([0, 1.08], [p.ih, 0]);
   const odd = p.g.append('rect').attr('x', X(0.5)).attr('width', X(1.5) - X(0.5)).attr('height', p.ih)
     .attr('fill', C.red_tint).attr('class', 'qm-fade').style('opacity', 0);
@@ -96,7 +122,6 @@ QM.register('lp', (el) => {
   QM.frame(p);
   p.label(p.iw / 2, p.ih + 50, '\\Phi/\\Phi_0', {});
   p.label(-56, p.ih / 2, '\\Omega/\\Delta_0', {}).style.transform = 'translate(-50%,-50%) rotate(-90deg)';
-  [[0.25, 'n = 0'], [1, 'n = 1'], [2, 'n = 2']].forEach(([f, t]) => p.label(X(f), -18, t, { math: false, cls: 'text' }));
   p.label(p.iw - 10, p.ih - 12, 'shell gap', { ax: 1, ay: 1, math: false, cls: 'text' }).style.color = C.ink_2;
   const oddLab = p.label(X(1.2), Y(0.2), 'odd lobe:<br>Majoranas<br>possible', { math: false, cls: 'text' });
   Object.assign(oddLab.style, { color: C.red, fontWeight: 700, textAlign: 'center', lineHeight: 1.15, opacity: 0 });
@@ -104,27 +129,29 @@ QM.register('lp', (el) => {
   const curLine = p.g.append('line').attr('y2', p.ih).attr('stroke', C.red).attr('stroke-width', 2.2);
   const dot = p.g.append('circle').attr('r', 7).attr('fill', C.red).attr('stroke', '#fff').attr('stroke-width', 2);
 
-  const sl = QM.slider(el, { x: size + 40 + 74, y: 392, w: 520, min: 0, max: 2.5, step: 0.005, value: 0,
+  const sl = QM.slider(el, { x: size + 40 + 74, y: 512, w: 520, min: 0, max: 2.5, step: 0.005, value: 0,
     tex: '\\Phi/\\Phi_0', fmt: (v) => v.toFixed(2), oninput: (v) => { stop(); draw(v); } });
   function draw(f) {
     drawRing(f);
     curLine.attr('x1', X(f)).attr('x2', X(f));
+    eLine.attr('x1', X(f)).attr('x2', X(f));
     dot.attr('cx', X(f)).attr('cy', Y(QM.interp(D['Φ'], D['Ω'], f)));
+    eDot.attr('cx', X(f)).attr('cy', YE((Math.round(f) - f) ** 2));
     sl.set(f);
   }
   let stop = () => {};
-  // steps 1–3 sweep one lobe each (ending just before the jump to the next n); step 4: odd lobe
-  const ends = [0, 0.49, 1.49, 2.4];
+  // step 1 sweeps lobe 0 (up to just before the jump), step 2 on through lobes 1 and 2; step 3: odd lobe
+  const ends = [0, 0.49, 2.4];
   return {
     go(step, animate) {
       stop();
-      odd.style('opacity', step >= 4 ? 1 : 0);
-      oddLab.style.opacity = step >= 4 ? 1 : 0;
-      const to = step >= 4 ? P1 : ends[step];
+      odd.style('opacity', step >= 3 ? 1 : 0);
+      oddLab.style.opacity = step >= 3 ? 1 : 0;
+      const to = step >= 3 ? P1 : ends[step];
       if (step === 0 || !animate) { draw(to); return; }
       const from = sl.value;
-      if (step === 4) { stop = QM.tween(1200, (t) => draw(QM.lerp(from, to, t))); return; }
-      stop = QM.tween(Math.max(600, 2400 * Math.abs(to - from)), (t) => draw(QM.lerp(from, to, t)), null, (t) => t);
+      if (step === 3) { stop = QM.tween(1200, (t) => draw(QM.lerp(from, to, t))); return; }
+      stop = QM.tween(Math.max(600, 1800 * Math.abs(to - from)), (t) => draw(QM.lerp(from, to, t)), null, (t) => t);
     },
     enter() { play(); },
     leave() { stop(); pause(); },
