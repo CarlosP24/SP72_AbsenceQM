@@ -357,6 +357,22 @@ EXPORTS["lp"] = function ()
         note = "slides/data/lp_lobes.jld2: shell gap Ω(Φ) and pairing Δ(Φ) in Δ0 (illustrative).")
 end
 
+# Normal-state band bottoms of base_fs, m_r = 0, at k_z = 0 and Φ0/2 vs m_j = m_l + s_z, from the
+# thesis (PT_Thesis/PT4_Majorana, Fig. 4.15(a), src/builders/skin_bands.jl): computed, where
+# the paper's Fig. 4(b) was schematic. At ⟨α⟩ = 85 meV nm, inside the m_r = 0 wedge, where the
+# picture of the paper shows (minima at m_j ≈ ±7/2); at the wire's 7 meV nm it doesn't. The
+# m_J = 0 pair is m_j = −1/2 on both branches, split; the Topo window lies between its levels.
+const THESIS_BANDS = "../../PT_Thesis/PT4_Majorana/data/prl26/skin_bands.jld2"
+EXPORTS["bands"] = function ()
+    b = JLD2.load(THESIS_BANDS)["bands"]["alpha=85.0"]
+    mj = b["m_j"]; E = b["E"][:, :, 1]
+    E0 = minimum(E)
+    k = abs.(mj) .<= 6.5
+    write_js("bands", (; mj = mj[k], E = [E[k, 1] .- E0, E[k, 2] .- E0]);
+        note = "$THESIS_BANDS, ⟨α⟩ = 85 meV nm, m_r = 0: E[branch][m_j] in meV from the band bottom " *
+               "($(round(E0; digits = 3)) meV, code scale).")
+end
+
 if abspath(PROGRAM_FILE) == @__FILE__
     names = isempty(ARGS) ? sort(collect(keys(EXPORTS))) : ARGS
     for n in names

@@ -334,6 +334,10 @@ $$
 ::: {.column width="52%"}
 ::: {.qm-widget data-widget="blocks" style="width:680px;height:420px"}
 :::
+
+::: {.fragment .fade-up}
+[The $m_J = 0$ sector turns topological through the **orbital** effect of the flux, not Zeeman: at $B \approx 0.1$ T, ~10× lower than in partial shells]{.small .ink2}
+:::
 :::
 ::::
 
@@ -356,7 +360,10 @@ of them, not under the product, so it survives and squares to +1. With it, the s
 AI and BDI; without it, once disorder breaks the mirror, A and D. Nothing changes for us:
 m_J ≠ 0 has no index either way, and of BDI's integer only the parity survives, the ℤ₂ of
 class D, like a partial-shell wire. From now on I just say A and D. Contrast with the
-partial shell, where one class-D Hamiltonian holds all the subbands.
+partial shell, where one class-D Hamiltonian holds all the subbands. [click] And the
+transition in m_J = 0 is driven by the orbital effect of the flux, not by the Zeeman field:
+that is why it happens at about 0.1 T, an order of magnitude below the field a partial-shell
+wire needs to close its gap by Zeeman alone.
 (If asked: in the sector basis 𝒯 is just complex conjugation, every block is real;
 (T·M)² = T²M² = (−1)(−1) = +1, hence AI and not AII. It also keeps m_J, unlike the true T.)
 :::
@@ -471,12 +478,16 @@ occupied sectors on its way to zero energy, so the Majorana keeps a topological 
 happens when walking into the wire from its depleted end. [click] Partial shell (left):
 all subbands belong to the same class-D Hamiltonian, so whichever fills first can turn
 topological right above depletion: the ordering of the bands is irrelevant. Full shell
-(right): normal-state angular subbands at k_z = 0 versus m_L. The radial spin–orbit
-coupling shifts the parabolas, so the band bottom is not at the m_J = 0 pair (red): the
-class-A CdGM sectors are populated first, and they are trivial. [click] Topology needs
-μ above the threshold μ^ts, where the class-D m_J = 0 pair fills. Along the wire (bottom strip), the
-stretch where μ(z) < μ^ts is trivial: the trivial skin. (In our wire the threshold comes
-from the second radial mode, ≈ 22 meV, because the first one needs unrealistic SOC.)
+(right): computed band bottoms of the first radial mode at k_z = 0 versus m_j = m_l + s_z,
+one line per spin branch. The radial spin–orbit coupling pushes the minima out to m_j ≈ ±7/2,
+so the band bottom is not at the m_J = 0 pair (red, m_j = −1/2 on both branches): the
+class-A CdGM sectors are populated first, and they are trivial. The m_J = 0 pair is split
+by the flux (an effective Zeeman field for that sector). [click] Topology needs μ inside the
+window between the two m_J = 0 levels: above the threshold μ^ts, where the lower one fills.
+(Strictly, the window opens a fraction of a meV higher, as the gap must close.) Along the wire (bottom strip), the stretch where μ(z) < μ^ts is
+trivial: the trivial skin. (These bands are at ⟨α⟩ = 85 meV nm: the first radial mode only
+turns topological above ~70 meV nm, unrealistic SOC. At our wire's 7 meV nm the threshold
+comes from the second radial mode, ≈ 22 meV, with the whole first mode below it as skin.)
 :::
 
 # Smooth confinement in full shells {.part data-num="03" data-kicker="03 · Smooth confinement in full shells" data-sub="The length that creates quasi-Majoranas also hides them"}
