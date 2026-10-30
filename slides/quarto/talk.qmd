@@ -368,6 +368,51 @@ wire needs to close its gap by Zeeman alone.
 (T·M)² = T²M² = (−1)(−1) = +1, hence AI and not AII. It also keeps m_J, unlike the true T.)
 :::
 
+## Why the transition is inverted in flux
+
+:::: {.columns}
+::: {.column width="46%"}
+- Partial shell: $V_\mathrm{Z}$ grows with $B$: trivial, then topological above $V_\mathrm{Z}^\mathrm{c}$
+
+::: {.fragment data-fragment-index="1"}
+- Full shell, $m_J = 0$: a Majorana nanowire whose Zeeman energy is mostly **orbital**
+
+::: {.eq}
+$$
+V_\mathrm{Z}^\mathrm{eff} = V_\mathrm{Z} + \frac{\tilde\phi}{2}\Bigl(\omega_R + \frac{\alpha}{R_\mathrm{av}}\Bigr), \qquad \tilde\phi = n - \frac{R_\mathrm{av}^2}{R_\mathrm{LP}^2}\frac{\Phi}{\Phi_0}
+$$
+:::
+:::
+
+::: {.fragment data-fragment-index="2"}
+- Topological if $V_\mathrm{Z}^\mathrm{eff} > \sqrt{\Gamma_S^2 + \tilde\mu_0^2}$. Within a lobe $V_\mathrm{Z}^\mathrm{eff}$ **falls** with $\Phi$: MZM at low flux, quasi-MZM at high flux
+:::
+:::
+::: {.column width="52%"}
+::: {.stack}
+![](assets/figs/s10b_inv_partial.svg){width="660px"}
+![](assets/figs/s10b_inv_full.svg){.fragment data-fragment-index="1" width="660px"}
+:::
+:::
+::::
+
+::: {.refs}
+S. Vaitiekėnas *et al.* Science **367**, eaav3392 (2020) · **C. Payá** *et al.* PRB **109**, 115428 (2024)
+:::
+
+::: {.notes}
+(1:00) You may have noticed that in full shells everything is mirrored: the MZM appears at the
+lower flux and the quasi-MZM at the higher one. Here is why. In a partial shell the Zeeman
+energy grows with the field, so the wire goes from trivial to topological at V_Z^c. [click] In a
+full shell, the m_J = 0 sector is again a Majorana nanowire, but its Zeeman energy is mostly
+orbital: proportional to the reduced flux φ̃ = n − (R_av/R_LP)² Φ/Φ0, measured from the
+degeneracy point of the lobe, with ω_R = ħ²/2m*R_av². It is there even at g = 0, and within a
+lobe it falls as the flux grows. [click] So increasing the flux takes the wire from topological
+to trivial at Φc: MZM below, quasi-MZM above. Everything that follows in flux looks inverted
+with respect to the partial shell. (Right: schematic, with R_av²/R_LP² = 0.6 for illustration
+and the paper's Φc.)
+:::
+
 ## A full shell is a synthetic vortex that confines Andreev subbands
 
 :::: {.columns}
@@ -816,7 +861,7 @@ m_r = 0 vs 1, conductance with all sectors, and the Quantica.jl code of the part
 wire.
 :::
 
-# Backup {.part data-num="+" data-kicker="Backup" data-sub="Disorder · inversion in flux · parameters · skin widths · conductance"}
+# Backup {.part data-num="+" data-kicker="Backup" data-sub="Disorder · parameters · skin widths · conductance"}
 
 ## The conclusion survives disorder and temperature
 
@@ -840,33 +885,6 @@ wire.
 peaks survive in both geometries; the quasi-MZM peak is smeared in the partial shell
 [click] and in the full shell nothing reaches the end. The tunneling conductance including
 all angular sectors and finite temperatures gives the same picture (Supplemental Material).
-:::
-
-## Why the transition is inverted in flux
-
-:::: {.columns}
-::: {.column width="46%"}
-- Partial shell: $V_\mathrm{Z}$ grows with $B$: trivial, then topological above $V_\mathrm{Z}^\mathrm{c}$
-- Full shell, $m_J = 0$: a Majorana nanowire whose Zeeman energy is mostly **orbital**
-
-::: {.eq}
-$$
-V_\mathrm{Z}^\mathrm{eff} = V_\mathrm{Z} + \frac{\tilde\phi}{2}\Bigl(\omega_R + \frac{\alpha}{R_\mathrm{av}}\Bigr), \qquad \tilde\phi = n - \frac{R_\mathrm{av}^2}{R_\mathrm{LP}^2}\frac{\Phi}{\Phi_0}
-$$
-:::
-
-- Topological if $V_\mathrm{Z}^\mathrm{eff} > \sqrt{\Gamma_S^2 + \tilde\mu_0^2}$. Within a lobe $V_\mathrm{Z}^\mathrm{eff}$ **falls** with $\Phi$: MZM at low flux, quasi-MZM at high flux
-:::
-::: {.column width="52%"}
-::: {.stack}
-![](assets/figs/s10b_inv_partial.svg)
-![](assets/figs/s10b_inv_full.svg)
-:::
-:::
-::::
-
-::: {.refs}
-S. Vaitiekėnas *et al.* Science **367**, eaav3392 (2020) · **C. Payá** *et al.* PRB **109**, 115428 (2024)
 :::
 
 ## Models and parameters

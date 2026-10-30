@@ -261,7 +261,7 @@ QM.register('fs-maps', (el, opts) => {
     QM.colorbar(p, { x: p.iw + 18, ticks, label: cbl });
     return { p, canv };
   };
-  const L = panel(0, 'ldos', 'End LDOS: what the probe sees', ['0', '1'], 'LDOS (arb. u.)');
+  const L = panel(0, 'ldos', 'End <i>m</i><sub>J</sub> = 0 LDOS: what the probe sees', ['0', '1'], 'LDOS (arb. u.)');
   const D = panel(1, 'dos', 'Inside the wire: <i>m</i><sub>J</sub> = 0 DOS', ['0.1', '1'], 'DOS (arb. u.)');
   // MZM below Φ^c and quasi-MZM above it, marked on the DOS where both sit at zero energy
   const bars = D.p.g.append('g').attr('class', 'qm-fade').style('opacity', 0);
